@@ -1,9 +1,7 @@
 "use client"
-
 import type React from "react"
-
 import { useState, useEffect } from "react"
-import Link from "next/link"
+// import Link from "next/link"
 import Image from "next/image"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
@@ -104,22 +102,9 @@ export default function ComplaintPage() {
   return (
     <div className="min-h-screen bg-gray-50">
       {/* Header */}
-      <header className="bg-white shadow-sm">
+      <header className=" shadow-sm">
         <div className="container mx-auto px-4 py-4">
           <div className="flex items-center justify-between">
-            <div className="flex items-center space-x-4">
-              <Button variant="ghost" size="sm" asChild>
-                <Link href="/">
-                  <ArrowLeft className="w-4 h-4 mr-2" />
-                  ফিরে যান
-                </Link>
-              </Button>
-              <div>
-                <h1 className="text-2xl font-bold text-gray-800">অভিযোগ পাতা</h1>
-                <p className="text-gray-600">আপনার সমস্যার কথা বলুন</p>
-              </div>
-            </div>
-
             <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
               <DialogTrigger asChild>
                 <Button className="bg-green-600 hover:bg-green-700">
@@ -182,7 +167,7 @@ export default function ComplaintPage() {
                   </div>
 
                   <div>
-                    <Label htmlFor="image">প্রমাণ (ছবি/ভিডিও)</Label>
+                    <Label htmlFor="image">প্রমাণ (ছবি)</Label>
                     <div className="mt-2">
                       <Input
                         id="image"

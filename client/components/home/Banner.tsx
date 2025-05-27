@@ -48,7 +48,7 @@ const Banner = () => {
                                 <div className="container mx-auto text-center text-black py-20">
                                     <h2 className="text-4xl md:text-6xl font-bold mb-6">{slide.title}</h2>
                                     <p className="text-xl mb-8 max-w-3xl mx-auto">{slide.description}</p>
-                                    <div className="flex sm:flex-row gap-4 justify-center">
+                                    <div className="flex flex-col sm:flex-row gap-4 justify-center px-10">
                                         <Button asChild size="lg" className="bg-green-600 hover:bg-green-700">
                                             <Link href="/complaint">
                                                 <FileText className="w-5 h-5 mr-2" />

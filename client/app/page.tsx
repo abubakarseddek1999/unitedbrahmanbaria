@@ -8,6 +8,7 @@ import { Badge } from "@/components/ui/badge"
 import { FileText, Shield, Users, ArrowRight, Phone, Mail, MapPin } from "lucide-react"
 import { initializeData, getSuccessStories, getGalleryItems, type SuccessStory, type GalleryItem } from "@/lib/storage"
 import Banner from "@/components/home/Banner"
+import Navbar from "@/components/share/Navbar"
 
 export default function HomePage() {
   const [successStories, setSuccessStories] = useState<SuccessStory[]>([])
@@ -21,75 +22,53 @@ export default function HomePage() {
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-green-50 to-blue-50">
-      {/* Header */}
-      <header className="bg-white shadow-md sticky top-0 z-50">
-        <div className="container mx-auto px-4 py-4">
-          <div className="flex items-center justify-between">
-            <div className="flex items-center space-x-3">
-              <div className="w-12 h-12 bg-green-600 rounded-full flex items-center justify-center">
-                <Shield className="w-6 h-6 text-white" />
-              </div>
-              <div>
-                <h1 className="text-xl font-bold text-gray-800">ঐক্যবদ্ধ সদর ব্রাহ্মণবাড়িয়া</h1>
-                <p className="text-sm text-gray-600">স্বচ্ছতা ও জবাবদিহিতার প্ল্যাটফর্ম</p>
-              </div>
-            </div>
-            <nav className="hidden md:flex space-x-6">
-              <Link href="/" className="text-gray-700 hover:text-green-600 font-medium">
-                হোম
-              </Link>
-              <Link href="/complaint" className="text-gray-700 hover:text-green-600 font-medium">
-                অভিযোগ
-              </Link>
-              <Link href="/spot-info" className="text-gray-700 hover:text-green-600 font-medium">
-                গোপন তথ্য
-              </Link>
-              <Link href="/admin" className="text-gray-700 hover:text-green-600 font-medium">
-                অ্যাডমিন
-              </Link>
-            </nav>
-          </div>
-        </div>
-      </header>
-
       <Banner />
 
-      {/* Features Section */}
-      <section className="py-16 px-4 bg-white">
-        <div className="container mx-auto">
-          <h3 className="text-3xl font-bold text-center text-gray-800 mb-12">আমাদের সেবাসমূহ</h3>
-          <div className="grid md:grid-cols-3 gap-8">
-            <Card className="text-center hover:shadow-lg transition-shadow">
-              <CardHeader>
-                <FileText className="w-12 h-12 text-green-600 mx-auto mb-4" />
-                <CardTitle>অভিযোগ জমা দিন</CardTitle>
-              </CardHeader>
-              <CardContent>
-                <CardDescription>
-                  যেকোনো সমস্যা বা অনিয়মের বিষয়ে অভিযোগ জানান। আপনার পরিচয় গোপন রাখার সুবিধা রয়েছে।
-                </CardDescription>
-              </CardContent>
-            </Card>
+      <section className="py-20 px-4 bg-gradient-to-b from-white via-[#f9fdfb] to-white">
+        <div className="max-w-7xl mx-auto">
+          <h3 className="text-3xl sm:text-4xl font-extrabold text-center text-gray-800 mb-16">
+            আমাদের সেবাসমূহ
+          </h3>
 
-            <Card className="text-center hover:shadow-lg transition-shadow">
-              <CardHeader>
-                <Shield className="w-12 h-12 text-blue-600 mx-auto mb-4" />
-                <CardTitle>গোপন তথ্য</CardTitle>
-              </CardHeader>
-              <CardContent>
-                <CardDescription>গুরুত্বপূর্ণ ও সংবেদনশীল তথ্য সম্পূর্ণ গোপনীয়তার সাথে জমা দিন।</CardDescription>
-              </CardContent>
-            </Card>
+          <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-8">
+            {/* Card 1 */}
+            <div className="group perspective">
+              <div className="bg-white h-full rounded-2xl border border-gray-200 shadow-xl p-8 text-center flex flex-col justify-between transition-transform duration-500 transform group-hover:-translate-y-2 group-hover:rotate-x-2 group-hover:scale-[1.03]">
+                <div>
+                  <FileText className="w-14 h-14 text-green-600 mx-auto mb-4 drop-shadow-md transition-transform duration-300 group-hover:scale-110" />
+                  <h4 className="text-xl font-bold text-gray-800 mb-2">অভিযোগ জমা দিন</h4>
+                  <p className="text-gray-600 text-base leading-relaxed">
+                    যেকোনো সমস্যা বা অনিয়মের বিষয়ে অভিযোগ জানান। আপনার পরিচয় গোপন রাখার সুবিধা রয়েছে।
+                  </p>
+                </div>
+              </div>
+            </div>
 
-            <Card className="text-center hover:shadow-lg transition-shadow">
-              <CardHeader>
-                <Users className="w-12 h-12 text-purple-600 mx-auto mb-4" />
-                <CardTitle>সফলতার গল্প</CardTitle>
-              </CardHeader>
-              <CardContent>
-                <CardDescription>আপনার অভিযোগের ভিত্তিতে সমাধান হওয়া সমস্যাগুলোর সফলতার গল্প দেখুন।</CardDescription>
-              </CardContent>
-            </Card>
+            {/* Card 2 */}
+            <div className="group perspective">
+              <div className="bg-white h-full rounded-2xl border border-gray-200 shadow-xl p-8 text-center flex flex-col justify-between transition-transform duration-500 transform group-hover:-translate-y-2 group-hover:rotate-x-2 group-hover:scale-[1.03]">
+                <div>
+                  <Shield className="w-14 h-14 text-blue-600 mx-auto mb-4 drop-shadow-md transition-transform duration-300 group-hover:scale-110" />
+                  <h4 className="text-xl font-bold text-gray-800 mb-2">গোপন তথ্য</h4>
+                  <p className="text-gray-600 text-base leading-relaxed">
+                    গুরুত্বপূর্ণ ও সংবেদনশীল তথ্য সম্পূর্ণ গোপনীয়তার সাথে জমা দিন।
+                  </p>
+                </div>
+              </div>
+            </div>
+
+            {/* Card 3 */}
+            <div className="group perspective">
+              <div className="bg-white h-full rounded-2xl border border-gray-200 shadow-xl p-8 text-center flex flex-col justify-between transition-transform duration-500 transform group-hover:-translate-y-2 group-hover:rotate-x-2 group-hover:scale-[1.03]">
+                <div>
+                  <Users className="w-14 h-14 text-purple-600 mx-auto mb-4 drop-shadow-md transition-transform duration-300 group-hover:scale-110" />
+                  <h4 className="text-xl font-bold text-gray-800 mb-2">সফলতার গল্প</h4>
+                  <p className="text-gray-600 text-base leading-relaxed">
+                    আপনার অভিযোগের ভিত্তিতে সমাধান হওয়া সমস্যাগুলোর সফলতার গল্প দেখুন।
+                  </p>
+                </div>
+              </div>
+            </div>
           </div>
         </div>
       </section>
