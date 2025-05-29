@@ -1,5 +1,7 @@
-import type React from "react"
-import type { Metadata } from "next"
+"use client"  // অবশ্যই যুক্ত করতে হবে কারণ QueryClientProvider ক্লায়েন্ট সাইডে কাজ করে
+
+import React from "react"
+import { QueryClient, QueryClientProvider } from "@tanstack/react-query"
 import { Inter } from "next/font/google"
 import "./globals.css"
 import { Toaster } from "@/components/ui/toaster"
@@ -7,11 +9,7 @@ import Navbar from "@/components/share/Navbar"
 
 const inter = Inter({ subsets: ["latin"] })
 
-export const metadata: Metadata = {
-  title: "ঐক্যবদ্ধ সদর ব্রাহ্মণবাড়িয়া - স্বচ্ছতা ও জবাবদিহিতার প্ল্যাটফর্ম",
-  description: "স্বচ্ছতা ও জবাবদিহিতার মাধ্যমে একটি উন্নত সমাজ গড়ে তুলুন। আপনার অভিযোগ ও গোপন তথ্য নিরাপদে জমা দিন।",
-    generator: 'v0.dev'
-}
+const queryClient = new QueryClient()
 
 export default function RootLayout({
   children,
@@ -21,9 +19,11 @@ export default function RootLayout({
   return (
     <html lang="bn">
       <body className={inter.className}>
-        <Navbar/>
-        {children}
-        <Toaster />
+        <QueryClientProvider client={queryClient}>
+          <Navbar />
+          {children}
+          <Toaster />
+        </QueryClientProvider>
       </body>
     </html>
   )

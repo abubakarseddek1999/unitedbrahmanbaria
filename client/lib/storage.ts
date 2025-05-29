@@ -1,7 +1,8 @@
 // Local Storage utility functions for data management
 
 export interface Complaint {
-  id: number
+  id?: number
+  _id?: string
   title: string
   description: string
   name: string
@@ -9,10 +10,14 @@ export interface Complaint {
   image?: string
   dateSubmitted: string
   status: string
+  hidePhone?: boolean; 
+  phone?: string | Number
+  email?: string
 }
 
 export interface SpotInfo {
-  id: number
+  id?: number
+  _id?: string
   subject: string
   description: string
   location: string
@@ -21,10 +26,14 @@ export interface SpotInfo {
   hideIdentity: boolean
   dateSubmitted: string
   status: string
+  phone?: string | Number
+  hidePhone?: boolean
+  email?: string
 }
 
 export interface SuccessStory {
-  id: number
+  id?: number
+  _id?: string
   title: string
   description: string
   image?: string
@@ -32,7 +41,8 @@ export interface SuccessStory {
 }
 
 export interface GalleryItem {
-  id: number
+  _id?: string
+  id?: number
   mediaType: "image" | "video"
   url: string
   caption: string

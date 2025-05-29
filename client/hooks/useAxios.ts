@@ -1,8 +1,11 @@
-import axios from 'axios';
+import axios from "axios";
 
-const useAxios = axios.create({
-  baseURL: 'http://localhost:8080/api/v1', // replace with your backend URL
-  withCredentials: true, // if using cookies
-});
+const axiosPublic = axios.create({
+  baseURL: 'http://localhost:8080/api/v1'
+})
 
-export default useAxios;
+const useAxiosPublic = () => {
+  return axiosPublic;
+};
+
+export default useAxiosPublic;

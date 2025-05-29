@@ -10,6 +10,7 @@ import { Label } from "@/components/ui/label"
 import { Textarea } from "@/components/ui/textarea"
 import { Checkbox } from "@/components/ui/checkbox"
 import { Badge } from "@/components/ui/badge"
+const image_hosting_api = `https://api.imgbb.com/1/upload?key=8c95c1dfdebd1604b24b162d5154275c`;
 import {
   Dialog,
   DialogContent,
@@ -21,27 +22,31 @@ import {
 import { ArrowLeft, Plus, Calendar, User, Eye, EyeOff, Upload } from "lucide-react"
 import { useToast } from "@/hooks/use-toast"
 import { getComplaints, addComplaint, initializeData, type Complaint } from "@/lib/storage"
+import useAxiosPublic from "@/hooks/useAxios"
+import useComplaints from "@/hooks/useComplaints"
 
 export default function ComplaintPage() {
-  const [complaints, setComplaints] = useState<Complaint[]>([])
+  const { data, isLoading, isError, refetch } = useComplaints()
+  console.log(data)
+  const axiosPublic = useAxiosPublic();
+
   const [isDialogOpen, setIsDialogOpen] = useState(false)
   const [formData, setFormData] = useState({
     title: "",
     description: "",
     name: "",
     hideName: true,
+    hidePhone: true,
     image: null as File | null,
+    phone: "",
   })
   const { toast } = useToast()
 
-  useEffect(() => {
-    initializeData()
-    setComplaints(getComplaints())
-  }, [])
 
-  const handleSubmit = (e: React.FormEvent) => {
+
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
-
+    console.log(formData.name)
     if (!formData.title || !formData.description) {
       toast({
         title: "ত্রুটি",
@@ -51,31 +56,62 @@ export default function ComplaintPage() {
       return
     }
 
-    // Add complaint to localStorage
-    addComplaint({
+    // image upload to imgbb and then get an url
+
+    if (!formData.image) {
+      toast({
+        title: "ত্রুটি",
+        description: "অনুগ্রহ করে একটি ছবি আপলোড করুন।",
+        variant: "destructive",
+      });
+      return;
+    }
+    const imageFile = { image: formData.image };
+    const res = await axiosPublic.post(image_hosting_api, imageFile, {
+      headers: {
+        'Content-Type': 'multipart/form-data'
+      }
+    });
+    const imageUrl = res.data.data.url;
+    console.log(imageUrl);
+    const newComplaint: Complaint = {
+      status: "নতুন", // Default status
+      dateSubmitted: new Date().toISOString(),
       title: formData.title,
       description: formData.description,
-      name: formData.hideName ? "গোপনীয়" : formData.name || "অজ্ঞাত",
+      name: formData.name ? formData.name : "অজ্ঞাত", // Default to "অজ্ঞাত" if name is empty
       hideName: formData.hideName,
-      image: formData.image ? URL.createObjectURL(formData.image) : undefined,
-    })
+      hidePhone: formData.hidePhone,
+      phone: formData.phone ? formData.phone : "অজ্ঞাত", // Default to "অজ্ঞাত" if phone is empty
+      image: imageUrl,
 
-    // Refresh complaints list
-    setComplaints(getComplaints())
-
-    toast({
-      title: "সফল!",
-      description: "আপনার অভিযোগ সফলভাবে জমা দেওয়া হয়েছে।",
-    })
-
-    setIsDialogOpen(false)
-    setFormData({
-      title: "",
-      description: "",
-      name: "",
-      hideName: true,
-      image: null,
-    })
+    }
+    // add server a newComplaint to the database using axios api: htttp://localhost:8080/api/v1/complaints
+    try {
+      const response = await axiosPublic.post("/complaint/create", newComplaint);
+      console.log(response);
+      toast({
+        title: "সফল!",
+        description: "আপনার অভিযোগ সফলভাবে জমা দেওয়া হয়েছে।",
+      })
+      setIsDialogOpen(false)
+      setFormData({
+        title: "",
+        description: "",
+        name: "",
+        hideName: true,
+        image: null,
+        phone: "",
+        hidePhone: true,
+      })
+    } catch (error) {
+      console.error("Error submitting complaint:", error);
+      toast({
+        title: "ত্রুটি",
+        description: "অভিযোগ জমা দিতে ব্যর্থ হয়েছে। অনুগ্রহ করে আবার চেষ্টা করুন।",
+        variant: "destructive",
+      });
+    }
   }
 
   const handleImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -143,7 +179,28 @@ export default function ComplaintPage() {
                       required
                     />
                   </div>
-
+                  <div>
+                    <Label htmlFor="phone">আপনার ফোন নম্বর (ঐচ্ছিক)</Label>
+                    <Input
+                      id="phone"
+                      value={formData.phone}
+                      onChange={(e) => setFormData({ ...formData, phone: e.target.value })}
+                      placeholder="আপনার ফোন নম্বর লিখুন"
+                      type="tel"
+                    />
+                  </div>
+                  {/* for hidden phone number */}
+                  <div className="flex items-center space-x-2">
+                    <Checkbox
+                      id="hidePhone"
+                      checked={formData.hidePhone}
+                      onCheckedChange={(checked) => setFormData({ ...formData, hidePhone: checked as boolean })}
+                    />
+                    <Label htmlFor="hidePhone" className="flex items-center">
+                      {formData.hidePhone ? <EyeOff className="w-4 h-4 mr-2" /> : <Eye className="w-4 h-4 mr-2" />}
+                      আমার ফোন নম্বর গোপন রাখুন
+                    </Label>
+                  </div>
                   <div>
                     <Label htmlFor="name">আপনার নাম (ঐচ্ছিক)</Label>
                     <Input
@@ -153,6 +210,7 @@ export default function ComplaintPage() {
                       placeholder="আপনার নাম লিখুন"
                     />
                   </div>
+
 
                   <div className="flex items-center space-x-2">
                     <Checkbox
@@ -173,6 +231,7 @@ export default function ComplaintPage() {
                         id="image"
                         type="file"
                         accept="image/*,video/*"
+                        multiple
                         onChange={handleImageChange}
                         className="hidden"
                       />
@@ -210,16 +269,16 @@ export default function ComplaintPage() {
         <div className="mb-8">
           <div className="flex items-center justify-between mb-6">
             <h2 className="text-xl font-semibold text-gray-800">সকল অভিযোগ</h2>
-            <Badge variant="secondary">{complaints.length}টি অভিযোগ</Badge>
+            <Badge variant="secondary">{data?.length}টি অভিযোগ</Badge>
           </div>
 
           <div className="grid gap-6">
-            {complaints.map((complaint) => (
-              <Card key={complaint.id} className="hover:shadow-md transition-shadow">
+            {data?.slice().reverse().map((complaint) => (
+              <Card key={complaint?._id} className="hover:shadow-md transition-shadow">
                 <CardHeader>
                   <div className="flex items-start justify-between">
                     <div className="flex-1">
-                      <CardTitle className="text-lg mb-2">{complaint.title}</CardTitle>
+                      <CardTitle className="text-lg mb-2">{complaint?.title}</CardTitle>
                       <div className="flex items-center space-x-4 text-sm text-gray-500 mb-2">
                         <div className="flex items-center">
                           <User className="w-4 h-4 mr-1" />
@@ -227,12 +286,16 @@ export default function ComplaintPage() {
                         </div>
                         <div className="flex items-center">
                           <Calendar className="w-4 h-4 mr-1" />
-                          {complaint.dateSubmitted}
+                          {new Date(complaint.dateSubmitted).toLocaleDateString("en-US", {
+                            year: "numeric",
+                            month: "short",
+                            day: "numeric",
+                          })}
                         </div>
                       </div>
-                      <Badge className={getStatusColor(complaint.status)}>{complaint.status}</Badge>
+                      <Badge className={getStatusColor(complaint?.status)}>{complaint.status}</Badge>
                     </div>
-                    {complaint.image && (
+                    {complaint?.image && (
                       <div className="ml-4">
                         <Image
                           src={complaint.image || "/placeholder.svg"}
@@ -246,7 +309,7 @@ export default function ComplaintPage() {
                   </div>
                 </CardHeader>
                 <CardContent>
-                  <CardDescription className="text-gray-700">{complaint.description}</CardDescription>
+                  <CardDescription className="text-gray-700">{complaint?.description}</CardDescription>
                 </CardContent>
               </Card>
             ))}
