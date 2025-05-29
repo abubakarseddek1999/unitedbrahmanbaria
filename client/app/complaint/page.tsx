@@ -10,7 +10,6 @@ import { Label } from "@/components/ui/label"
 import { Textarea } from "@/components/ui/textarea"
 import { Checkbox } from "@/components/ui/checkbox"
 import { Badge } from "@/components/ui/badge"
-const image_hosting_api = `https://api.imgbb.com/1/upload?key=8c95c1dfdebd1604b24b162d5154275c`;
 import {
   Dialog,
   DialogContent,
@@ -27,6 +26,7 @@ import useComplaints from "@/hooks/useComplaints"
 
 export default function ComplaintPage() {
   const { data, isLoading, isError, refetch } = useComplaints()
+  const [photoPreview, setPhotoPreview] = useState<string>('');
   console.log(data)
   const axiosPublic = useAxiosPublic();
 
@@ -41,22 +41,29 @@ export default function ComplaintPage() {
     phone: "",
   })
   const { toast } = useToast()
-
-
+  const handlePhotoUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (file) {
+      const reader = new FileReader();
+      reader.onloadend = () => {
+        setPhotoPreview(reader.result as string);
+        setFormData(prev => ({ ...prev, image: file }));
+      };
+      reader.readAsDataURL(file);
+    }
+  };
 
   const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault()
-    console.log(formData.name)
+    e.preventDefault();
+
     if (!formData.title || !formData.description) {
       toast({
         title: "ত্রুটি",
         description: "অনুগ্রহ করে সকল প্রয়োজনীয় তথ্য পূরণ করুন।",
         variant: "destructive",
-      })
-      return
+      });
+      return;
     }
-
-    // image upload to imgbb and then get an url
 
     if (!formData.image) {
       toast({
@@ -66,35 +73,39 @@ export default function ComplaintPage() {
       });
       return;
     }
-    const imageFile = { image: formData.image };
-    const res = await axiosPublic.post(image_hosting_api, imageFile, {
-      headers: {
-        'Content-Type': 'multipart/form-data'
-      }
-    });
-    const imageUrl = res.data.data.url;
-    console.log(imageUrl);
-    const newComplaint: Complaint = {
-      status: "নতুন", // Default status
+    console.log(formData.image)
+    // বাকী তথ্য JSON string হিসেবে পাঠানোর জন্য
+    const complaintData = {
+      status: "নতুন",
       dateSubmitted: new Date().toISOString(),
       title: formData.title,
       description: formData.description,
-      name: formData.name ? formData.name : "অজ্ঞাত", // Default to "অজ্ঞাত" if name is empty
+      name: formData.name ? formData.name : "অজ্ঞাত",
       hideName: formData.hideName,
       hidePhone: formData.hidePhone,
-      phone: formData.phone ? formData.phone : "অজ্ঞাত", // Default to "অজ্ঞাত" if phone is empty
-      image: imageUrl,
+      phone: formData.phone ? formData.phone : "অজ্ঞাত",
+    };
 
+    const submissionData = new FormData();
+    submissionData.append('image', formData.image);
+    submissionData.append('data', JSON.stringify(complaintData));
+
+    for (const [key, value] of submissionData.entries()) {
+      console.log(key, value);
     }
-    // add server a newComplaint to the database using axios api: htttp://localhost:8080/api/v1/complaints
+
     try {
-      const response = await axiosPublic.post("/complaint/create", newComplaint);
+      // axios call - Content-Type নিজে থেকেই হবে multipart/form-data
+      const response = await axiosPublic.post("/complaint/create", submissionData);
+
       console.log(response);
       toast({
         title: "সফল!",
         description: "আপনার অভিযোগ সফলভাবে জমা দেওয়া হয়েছে।",
-      })
-      setIsDialogOpen(false)
+      });
+
+      setIsDialogOpen(false);
+
       setFormData({
         title: "",
         description: "",
@@ -103,7 +114,8 @@ export default function ComplaintPage() {
         image: null,
         phone: "",
         hidePhone: true,
-      })
+        
+      });
     } catch (error) {
       console.error("Error submitting complaint:", error);
       toast({
@@ -112,13 +124,9 @@ export default function ComplaintPage() {
         variant: "destructive",
       });
     }
-  }
+  };
 
-  const handleImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    if (e.target.files && e.target.files[0]) {
-      setFormData({ ...formData, image: e.target.files[0] })
-    }
-  }
+
 
   const getStatusColor = (status: string) => {
     switch (status) {
@@ -232,7 +240,7 @@ export default function ComplaintPage() {
                         type="file"
                         accept="image/*,video/*"
                         multiple
-                        onChange={handleImageChange}
+                        onChange={handlePhotoUpload}
                         className="hidden"
                       />
                       <Label
