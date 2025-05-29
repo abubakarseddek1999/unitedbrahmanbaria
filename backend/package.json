@@ -1,0 +1,103 @@
+{
+  "name": "rapid-mongo-expresskit",
+  "version": "1.5.0",
+  "description": "Rapid Mongo Express Kit is a ready-to-use boilerplate for building Express.js applications with MongoDB. It includes pre-configured authentication, mail sending, error handling, and other utilities to streamline development and reduce repetitive tasks.",
+  "main": "index.js",
+  "bin": {
+    "rapid-mongo-expresskit": "./nbin/cli.js",
+    "create-module": "./bin/genarator.js"
+  },
+  "engines": {
+    "node": ">=18"
+  },
+  "scripts": {
+    "start": "node dist/index.js",
+    "build": "tsc",
+    "dev": "ts-node-dev --respawn --transpile-only src/index.ts",
+    "lint:fix": "npx eslint src --fix",
+    "lint": "eslint src --ignore-path .eslintignore --ext .ts",
+    "format": "prettier --ignore-path .gitignore --write \"./src/**/*.+(js|ts|json)\"",
+    "format:fix": "npx prettier --write src",
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "create-module": "npx create-module"
+  },
+  "keywords": [
+    "express",
+    "mongodb",
+    "authentication",
+    "boilerplate",
+    "redis",
+    "development",
+    "mail server",
+    "error handling",
+    "express",
+    "mongoose",
+    "jwt",
+    "bcrypt",
+    "nodemailer",
+    "cors",
+    "cookie-parser",
+    "dotenv",
+    "ejs",
+    "swagger",
+    "zod",
+    "ioredis"
+  ],
+  "author": "Mahamodul Hasan Moon",
+  "license": "MIT",
+  "dependencies": {
+    "@types/cookie-parser": "^1.4.7",
+    "bcrypt": "^5.1.1",
+    "cloudinary": "^2.5.1",
+    "cookie-parser": "^1.4.7",
+    "cors": "^2.8.5",
+    "dotenv": "^16.4.5",
+    "ejs": "^3.1.10",
+    "express": "^4.21.1",
+    "express-session": "^1.18.1",
+    "http-status": "^1.7.4",
+    "ioredis": "^5.4.1",
+    "jsonwebtoken": "^9.0.2",
+    "mongoose": "^8.7.1",
+    "multer": "1.4.5-lts.1",
+    "nodemailer": "^6.9.15",
+    "passport": "^0.7.0",
+    "passport-google-oauth2": "^0.2.0",
+    "sharp": "^0.33.5",
+    "swagger-ui-express": "^5.0.1",
+    "yamljs": "^0.3.0",
+    "zod": "^3.23.8"
+  },
+  "devDependencies": {
+    "@types/bcrypt": "^5.0.2",
+    "@types/cors": "^2.8.17",
+    "@types/ejs": "^3.1.5",
+    "@types/express": "^5.0.0",
+    "@types/express-session": "^1.18.0",
+    "@types/jsonwebtoken": "^9.0.7",
+    "@types/morgan": "^1.9.9",
+    "@types/multer": "^1.4.12",
+    "@types/node": "^22.7.5",
+    "@types/nodemailer": "^6.4.16",
+    "@types/passport": "^1.0.16",
+    "@types/passport-google-oauth2": "^0.1.10",
+    "@types/swagger-ui-express": "^4.1.6",
+    "@types/yamljs": "^0.2.34",
+    "@typescript-eslint/eslint-plugin": "^8.9.0",
+    "@typescript-eslint/parser": "^8.9.0",
+    "eslint": "^9.12.0",
+    "eslint-config-prettier": "^9.1.0",
+    "morgan": "^1.10.0",
+    "prettier": "^3.3.3",
+    "ts-node-dev": "^2.0.0",
+    "typescript": "^5.6.3"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/mahamodulhasanmoon/rapid-mongo-expresskit.git"
+  },
+  "bugs": {
+    "url": "https://github.com/mahamodulhasanmoon/rapid-mongo-expresskit/issues"
+  },
+  "homepage": "https://github.com/mahamodulhasanmoon/rapid-mongo-expresskit#readme"
+}
