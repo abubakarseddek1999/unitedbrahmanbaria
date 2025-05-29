@@ -27,6 +27,7 @@ import useComplaints from "@/hooks/useComplaints"
 export default function ComplaintPage() {
   const { data, isLoading, isError, refetch } = useComplaints()
   const [photoPreview, setPhotoPreview] = useState<string>('');
+  const [photoFiles, setPhotoFiles] = useState<File[]>([])
   console.log(data)
   const axiosPublic = useAxiosPublic();
 
@@ -42,16 +43,13 @@ export default function ComplaintPage() {
   })
   const { toast } = useToast()
   const handlePhotoUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const file = e.target.files?.[0];
-    if (file) {
-      const reader = new FileReader();
-      reader.onloadend = () => {
-        setPhotoPreview(reader.result as string);
-        setFormData(prev => ({ ...prev, image: file }));
-      };
-      reader.readAsDataURL(file);
+    const files = e.target.files;
+    if (files && files.length > 0) {
+      const fileArray = Array.from(files);
+      setPhotoFiles(fileArray);
     }
   };
+
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -65,15 +63,18 @@ export default function ComplaintPage() {
       return;
     }
 
-    if (!formData.image) {
+    if (photoFiles.length === 0) {
       toast({
         title: "ত্রুটি",
         description: "অনুগ্রহ করে একটি ছবি আপলোড করুন।",
         variant: "destructive",
       });
       return;
+
     }
-    console.log(formData.image)
+
+
+
     // বাকী তথ্য JSON string হিসেবে পাঠানোর জন্য
     const complaintData = {
       status: "নতুন",
@@ -87,7 +88,9 @@ export default function ComplaintPage() {
     };
 
     const submissionData = new FormData();
-    submissionData.append('image', formData.image);
+    photoFiles.forEach((file, index) => {
+      submissionData.append("images", file); // backend এ "images" নামে multiple files যাবে
+    });
     submissionData.append('data', JSON.stringify(complaintData));
 
     for (const [key, value] of submissionData.entries()) {
@@ -114,7 +117,7 @@ export default function ComplaintPage() {
         image: null,
         phone: "",
         hidePhone: true,
-        
+
       });
     } catch (error) {
       console.error("Error submitting complaint:", error);
@@ -280,46 +283,69 @@ export default function ComplaintPage() {
             <Badge variant="secondary">{data?.length}টি অভিযোগ</Badge>
           </div>
 
-          <div className="grid gap-6">
-            {data?.slice().reverse().map((complaint) => (
-              <Card key={complaint?._id} className="hover:shadow-md transition-shadow">
-                <CardHeader>
-                  <div className="flex items-start justify-between">
-                    <div className="flex-1">
-                      <CardTitle className="text-lg mb-2">{complaint?.title}</CardTitle>
-                      <div className="flex items-center space-x-4 text-sm text-gray-500 mb-2">
-                        <div className="flex items-center">
-                          <User className="w-4 h-4 mr-1" />
-                          {complaint.name}
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+            {data?.slice().reverse().map((complaint: any) => (
+              <Card key={complaint?._id} className="hover:shadow-md transition-shadow flex flex-col-reverse md:flex-row">
+                <div className="w-full md:w-1/2">
+                  <CardHeader>
+                    <div className="flex flex-col md:flex-row items-start justify-between">
+                      <div className="flex-1 mb-2">
+                        <CardTitle className="text-lg mb-2">{complaint?.title}</CardTitle>
+                        <div className="flex items-center space-x-4 text-sm text-gray-500 mb-2">
+                          <div className="flex items-center">
+                            <User className="w-4 h-4 mr-1" />
+                            {complaint.name}
+                          </div>
+                          <div className="flex items-center">
+                            <Calendar className="w-4 h-4 mr-1" />
+                            {new Date(complaint.dateSubmitted).toLocaleDateString("en-US", {
+                              year: "numeric",
+                              month: "short",
+                              day: "numeric",
+                            })}
+                          </div>
                         </div>
-                        <div className="flex items-center">
-                          <Calendar className="w-4 h-4 mr-1" />
-                          {new Date(complaint.dateSubmitted).toLocaleDateString("en-US", {
-                            year: "numeric",
-                            month: "short",
-                            day: "numeric",
-                          })}
-                        </div>
+                        <Badge className={getStatusColor(complaint?.status)}>{complaint.status}</Badge>
                       </div>
-                      <Badge className={getStatusColor(complaint?.status)}>{complaint.status}</Badge>
                     </div>
-                    {complaint?.image && (
-                      <div className="ml-4">
+                  </CardHeader>
+
+                  <CardContent>
+                    <CardDescription className="text-gray-700">
+                      {complaint?.description
+                        ? complaint.description.split(" ").slice(0, 10).join(" ") + (complaint.description.split(" ").length > 20 ? "..." : "")
+                        : ""}
+                    </CardDescription>
+                  </CardContent>
+
+                  <div className="flex ml-6 my-2">
+                    <button className="flex items-center bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded-sm text-xs">
+                      {/* Animated dot */}
+                      <span className="inline-block w-2 h-2 mr-2 rounded-full bg-white animate-pulse"></span>
+                      বিস্তারিত জানুন
+                    </button>
+                  </div>
+                </div>
+                <div className="w-full md:w-1/2 p-5 ">
+                  {complaint?.images && complaint.images.length > 0 && (
+                    <div className=" flex flex-col md:flex-row space-x-2 overflow-x-auto">
+                      {complaint.images.slice(0, 1).map((imgUrl: string, index: number) => (
                         <Image
-                          src={complaint.image || "/placeholder.svg"}
-                          alt="অভিযোগের ছবি"
+                          key={index}
+                          src={imgUrl || "/placeholder.svg"}
+                          alt={`অভিযোগের ছবি ${index + 1}`}
                           width={120}
                           height={80}
-                          className="rounded-lg object-cover"
+                          className="rounded-lg w-full object-cover max-h-[300px] shadow-sm"
                         />
-                      </div>
-                    )}
-                  </div>
-                </CardHeader>
-                <CardContent>
-                  <CardDescription className="text-gray-700">{complaint?.description}</CardDescription>
-                </CardContent>
+                      ))}
+                    </div>
+                  )}
+
+                </div>
+
               </Card>
+              // <ComplaintCard complaint={complaint} />
             ))}
           </div>
         </div>

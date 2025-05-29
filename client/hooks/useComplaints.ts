@@ -12,7 +12,7 @@ export type Complaint = {
   hideName: boolean
   hidePhone: boolean
   phone: string
-  image: string
+  images: string[]
 
 }
 
