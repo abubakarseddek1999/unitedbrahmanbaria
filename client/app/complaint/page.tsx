@@ -23,6 +23,7 @@ import { useToast } from "@/hooks/use-toast"
 import { getComplaints, addComplaint, initializeData, type Complaint } from "@/lib/storage"
 import useAxiosPublic from "@/hooks/useAxios"
 import useComplaints from "@/hooks/useComplaints"
+import Link from "next/link"
 
 export default function ComplaintPage() {
   const { data, isLoading, isError, refetch } = useComplaints()
@@ -318,13 +319,13 @@ export default function ComplaintPage() {
                     </CardDescription>
                   </CardContent>
 
-                  <div className="flex ml-6 my-2">
-                    <button className="flex items-center bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded-sm text-xs">
-                      {/* Animated dot */}
+                  <Link href={`/complaint-details/${complaint._id}`}>
+                    <button className="flex items-center mx-5 my-3 bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded-sm text-xs">
                       <span className="inline-block w-2 h-2 mr-2 rounded-full bg-white animate-pulse"></span>
                       বিস্তারিত জানুন
                     </button>
-                  </div>
+                  </Link>
+
                 </div>
                 <div className="w-full md:w-1/2 p-5 ">
                   {complaint?.images && complaint.images.length > 0 && (
