@@ -2,6 +2,7 @@ import { Router } from 'express';
 import { userRoutes } from '../modules/user/user.routes';
 import { authRoutes } from '../modules/auth/auth.routes';
 import { complaintRoutes } from '../modules/complaint/complaint.routes';
+import { secretdataRoutes } from '../modules/secretdata/secretdata.routes';
 
 type IModulerRoutes = { path: string; route: Router }[];
 
@@ -17,5 +18,9 @@ export const modulerRoutes: IModulerRoutes = [
   {
     path: '/complaint',
     route: complaintRoutes,
+  }
+  ,{
+    path: '/secretdata',
+    route: secretdataRoutes,
   }
 ];

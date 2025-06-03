@@ -14,8 +14,11 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { ArrowLeft, Shield, Upload, AlertTriangle, Lock } from "lucide-react"
 import { useToast } from "@/hooks/use-toast"
 import { addSpotInfo, initializeData } from "@/lib/storage"
+import useAxiosPublic from "@/hooks/useAxios"
 
 export default function SpotInfoPage() {
+  const axiosPublic = useAxiosPublic();
+  const [photoFiles, setPhotoFiles] = useState<File[]>([])
   const [formData, setFormData] = useState({
     subject: "",
     description: "",
@@ -29,10 +32,17 @@ export default function SpotInfoPage() {
   useEffect(() => {
     initializeData()
   }, [])
-
-  const handleSubmit = (e: React.FormEvent) => {
+  const handlePhotoUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const files = e.target.files;
+    if (files && files.length > 0) {
+      const fileArray = Array.from(files);
+      setPhotoFiles(fileArray);
+    }
+  };
+  const handleSubmit = async(e: React.FormEvent) => {
     e.preventDefault()
 
+    
     if (!formData.subject || !formData.description || !formData.location) {
       toast({
         title: "ত্রুটি",
@@ -47,30 +57,55 @@ export default function SpotInfoPage() {
       subject: formData.subject,
       description: formData.description,
       location: formData.location,
-      imageOrVideo: formData.imageOrVideo ? URL.createObjectURL(formData.imageOrVideo) : undefined,
       submitterType: formData.submitterType || "অজ্ঞাত",
       hideIdentity: formData.hideIdentity,
     })
+    // বাকী তথ্য JSON string হিসেবে পাঠানোর জন্য
+    const spotData = {
+      subject: formData.subject,
+      description: formData.description,
+      location: formData.location,
+      submitterType: formData.submitterType || "অজ্ঞাত",
+      hideIdentity: formData.hideIdentity,
+    };
+    const submissionData = new FormData();
+    photoFiles.forEach((file, index) => {
+      submissionData.append("images", file); // backend এ "images" নামে multiple files যাবে
+    });
+    submissionData.append('data', JSON.stringify(spotData));
 
-    toast({
-      title: "সফল!",
-      description: "আপনার গোপন তথ্য সফলভাবে জমা দেওয়া হয়েছে। এটি সম্পূর্ণ গোপনীয় রাখা হবে।",
-    })
 
-    setFormData({
-      subject: "",
-      description: "",
-      location: "",
-      imageOrVideo: null,
-      submitterType: "",
-      hideIdentity: true,
-    })
-  }
+    try {
+      // axios call - Content-Type নিজে থেকেই হবে multipart/form-data
+      const response = await axiosPublic.post("/secretdata/create", submissionData);
 
-  const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    if (e.target.files && e.target.files[0]) {
-      setFormData({ ...formData, imageOrVideo: e.target.files[0] })
+      console.log(response);
+      toast({
+        title: "সফল!",
+        description: "আপনার গোপন তথ্য সফলভাবে সফলভাবে জমা দেওয়া হয়েছে।",
+      });
+
+      setFormData({
+        subject: "",
+        description: "",
+        location: "",
+        imageOrVideo: null,
+        submitterType: "",
+        hideIdentity: true,
+      })
+    } catch (error) {
+      console.error("Error submitting complaint:", error);
+      toast({
+        title: "সফল!",
+        description: "আপনার গোপন তথ্য সফলভাবে জমা দেওয়া হয়েছে। এটি সম্পূর্ণ গোপনীয় রাখা হবে।",
+      })
     }
+
+
+
+    
+
+   
   }
 
   return (
@@ -79,12 +114,7 @@ export default function SpotInfoPage() {
       <header className="bg-white shadow-sm">
         <div className="container mx-auto px-4 py-4">
           <div className="flex items-center space-x-4">
-            <Button variant="ghost" size="sm" asChild>
-              <Link href="/">
-                <ArrowLeft className="w-4 h-4 mr-2" />
-                ফিরে যান
-              </Link>
-            </Button>
+
             <div>
               <h1 className="text-2xl font-bold text-gray-800">গোপন তথ্য</h1>
               <p className="text-gray-600">সংবেদনশীল তথ্য নিরাপদে জমা দিন</p>
@@ -97,7 +127,7 @@ export default function SpotInfoPage() {
       <main className="container mx-auto px-4 py-8">
         <div className="max-w-4xl mx-auto">
           {/* Security Notice */}
-          <Card className="mb-8 border-blue-200 bg-blue-50">
+          <Card className="mb-8 border-blue-200 bg-blue-50 p-2">
             <CardHeader>
               <div className="flex items-center space-x-3">
                 <Shield className="w-6 h-6 text-blue-600" />
@@ -127,7 +157,7 @@ export default function SpotInfoPage() {
           </Card>
 
           {/* Form */}
-          <Card>
+          <Card className="py-4">
             <CardHeader>
               <CardTitle className="flex items-center space-x-2">
                 <Shield className="w-5 h-5" />
@@ -189,13 +219,14 @@ export default function SpotInfoPage() {
                 </div>
 
                 <div>
-                  <Label htmlFor="imageOrVideo">প্রমাণ (ছবি/ভিডিও) - ঐচ্ছিক</Label>
+                  <Label htmlFor="imageOrVideo">প্রমাণ (ছবি যদি থাকে) - ঐচ্ছিক</Label>
                   <div className="mt-2">
                     <Input
                       id="imageOrVideo"
                       type="file"
+                      multiple
                       accept="image/*,video/*"
-                      onChange={handleFileChange}
+                      onChange={handlePhotoUpload}
                       className="hidden"
                     />
                     <Label
@@ -205,7 +236,7 @@ export default function SpotInfoPage() {
                       <div className="text-center">
                         <Upload className="w-8 h-8 mx-auto text-gray-400 mb-2" />
                         <p className="text-sm text-gray-600">
-                          {formData.imageOrVideo ? formData.imageOrVideo.name : "ছবি বা ভিডিও আপলোড করুন (ঐচ্ছিক)"}
+                          {formData.imageOrVideo ? formData.imageOrVideo.name : "ছবি আপলোড করুন (ঐচ্ছিক)"}
                         </p>
                         <p className="text-xs text-gray-500 mt-1">সর্বোচ্চ ১০ MB</p>
                       </div>
@@ -244,7 +275,7 @@ export default function SpotInfoPage() {
           </Card>
 
           {/* Additional Information */}
-          <Card className="mt-8 border-gray-200">
+          <Card className="mt-8 pb-4 border-gray-200">
             <CardHeader>
               <CardTitle className="text-lg">গুরুত্বপূর্ণ নির্দেশনা</CardTitle>
             </CardHeader>
