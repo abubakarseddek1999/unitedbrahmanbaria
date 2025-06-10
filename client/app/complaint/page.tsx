@@ -99,7 +99,7 @@ export default function ComplaintPage() {
 
     // বাকী তথ্য JSON string হিসেবে পাঠানোর জন্য
     const complaintData = {
-      status: "নতুন",
+      status: "নতুন ",
       dateSubmitted: new Date().toISOString(),
       title: formData.title,
       description: formData.description,

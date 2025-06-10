@@ -14,6 +14,7 @@ import { ArrowLeft, Shield, Upload, AlertTriangle, Lock, X, Eye, Loader2, FileIm
 import { useToast } from "@/hooks/use-toast"
 import { addSpotInfo, initializeData } from "@/lib/storage"
 import useAxiosPublic from "@/hooks/useAxios"
+import { stat } from "fs"
 
 export default function SpotInfoPage() {
   const axiosPublic = useAxiosPublic();
@@ -85,6 +86,7 @@ export default function SpotInfoPage() {
         subject: formData.subject,
         description: formData.description,
         location: formData.location,
+        status: "নতুন ",
         submitterType: formData.submitterType || "অজ্ঞাত",
         hideIdentity: formData.hideIdentity,
       };

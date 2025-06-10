@@ -1,15 +1,11 @@
 "use client"
-
 import type React from "react"
-
 import { useState, useEffect } from "react"
-import Link from "next/link"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 import { Textarea } from "@/components/ui/textarea"
-import { Badge } from "@/components/ui/badge"
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
 import {
   Dialog,
@@ -19,8 +15,7 @@ import {
   DialogTitle,
   DialogTrigger,
 } from "@/components/ui/dialog"
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
-import { FileText, Shield, Trophy, Camera, Plus, Edit, Trash2, Eye } from "lucide-react"
+import { FileText, Shield, Trophy, Camera, Plus, Edit, Trash2, Eye, Upload } from "lucide-react"
 import { useToast } from "@/hooks/use-toast"
 import {
   getComplaints,
@@ -46,18 +41,56 @@ import { Login } from "@/components/login/Login"
 import useComplaints from "@/hooks/useComplaints"
 import ComplainCard from "@/components/complaint/ComplainCard"
 import useAxiosPublic from "@/hooks/useAxios"
+import useSecretData from "@/hooks/useSecretData"
+import SecretData from "@/components/secretData/SecretData"
+import Image from "next/image"
+import useSuccessStories from "@/hooks/useSuccessData"
 
 export default function AdminPage() {
   const axiosPublic = useAxiosPublic();
+  const [isDialogOpen, setIsDialogOpen] = useState(false)
+  const [photoPreview, setPhotoPreview] = useState<string[]>([])
+  const [photoFiles, setPhotoFiles] = useState<File[]>([])
   const [isLoggedIn, setIsLoggedIn] = useState(false)
   const [loginData, setLoginData] = useState({ username: "", password: "" })
   const [spotInfos, setSpotInfos] = useState<SpotInfo[]>([])
-  const [successStories, setSuccessStories] = useState<SuccessStory[]>([])
   const [galleryItems, setGalleryItems] = useState<GalleryItem[]>([])
-  const [newStory, setNewStory] = useState({ title: "", description: "", image: null as File | null })
+  const [newStory, setNewStory] = useState<{ title: string; description: string; image?: File }>({
+    title: "",
+    description: "",
+    image: undefined as File | undefined,
+  })
   const { data: complaints, isLoading, isError, refetch } = useComplaints()
+  const { data: secretData } = useSecretData()
+  const { data: successStories } = useSuccessStories()
+
   const [isPageLoading, setIsPageLoading] = useState(false)
   const { toast } = useToast()
+
+  const handlePhotoUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const files = e.target.files
+    if (files && files.length > 0) {
+      const fileArray = Array.from(files)
+      setPhotoFiles(fileArray)
+
+      // Create preview URLs for all uploaded photos
+      const previewUrls = fileArray.map((file) => URL.createObjectURL(file))
+      setPhotoPreview(previewUrls)
+    }
+  }
+  const removeImage = (indexToRemove: number) => {
+    // Revoke the URL for the removed image
+    URL.revokeObjectURL(photoPreview[indexToRemove])
+
+    // Remove from preview array
+    const newPreviews = photoPreview.filter((_, index) => index !== indexToRemove)
+    setPhotoPreview(newPreviews)
+
+    // Remove from files array
+    const newFiles = photoFiles.filter((_, index) => index !== indexToRemove)
+    setPhotoFiles(newFiles)
+  }
+
 
   useEffect(() => {
     initializeData()
@@ -69,7 +102,7 @@ export default function AdminPage() {
 
   const loadData = () => {
     setSpotInfos(getSpotInfos())
-    setSuccessStories(getSuccessStories())
+    // setSuccessStories(getSuccessStories())
     setGalleryItems(getGalleryItems())
   }
 
@@ -147,45 +180,71 @@ export default function AdminPage() {
   };
 
 
-  const handleDeleteSpotInfo = (id: number) => {
-    deleteSpotInfo(id)
-    setSpotInfos(getSpotInfos())
-    toast({
-      title: "মুছে ফেলা হয়েছে",
-      description: "গোপন তথ্যটি সফলভাবে মুছে ফেলা হয়েছে।",
-    })
-  }
-
-  const handleAddSuccessStory = (e: React.FormEvent) => {
-    e.preventDefault()
-    if (!newStory.title || !newStory.description) {
+  const handleDeleteSpotInfo = (id: string) => {
+    const numericId = Number(id);
+    if (!isNaN(numericId)) {
+      deleteSpotInfo(numericId);
+      setSpotInfos(getSpotInfos());
+      toast({
+        title: "মুছে ফেলা হয়েছে",
+        description: "গোপন তথ্যটি সফলভাবে মুছে ফেলা হয়েছে।",
+      });
+    } else {
       toast({
         title: "ত্রুটি",
-        description: "সকল তথ্য পূরণ করুন।",
+        description: "ID টি সঠিক সংখ্যা নয়।",
         variant: "destructive",
-      })
-      return
+      });
     }
+  }
 
-    addSuccessStory({
+  const handleAddSuccessStory = async (e: React.FormEvent) => {
+    e.preventDefault();
+
+    const succesData = {
       title: newStory.title,
       description: newStory.description,
-      image: newStory.image ? URL.createObjectURL(newStory.image) : undefined,
+    };
+
+    const submissionData = new FormData()
+    photoFiles.forEach((file, index) => {
+      submissionData.append("images", file) // backend এ "images" নামে multiple files যাবে
     })
+    submissionData.append("data", JSON.stringify(succesData))
 
-    setSuccessStories(getSuccessStories())
+    try {
+      // axios call - Content-Type নিজে থেকেই হবে multipart/form-data (যদি ফাইল থাকে)
+      const response = await axiosPublic.post("/successdata/create", submissionData);
 
-    toast({
-      title: "সফল!",
-      description: "নতুন সফলতার গল্প যোগ করা হয়েছে।",
-    })
+      console.log(response);
+      toast({
+        title: "সফল!",
+        description: "নতুন সফলতার গল্প সফলভাবে যোগ করা হয়েছে।",
+      });
 
-    setNewStory({ title: "", description: "", image: null })
-  }
+      setPhotoPreview([]);
+      setPhotoFiles([]);
+      setNewStory({
+        title: "",
+        description: "",
+      });
+    } catch (error) {
+      console.error("Error submitting complaint:", error);
+      toast({
+        title: "ত্রুটি!",
+        description: "গল্প যোগ করার সময় একটি সমস্যা হয়েছে। অনুগ্রহ করে আবার চেষ্টা করুন।",
+        variant: "destructive", // যদি তোমার toast লাইব্রেরি এই ধরনের ভ্যারিয়েন্ট সাপোর্ট করে
+      });
+    }
+  };
+
+
+
+
+
 
   const handleDeleteSuccessStory = (id: number) => {
     deleteSuccessStory(id)
-    setSuccessStories(getSuccessStories())
     toast({
       title: "মুছে ফেলা হয়েছে",
       description: "সফলতার গল্পটি সফলভাবে মুছে ফেলা হয়েছে।",
@@ -250,7 +309,7 @@ export default function AdminPage() {
               <div className="flex items-center justify-between">
                 <div>
                   <p className="text-sm font-semibold text-red-700 uppercase tracking-wide">গোপন তথ্য</p>
-                  <p className="text-3xl font-bold text-red-800">{spotInfos.length}</p>
+                  <p className="text-3xl font-bold text-red-800">{secretData?.length ?? 0}</p>
                   <p className="text-xs text-red-600 mt-1">সংবেদনশীল তথ্য</p>
                 </div>
                 <div className="w-12 h-12 bg-red-500 rounded-xl flex items-center justify-center">
@@ -264,7 +323,7 @@ export default function AdminPage() {
               <div className="flex items-center justify-between">
                 <div>
                   <p className="text-sm font-semibold text-green-700 uppercase tracking-wide">সফলতার গল্প</p>
-                  <p className="text-3xl font-bold text-green-800">{successStories.length}</p>
+                  <p className="text-3xl font-bold text-green-800">{successStories?.length ?? 0}</p>
                   <p className="text-xs text-green-600 mt-1">প্রকাশিত গল্প</p>
                 </div>
                 <div className="w-12 h-12 bg-green-500 rounded-xl flex items-center justify-center">
@@ -291,8 +350,8 @@ export default function AdminPage() {
         </div>
         {/* Main Content Tabs */}
         <Tabs defaultValue="complaints" className="space-y-6">
-          <TabsList className="grid w-full grid-cols-4">
-            <TabsTrigger value="complaints">অভিযোগ ব্যবস্থাপনা</TabsTrigger>
+          <TabsList className="grid w-full grid-cols-4 gap-5">
+            <TabsTrigger value="complaints">অভিযোগ </TabsTrigger>
             <TabsTrigger value="spotinfo">গোপন তথ্য</TabsTrigger>
             <TabsTrigger value="stories">সফলতার গল্প</TabsTrigger>
             <TabsTrigger value="gallery">গ্যালারি</TabsTrigger>
@@ -320,54 +379,7 @@ export default function AdminPage() {
 
           {/* Spot Info Management */}
           <TabsContent value="spotinfo">
-            <Card>
-              <CardHeader>
-                <CardTitle>গোপন তথ্য পর্যালোচনা</CardTitle>
-                <CardDescription>সংবেদনশীল তথ্য পর্যালোচনা করুন</CardDescription>
-              </CardHeader>
-              <CardContent>
-                <div className="space-y-4">
-                  {spotInfos.map((info) => (
-                    <Card key={info.id} className="border-l-4 border-l-red-500">
-                      <CardContent className="p-4">
-                        <div className="flex items-start justify-between">
-                          <div className="flex-1">
-                            <h4 className="font-semibold text-lg">{info.subject}</h4>
-                            <p className="text-gray-600 mt-1">{info.description}</p>
-                            <div className="flex items-center space-x-4 mt-2 text-sm text-gray-500">
-                              <span>অবস্থান: {info.location}</span>
-                              <span>ধরন: {info.submitterType}</span>
-                              <span>তারিখ: {info.dateSubmitted}</span>
-                            </div>
-                          </div>
-                          <div className="flex items-center space-x-2">
-                            <Badge variant="destructive">গোপনীয়</Badge>
-                            <Select onValueChange={(value) => handleUpdateSpotInfoStatus(info._id, value)}>
-                              <SelectTrigger className="w-40">
-                                <SelectValue placeholder={info.status} />
-                              </SelectTrigger>
-                              <SelectContent>
-                                <SelectItem value="নতুন">নতুন</SelectItem>
-                                <SelectItem value="পর্যালোচনাধীন">পর্যালোচনাধীন</SelectItem>
-                                <SelectItem value="তদন্তাধীন">তদন্তাধীন</SelectItem>
-                                <SelectItem value="সমাধান হয়েছে">সমাধান হয়েছে</SelectItem>
-                                <SelectItem value="আর্কাইভ">আর্কাইভ</SelectItem>
-                              </SelectContent>
-                            </Select>
-                            <Button size="sm" variant="outline">
-                              <Eye className="w-4 h-4" />
-                            </Button>
-                            <Button size="sm" variant="destructive" onClick={() => handleDeleteSpotInfo(info._id)}>
-                              <Trash2 className="w-4 h-4" />
-                            </Button>
-                          </div>
-                        </div>
-                      </CardContent>
-                    </Card>
-                  ))}
-                </div>
-              </CardContent>
-            </Card>
+            <SecretData />
           </TabsContent>
 
           {/* Success Stories Management */}
@@ -379,7 +391,7 @@ export default function AdminPage() {
                     <CardTitle>সফলতার গল্প ব্যবস্থাপনা</CardTitle>
                     <CardDescription>সফল সমাধানের গল্প যোগ ও সম্পাদনা করুন</CardDescription>
                   </div>
-                  <Dialog>
+                  <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
                     <DialogTrigger asChild>
                       <Button className="bg-green-600 hover:bg-green-700">
                         <Plus className="w-4 h-4 mr-2" />
@@ -414,16 +426,72 @@ export default function AdminPage() {
                           />
                         </div>
                         <div>
-                          <Label htmlFor="storyImage">ছবি</Label>
-                          <Input
-                            id="storyImage"
-                            type="file"
-                            accept="image/*"
-                            onChange={(e) => setNewStory({ ...newStory, image: e.target.files?.[0] || null })}
-                          />
+                          <Label htmlFor="image">প্রমাণ (ছবি)</Label>
+                          {photoPreview.length > 0 && (
+                            <div className="mt-4">
+                              <p className="text-sm text-gray-600 mb-2">প্রিভিউ ({photoPreview.length}টি ছবি):</p>
+                              <div className="grid grid-cols-2 md:grid-cols-3 gap-3 mb-3">
+                                {photoPreview.map((preview, index) => (
+                                  <div key={index} className="relative group">
+                                    <div className="relative w-full h-24 bg-gray-100 rounded-lg overflow-hidden">
+                                      <Image
+                                        src={preview || "/placeholder.svg"}
+                                        alt={`Photo preview ${index + 1}`}
+                                        fill
+                                        className="object-cover"
+                                      />
+                                    </div>
+                                    <Button
+                                      type="button"
+                                      variant="destructive"
+                                      size="sm"
+                                      className="absolute -top-2 -right-2 w-6 h-6 rounded-full p-0 opacity-0 group-hover:opacity-100 transition-opacity"
+                                      onClick={() => removeImage(index)}
+                                    >
+                                      ×
+                                    </Button>
+                                  </div>
+                                ))}
+                              </div>
+                              <Button
+                                type="button"
+                                variant="outline"
+                                size="sm"
+                                onClick={() => {
+                                  photoPreview.forEach((url) => URL.revokeObjectURL(url))
+                                  setPhotoPreview([])
+                                  setPhotoFiles([])
+                                }}
+                              >
+                                সব ছবি মুছুন
+                              </Button>
+                            </div>
+                          )}
+                          <div className="mt-2">
+                            <Input
+                              id="image"
+                              type="file"
+                              accept="image/*,video/*"
+                              multiple
+                              onChange={handlePhotoUpload}
+                              className="hidden"
+                            />
+                            <Label
+                              htmlFor="image"
+                              className="flex items-center justify-center w-full h-32 border-2 border-dashed border-gray-300 rounded-lg cursor-pointer hover:border-gray-400"
+                            >
+                              <div className="text-center">
+                                <Upload className="w-8 h-8 mx-auto text-gray-400 mb-2" />
+                                <p className="text-sm text-gray-600">
+                                  {newStory.image ? newStory.image.name : "ছবি বা ভিডিও আপলোড করুন"}
+                                </p>
+                              </div>
+                            </Label>
+                          </div>
                         </div>
+                        {/* modal close button বাতিল*/}
                         <div className="flex justify-end space-x-2">
-                          <Button type="button" variant="outline">
+                          <Button type="button" variant="outline" onClick={() => setIsDialogOpen(false)} >
                             বাতিল
                           </Button>
                           <Button type="submit">যোগ করুন</Button>
@@ -434,23 +502,50 @@ export default function AdminPage() {
                 </div>
               </CardHeader>
               <CardContent>
-                <div className="space-y-4">
-                  {successStories.map((story) => (
-                    <Card key={story.id} className="border-l-4 border-l-green-500">
+                <div className="space-y-4 pb-6 grid grid-cols-1 lg:grid-cols-2 gap-6">
+                  {(successStories ?? []).map((story) => (
+                    <Card key={story._id} className="border-l-4 border-l-green-500">
                       <CardContent className="p-4">
-                        <div className="flex items-start justify-between">
-                          <div className="flex-1">
-                            <h4 className="font-semibold text-lg">{story.title}</h4>
-                            <p className="text-gray-600 mt-1">{story.description}</p>
-                            <div className="text-sm text-gray-500 mt-2">তারিখ: {story.dateAdded}</div>
+                        <div className=" flex flex-col-reverse md:flex-row gap-5 items-start justify-between">
+
+                          <div className=" flex flex-1 flex-col gap-5 items-start justify-between md:w-1/2">
+                            <div className="flex-1">
+                              <h4 className="font-semibold text-2xl">{story.title}</h4>
+                              <p className="text-gray-600 text-[14px] mt-1 line-clamp-4">{story.description}</p>
+                              <p className="text-[14px]">তারিখ: {new Date(story.dateSubmitted).toLocaleDateString("bn-BD", {
+                                year: "numeric",
+                                month: "long",
+                                day: "numeric",
+                              })}</p>
+                            </div>
+                            <div className="flex items-center space-x-2">
+                              <Button size="sm" variant="outline">
+                                <Edit className="w-4 h-4" />
+                              </Button>
+                              <Button size="sm" variant="destructive" onClick={() => handleDeleteSuccessStory(story._id)}>
+                                <Trash2 className="w-4 h-4" />
+                              </Button>
+                            </div>
                           </div>
-                          <div className="flex items-center space-x-2">
-                            <Button size="sm" variant="outline">
-                              <Edit className="w-4 h-4" />
-                            </Button>
-                            <Button size="sm" variant="destructive" onClick={() => handleDeleteSuccessStory(story._id)}>
-                              <Trash2 className="w-4 h-4" />
-                            </Button>
+
+                          <div className=" w-full md:w-1/2">
+                            {story.images ? (
+                              <div className="grid grid-cols-1  lg:grid-cols-1 gap-3">
+                                {story.images.map((image, index) => (
+                                  <div key={index} className="relative group">
+                                    <div className="relative w-full  bg-gray-100 rounded-lg overflow-hidden">
+
+                                      <Image src={image} alt="example" width={800} height={500} className="object-fill w-full h-[200px]" />
+
+
+                                    </div>
+                                  </div>
+                                ))}
+                              </div>
+                            ) : (
+                              <p className="text-gray-500">কোন ছবি নেই</p>
+                            )}
+
                           </div>
                         </div>
                       </CardContent>

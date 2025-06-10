@@ -70,7 +70,15 @@ export default function ComplaintDetailsPage({ params }: PageProps) {
         <main className="container mx-auto px-4 py-10">
             <div className="container mx-auto bg-white rounded-xl shadow-lg p-8 border border-gray-200">
                 <h1 className="text-2xl font-bold text-gray-800 mb-4">অভিযোগের বিস্তারিত</h1>
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 text-sm text-gray-600">
+                    <div>
+                        <span className="font-medium text-gray-800">অবস্থা:</span>{" "}
+                        <span className="inline-block bg-green-100 text-green-700 px-2 py-1 rounded">
+                            {complaint.status}
+                        </span>
+                    </div>
 
+                </div>
                 <div className="mb-4">
                     <p className="text-sm text-gray-500">
                         অভিযোগ আইডি: <span className="font-mono">{complaint._id}</span>
@@ -95,7 +103,7 @@ export default function ComplaintDetailsPage({ params }: PageProps) {
 
                 <div className="mb-6">
                     <h2 className="text-xl font-semibold text-blue-600 mb-2">{complaint.title}</h2>
-                    <p className="text-gray-700 leading-relaxed">{complaint.description}</p>
+                    <p className="text-gray-700 leading-relaxed max-w-4xl">{complaint.description}</p>
                 </div>
 
                 {/* Image gallery */}
@@ -117,15 +125,7 @@ export default function ComplaintDetailsPage({ params }: PageProps) {
                     </div>
                 )}
 
-                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 text-sm text-gray-600">
-                    <div>
-                        <span className="font-medium text-gray-800">অবস্থা:</span>{" "}
-                        <span className="inline-block bg-green-100 text-green-700 px-2 py-1 rounded">
-                            {complaint.status}
-                        </span>
-                    </div>
 
-                </div>
             </div>
 
             {/* Lightbox modal */}

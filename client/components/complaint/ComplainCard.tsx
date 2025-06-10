@@ -27,30 +27,30 @@ export default function ComplainCard({ complaint, refetch }: { complaint: Compla
     const { toast } = useToast()
     const handleStatusChange = async (newStatus: string) => {
         try {
-          const res = await axiosPublic.put(`/complaint/${complaint._id}`, { status: newStatus });
-      
-          if (res.status === 200) {
-            toast({
-              title: "স্ট্যাটাস পরিবর্তন হয়েছে",
-              description: "অভিযোগের স্ট্যাটাস সফলভাবে পরিবর্তন হয়েছে।",
-            });
-            refetch(); // ডেটা আবার লোড করার জন্য (যদি প্রয়োজন হয়)
-          } else {
-            toast({
-              title: "ত্রুটি",
-              description: "স্ট্যাটাস পরিবর্তন করা যায়নি।",
-              variant: "destructive",
-            });
-          }
+            const res = await axiosPublic.put(`/complaint/${complaint._id}`, { status: newStatus });
+
+            if (res.status === 200) {
+                toast({
+                    title: "স্ট্যাটাস পরিবর্তন হয়েছে",
+                    description: "অভিযোগের স্ট্যাটাস সফলভাবে পরিবর্তন হয়েছে।",
+                });
+                refetch(); // ডেটা আবার লোড করার জন্য (যদি প্রয়োজন হয়)
+            } else {
+                toast({
+                    title: "ত্রুটি",
+                    description: "স্ট্যাটাস পরিবর্তন করা যায়নি।",
+                    variant: "destructive",
+                });
+            }
         } catch (error) {
-          console.error("Status update error:", error);
-          toast({
-            title: "ত্রুটি",
-            description: "স্ট্যাটাস আপডেট করার সময় একটি সমস্যা হয়েছে।",
-            variant: "destructive",
-          });
+            console.error("Status update error:", error);
+            toast({
+                title: "ত্রুটি",
+                description: "স্ট্যাটাস আপডেট করার সময় একটি সমস্যা হয়েছে।",
+                variant: "destructive",
+            });
         }
-      };
+    };
 
 
     const swalWithTailwind = Swal.mixin({
@@ -109,8 +109,8 @@ export default function ComplainCard({ complaint, refetch }: { complaint: Compla
 
     return (
         <div className="p-4">
-            <Card className="hover:shadow-md transition-shadow flex flex-col-reverse md:flex-row">
-                <div className="p-6">
+            <Card className="hover:shadow-md transition-shadow flex flex-col-reverse md:flex-row  border-l-4 border-l-red-500">
+                <div className="p-6 ">
                     <div className="flex gap-6">
                         {/* Left Content Section */}
                         <div className="flex-1 min-w-0">
@@ -150,11 +150,11 @@ export default function ComplainCard({ complaint, refetch }: { complaint: Compla
                                         <SelectValue placeholder="স্ট্যাটাস পরিবর্তন করুন" />
                                     </SelectTrigger>
                                     <SelectContent>
-                                        <SelectItem value="new">নতুন</SelectItem>
-                                        <SelectItem value="reviewing">পর্যালোচনাধীন</SelectItem>
-                                        <SelectItem value="in-progress">সমাধানাধীন</SelectItem>
-                                        <SelectItem value="resolved">সমাধান হয়েছে</SelectItem>
-                                        <SelectItem value="cancelled">বাতিল</SelectItem>
+                                        <SelectItem value="নতুন">নতুন</SelectItem>
+                                        <SelectItem value="পর্যালোচনাধীন">পর্যালোচনাধীন</SelectItem>
+                                        <SelectItem value="সমাধানাধীন">সমাধানাধীন</SelectItem>
+                                        <SelectItem value="সমাধান হয়েছে">সমাধান হয়েছে</SelectItem>
+                                        <SelectItem value="বাতিল">বাতিল</SelectItem>
                                     </SelectContent>
                                 </Select>
 

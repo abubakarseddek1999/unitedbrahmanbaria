@@ -1,9 +1,9 @@
 // secretdata.model.ts
 
-  import { Schema, model } from 'mongoose';
-import { ISecretdata } from './secretdata.interface';
+import { Schema, model } from 'mongoose';
+import { SecretData } from './secretdata.interface';
 
-const secretdataSchema = new Schema<ISecretdata>({
+const secretdataSchema = new Schema<SecretData>({
   images: {
     type: [String],  // <-- এটা array of strings হবে, না যে শুধু string
     default: [],
@@ -20,18 +20,25 @@ const secretdataSchema = new Schema<ISecretdata>({
     type: String,
     required: true,
   },
-   submitterType: {
+  submitterType: {
     type: String,
     required: true,
   },
- hideIdentity: {
+  hideIdentity: {
     type: Boolean,
     required: true,
   },
-// update your content here
+  dateSubmitted: {
+    type: Date,
+    default: () => new Date(),
+  },
+  status: {
+    type: String,
+    required: true,
+  },
+  // update your content here
 });
 
 
-  export const Secretdata = model<ISecretdata>('Secretdata', secretdataSchema);
+export const Secretdata = model<SecretData>('Secretdata', secretdataSchema);
 
-  

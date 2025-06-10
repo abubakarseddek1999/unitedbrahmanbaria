@@ -1,12 +1,11 @@
-// secretdata.model.ts
-
-export interface ISecretdata {
+export interface SecretData {
+  _id: string;
   subject: string;
+  images?: string[]; 
   description: string;
-  location: string;
   submitterType: string;
   hideIdentity: boolean;
-  images?: [];
-  // update your content here 
+  dateSubmitted: Date;
+  status: string;
+  location: string; // Added location property
 }
-
