@@ -18,19 +18,18 @@ import {
   DialogTitle,
   DialogTrigger,
 } from "@/components/ui/dialog"
-import { ArrowLeft, Plus, Calendar, User, Eye, EyeOff, Upload } from "lucide-react"
+import { Plus, Calendar, User, Eye, EyeOff, Upload } from "lucide-react"
 import { useToast } from "@/hooks/use-toast"
-import { getComplaints, addComplaint, initializeData, type Complaint } from "@/lib/storage"
 import useAxiosPublic from "@/hooks/useAxios"
 import useComplaints from "@/hooks/useComplaints"
 import Link from "next/link"
 
 export default function ComplaintPage() {
   const { data, isLoading, isError, refetch } = useComplaints()
-  const [photoPreview, setPhotoPreview] = useState<string>('');
+  const [photoPreview, setPhotoPreview] = useState<string[]>([])
   const [photoFiles, setPhotoFiles] = useState<File[]>([])
   console.log(data)
-  const axiosPublic = useAxiosPublic();
+  const axiosPublic = useAxiosPublic()
 
   const [isDialogOpen, setIsDialogOpen] = useState(false)
   const [formData, setFormData] = useState({
@@ -44,24 +43,49 @@ export default function ComplaintPage() {
   })
   const { toast } = useToast()
   const handlePhotoUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const files = e.target.files;
+    const files = e.target.files
     if (files && files.length > 0) {
-      const fileArray = Array.from(files);
-      setPhotoFiles(fileArray);
-    }
-  };
+      const fileArray = Array.from(files)
+      setPhotoFiles(fileArray)
 
+      // Create preview URLs for all uploaded photos
+      const previewUrls = fileArray.map((file) => URL.createObjectURL(file))
+      setPhotoPreview(previewUrls)
+    }
+  }
+
+  const removeImage = (indexToRemove: number) => {
+    // Revoke the URL for the removed image
+    URL.revokeObjectURL(photoPreview[indexToRemove])
+
+    // Remove from preview array
+    const newPreviews = photoPreview.filter((_, index) => index !== indexToRemove)
+    setPhotoPreview(newPreviews)
+
+    // Remove from files array
+    const newFiles = photoFiles.filter((_, index) => index !== indexToRemove)
+    setPhotoFiles(newFiles)
+  }
+
+  useEffect(() => {
+    // Cleanup function to revoke object URLs when component unmounts
+    return () => {
+      photoPreview.forEach((url) => {
+        URL.revokeObjectURL(url)
+      })
+    }
+  }, [photoPreview])
 
   const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
+    e.preventDefault()
 
     if (!formData.title || !formData.description) {
       toast({
         title: "ত্রুটি",
         description: "অনুগ্রহ করে সকল প্রয়োজনীয় তথ্য পূরণ করুন।",
         variant: "destructive",
-      });
-      return;
+      })
+      return
     }
 
     if (photoFiles.length === 0) {
@@ -69,12 +93,9 @@ export default function ComplaintPage() {
         title: "ত্রুটি",
         description: "অনুগ্রহ করে একটি ছবি আপলোড করুন।",
         variant: "destructive",
-      });
-      return;
-
+      })
+      return
     }
-
-
 
     // বাকী তথ্য JSON string হিসেবে পাঠানোর জন্য
     const complaintData = {
@@ -86,30 +107,32 @@ export default function ComplaintPage() {
       hideName: formData.hideName,
       hidePhone: formData.hidePhone,
       phone: formData.phone ? formData.phone : "অজ্ঞাত",
-    };
+    }
 
-    const submissionData = new FormData();
+    const submissionData = new FormData()
     photoFiles.forEach((file, index) => {
-      submissionData.append("images", file); // backend এ "images" নামে multiple files যাবে
-    });
-    submissionData.append('data', JSON.stringify(complaintData));
+      submissionData.append("images", file) // backend এ "images" নামে multiple files যাবে
+    })
+    submissionData.append("data", JSON.stringify(complaintData))
 
     for (const [key, value] of submissionData.entries()) {
-      console.log(key, value);
+      console.log(key, value)
     }
 
     try {
       // axios call - Content-Type নিজে থেকেই হবে multipart/form-data
-      const response = await axiosPublic.post("/complaint/create", submissionData);
+      const response = await axiosPublic.post("/complaint/create", submissionData)
 
-      console.log(response);
+      console.log(response)
       toast({
         title: "সফল!",
         description: "আপনার অভিযোগ সফলভাবে জমা দেওয়া হয়েছে।",
-      });
+      })
 
-      setIsDialogOpen(false);
+      setIsDialogOpen(false)
 
+      setPhotoPreview([])
+      setPhotoFiles([])
       setFormData({
         title: "",
         description: "",
@@ -118,19 +141,16 @@ export default function ComplaintPage() {
         image: null,
         phone: "",
         hidePhone: true,
-
-      });
+      })
     } catch (error) {
-      console.error("Error submitting complaint:", error);
+      console.error("Error submitting complaint:", error)
       toast({
         title: "ত্রুটি",
         description: "অভিযোগ জমা দিতে ব্যর্থ হয়েছে। অনুগ্রহ করে আবার চেষ্টা করুন।",
         variant: "destructive",
-      });
+      })
     }
-  };
-
-
+  }
 
   const getStatusColor = (status: string) => {
     switch (status) {
@@ -148,7 +168,7 @@ export default function ComplaintPage() {
   }
 
   return (
-    <div className="min-h-screen bg-gray-50">
+    <div className="bg-gray-50">
       {/* Header */}
       <header className=" shadow-sm">
         <div className="container mx-auto px-4 py-4">
@@ -160,7 +180,7 @@ export default function ComplaintPage() {
                   নতুন অভিযোগ
                 </Button>
               </DialogTrigger>
-              <DialogContent className="max-w-2xl">
+              <DialogContent className="max-w-2xl max-h-[90vh] overflow-y-auto">
                 <DialogHeader>
                   <DialogTitle>নতুন অভিযোগ জমা দিন</DialogTitle>
                   <DialogDescription>
@@ -223,7 +243,6 @@ export default function ComplaintPage() {
                     />
                   </div>
 
-
                   <div className="flex items-center space-x-2">
                     <Checkbox
                       id="hideName"
@@ -238,6 +257,46 @@ export default function ComplaintPage() {
 
                   <div>
                     <Label htmlFor="image">প্রমাণ (ছবি)</Label>
+                    {photoPreview.length > 0 && (
+                      <div className="mt-4">
+                        <p className="text-sm text-gray-600 mb-2">প্রিভিউ ({photoPreview.length}টি ছবি):</p>
+                        <div className="grid grid-cols-2 md:grid-cols-3 gap-3 mb-3">
+                          {photoPreview.map((preview, index) => (
+                            <div key={index} className="relative group">
+                              <div className="relative w-full h-24 bg-gray-100 rounded-lg overflow-hidden">
+                                <Image
+                                  src={preview || "/placeholder.svg"}
+                                  alt={`Photo preview ${index + 1}`}
+                                  fill
+                                  className="object-cover"
+                                />
+                              </div>
+                              <Button
+                                type="button"
+                                variant="destructive"
+                                size="sm"
+                                className="absolute -top-2 -right-2 w-6 h-6 rounded-full p-0 opacity-0 group-hover:opacity-100 transition-opacity"
+                                onClick={() => removeImage(index)}
+                              >
+                                ×
+                              </Button>
+                            </div>
+                          ))}
+                        </div>
+                        <Button
+                          type="button"
+                          variant="outline"
+                          size="sm"
+                          onClick={() => {
+                            photoPreview.forEach((url) => URL.revokeObjectURL(url))
+                            setPhotoPreview([])
+                            setPhotoFiles([])
+                          }}
+                        >
+                          সব ছবি মুছুন
+                        </Button>
+                      </div>
+                    )}
                     <div className="mt-2">
                       <Input
                         id="image"
@@ -285,69 +344,73 @@ export default function ComplaintPage() {
           </div>
 
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-            {data?.slice().reverse().map((complaint: any) => (
-              <Card key={complaint?._id} className="hover:shadow-md transition-shadow flex flex-col-reverse md:flex-row">
-                <div className="w-full md:w-1/2">
-                  <CardHeader>
-                    <div className="flex flex-col md:flex-row items-start justify-between">
-                      <div className="flex-1 mb-2">
-                        <CardTitle className="text-lg mb-2">{complaint?.title}</CardTitle>
-                        <div className="flex items-center space-x-4 text-sm text-gray-500 mb-2">
-                          <div className="flex items-center">
-                            <User className="w-4 h-4 mr-1" />
-                            {complaint.name}
+            {data
+              ?.slice()
+              .reverse()
+              .map((complaint: any) => (
+                <Card
+                  key={complaint?._id}
+                  className="hover:shadow-md transition-shadow flex flex-col-reverse md:flex-row"
+                >
+                  <div className="w-full md:w-1/2">
+                    <CardHeader>
+                      <div className="flex flex-col md:flex-row items-start justify-between">
+                        <div className="flex-1 mb-2">
+                          <CardTitle className="text-lg mb-2">{complaint?.title}</CardTitle>
+                          <div className="flex items-center space-x-4 text-sm text-gray-500 mb-2">
+                            <div className="flex items-center">
+                              <User className="w-4 h-4 mr-1" />
+                              {complaint.name}
+                            </div>
+                            <div className="flex items-center">
+                              <Calendar className="w-4 h-4 mr-1" />
+                              {new Date(complaint.dateSubmitted).toLocaleDateString("en-US", {
+                                year: "numeric",
+                                month: "short",
+                                day: "numeric",
+                              })}
+                            </div>
                           </div>
-                          <div className="flex items-center">
-                            <Calendar className="w-4 h-4 mr-1" />
-                            {new Date(complaint.dateSubmitted).toLocaleDateString("en-US", {
-                              year: "numeric",
-                              month: "short",
-                              day: "numeric",
-                            })}
-                          </div>
+                          <Badge className={getStatusColor(complaint?.status)}>{complaint.status}</Badge>
                         </div>
-                        <Badge className={getStatusColor(complaint?.status)}>{complaint.status}</Badge>
                       </div>
-                    </div>
-                  </CardHeader>
+                    </CardHeader>
 
-                  <CardContent>
-                    <CardDescription className="text-gray-700">
-                      {complaint?.description
-                        ? complaint.description.split(" ").slice(0, 10).join(" ") + (complaint.description.split(" ").length > 20 ? "..." : "")
-                        : ""}
-                    </CardDescription>
-                  </CardContent>
+                    <CardContent>
+                      <CardDescription className="text-gray-700">
+                        {complaint?.description
+                          ? complaint.description.split(" ").slice(0, 10).join(" ") +
+                            (complaint.description.split(" ").length > 20 ? "..." : "")
+                          : ""}
+                      </CardDescription>
+                    </CardContent>
 
-                  <Link href={`/complaint-details/${complaint._id}`}>
-                    <button className="flex items-center mx-5 my-3 bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded-sm text-xs">
-                      <span className="inline-block w-2 h-2 mr-2 rounded-full bg-white animate-pulse"></span>
-                      বিস্তারিত জানুন
-                    </button>
-                  </Link>
-
-                </div>
-                <div className="w-full md:w-1/2 p-5 ">
-                  {complaint?.images && complaint.images.length > 0 && (
-                    <div className=" flex flex-col md:flex-row space-x-2 overflow-x-auto">
-                      {complaint.images.slice(0, 1).map((imgUrl: string, index: number) => (
-                        <Image
-                          key={index}
-                          src={imgUrl || "/placeholder.svg"}
-                          alt={`অভিযোগের ছবি ${index + 1}`}
-                          width={120}
-                          height={80}
-                          className="rounded-lg w-full object-cover max-h-[300px] shadow-sm"
-                        />
-                      ))}
-                    </div>
-                  )}
-
-                </div>
-
-              </Card>
-              // <ComplaintCard complaint={complaint} />
-            ))}
+                    <Link href={`/complaint-details/${complaint._id}`}>
+                      <button className="flex items-center mx-5 my-3 bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded-sm text-xs">
+                        <span className="inline-block w-2 h-2 mr-2 rounded-full bg-white animate-pulse"></span>
+                        বিস্তারিত জানুন
+                      </button>
+                    </Link>
+                  </div>
+                  <div className="w-full md:w-1/2 p-5 ">
+                    {complaint?.images && complaint.images.length > 0 && (
+                      <div className=" flex flex-col md:flex-row space-x-2 overflow-x-auto">
+                        {complaint.images.slice(0, 1).map((imgUrl: string, index: number) => (
+                          <Image
+                            key={index}
+                            src={imgUrl || "/placeholder.svg"}
+                            alt={`অভিযোগের ছবি ${index + 1}`}
+                            width={120}
+                            height={80}
+                            className="rounded-lg w-full object-cover max-h-[300px] shadow-sm"
+                          />
+                        ))}
+                      </div>
+                    )}
+                  </div>
+                </Card>
+                // <ComplaintCard complaint={complaint} />
+              ))}
           </div>
         </div>
       </main>

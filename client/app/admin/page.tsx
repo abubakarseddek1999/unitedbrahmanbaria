@@ -20,7 +20,7 @@ import {
   DialogTrigger,
 } from "@/components/ui/dialog"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
-import { ArrowLeft, FileText, Shield, Trophy, Camera, Plus, Edit, Trash2, Eye } from "lucide-react"
+import { FileText, Shield, Trophy, Camera, Plus, Edit, Trash2, Eye } from "lucide-react"
 import { useToast } from "@/hooks/use-toast"
 import {
   getComplaints,
@@ -42,16 +42,21 @@ import {
   type SuccessStory,
   type GalleryItem,
 } from "@/lib/storage"
+import { Login } from "@/components/login/Login"
+import useComplaints from "@/hooks/useComplaints"
+import ComplainCard from "@/components/complaint/ComplainCard"
+import useAxiosPublic from "@/hooks/useAxios"
 
 export default function AdminPage() {
+  const axiosPublic = useAxiosPublic();
   const [isLoggedIn, setIsLoggedIn] = useState(false)
   const [loginData, setLoginData] = useState({ username: "", password: "" })
-  const [complaints, setComplaints] = useState<Complaint[]>([])
   const [spotInfos, setSpotInfos] = useState<SpotInfo[]>([])
   const [successStories, setSuccessStories] = useState<SuccessStory[]>([])
   const [galleryItems, setGalleryItems] = useState<GalleryItem[]>([])
   const [newStory, setNewStory] = useState({ title: "", description: "", image: null as File | null })
-  const [isLoading, setIsLoading] = useState(false)
+  const { data: complaints, isLoading, isError, refetch } = useComplaints()
+  const [isPageLoading, setIsPageLoading] = useState(false)
   const { toast } = useToast()
 
   useEffect(() => {
@@ -63,7 +68,6 @@ export default function AdminPage() {
   }, [])
 
   const loadData = () => {
-    setComplaints(getComplaints())
     setSpotInfos(getSpotInfos())
     setSuccessStories(getSuccessStories())
     setGalleryItems(getGalleryItems())
@@ -71,7 +75,7 @@ export default function AdminPage() {
 
   const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault()
-    setIsLoading(true)
+    setIsPageLoading(true)
 
     // Simulate a small delay for better UX
     await new Promise((resolve) => setTimeout(resolve, 500))
@@ -92,7 +96,7 @@ export default function AdminPage() {
         variant: "destructive",
       })
     }
-    setIsLoading(false)
+    setIsPageLoading(false)
   }
 
   const handleLogout = () => {
@@ -123,14 +127,34 @@ export default function AdminPage() {
     })
   }
 
-  const handleDeleteComplaint = (id: number) => {
-    deleteComplaint(id)
-    setComplaints(getComplaints())
-    toast({
-      title: "মুছে ফেলা হয়েছে",
-      description: "অভিযোগটি সফলভাবে মুছে ফেলা হয়েছে।",
-    })
-  }
+
+
+  const handleDeleteComplaint = async (id: string) => {
+    try {
+      const res = await axiosPublic.delete(`/complaint/${id}`);
+      console.log(res.data)
+      if (res.data.status === 200) {
+        toast({
+          title: "মুছে ফেলা হয়েছে",
+          description: "অভিযোগটি সফলভাবে মুছে ফেলা হয়েছে।",
+        });
+      } else {
+        toast({
+          title: "ত্রুটি",
+          description: "অভিযোগটি মুছে ফেলা যায়নি।",
+          variant: "destructive",
+        });
+      }
+    } catch (error) {
+      console.error("Delete error:", error);
+      toast({
+        title: "ত্রুটি",
+        description: "সার্ভার থেকে অভিযোগ মুছে ফেলার সময় একটি সমস্যা হয়েছে।",
+        variant: "destructive",
+      });
+    }
+  };
+
 
   const handleDeleteSpotInfo = (id: number) => {
     deleteSpotInfo(id)
@@ -188,65 +212,10 @@ export default function AdminPage() {
 
   if (!isLoggedIn) {
     return (
-      <div className="min-h-screen bg-gray-50 flex items-center justify-center p-4">
-        <Card className="w-full max-w-md">
-          <CardHeader className="text-center">
-            <div className="w-16 h-16 bg-green-600 rounded-full flex items-center justify-center mx-auto mb-4">
-              <Shield className="w-8 h-8 text-white" />
-            </div>
-            <CardTitle className="text-2xl">অ্যাডমিন লগইন</CardTitle>
-            <CardDescription>অ্যাডমিন প্যানেলে প্রবেশ করুন</CardDescription>
-          </CardHeader>
-          <CardContent>
-            <form onSubmit={handleLogin} className="space-y-4">
-              <div>
-                <Label htmlFor="username">ইউজারনেম</Label>
-                <Input
-                  id="username"
-                  type="text"
-                  value={loginData.username}
-                  onChange={(e) => setLoginData({ ...loginData, username: e.target.value })}
-                  placeholder="Enter your username"
-                  required
-                  disabled={isLoading}
-                />
-              </div>
-              <div>
-                <Label htmlFor="password">পাসওয়ার্ড</Label>
-                <Input
-                  id="password"
-                  type="password"
-                  value={loginData.password}
-                  onChange={(e) => setLoginData({ ...loginData, password: e.target.value })}
-                  placeholder="Enter your password"
-                  required
-                  disabled={isLoading}
-                />
-              </div>
-              <Button type="submit" className="w-full" disabled={isLoading}>
-                {isLoading ? "লগইন হচ্ছে..." : "লগইন করুন"}
-              </Button>
-            </form>
-            {/* <div className="mt-4 p-3 bg-blue-50 rounded-lg">
-              <p className="text-sm text-blue-700">
-                <strong>ডেমো লগইন:</strong>
-                <br />
-                ইউজারনেম: admin
-                <br />
-                পাসওয়ার্ড: admin123
-              </p>
-            </div> */}
-            <div className="mt-4 text-center">
-              <Button variant="outline" asChild>
-                <Link href="/">
-                  <ArrowLeft className="w-4 h-4 mr-2" />
-                  হোমে ফিরুন
-                </Link>
-              </Button>
-            </div>
-          </CardContent>
-        </Card>
-      </div>
+      <Login handleLogin={handleLogin}
+        loginData={loginData}
+        setLoginData={setLoginData}
+        isLoading={isLoading} />
     )
   }
 
@@ -257,12 +226,6 @@ export default function AdminPage() {
         <div className="container mx-auto px-4 py-4">
           <div className="flex items-center justify-between">
             <div className="flex items-center space-x-4">
-              <Button variant="ghost" size="sm" asChild>
-                <Link href="/">
-                  <ArrowLeft className="w-4 h-4 mr-2" />
-                  হোমে ফিরুন
-                </Link>
-              </Button>
               <div>
                 <h1 className="text-2xl font-bold text-gray-800">অ্যাডমিন ড্যাশবোর্ড</h1>
                 <p className="text-gray-600">সিস্টেম ব্যবস্থাপনা</p>
@@ -274,59 +237,67 @@ export default function AdminPage() {
           </div>
         </div>
       </header>
-
       {/* Dashboard Stats */}
       <div className="container mx-auto px-4 py-6">
         <div className="grid grid-cols-1 md:grid-cols-4 gap-6 mb-8">
-          <Card>
+          <Card className="bg-gradient-to-r from-blue-50 to-blue-100 border-blue-200 hover:shadow-lg transition-shadow">
             <CardContent className="p-6">
               <div className="flex items-center justify-between">
                 <div>
-                  <p className="text-sm font-medium text-gray-600">মোট অভিযোগ</p>
-                  <p className="text-3xl font-bold text-blue-600">{complaints.length}</p>
+                  <p className="text-sm font-semibold text-blue-700 uppercase tracking-wide">মোট অভিযোগ</p>
+                  <p className="text-3xl font-bold text-blue-800">{complaints?.length || 0}</p>
+                  <p className="text-xs text-blue-600 mt-1">সর্বমোট জমাকৃত</p>
                 </div>
-                <FileText className="w-8 h-8 text-blue-600" />
+                <div className="w-12 h-12 bg-blue-500 rounded-xl flex items-center justify-center">
+                  <FileText className="w-6 h-6 text-white" />
+                </div>
+              </div>
+            </CardContent>
+          </Card>
+          <Card className="bg-gradient-to-r from-red-50 to-red-100 border-red-200 hover:shadow-lg transition-shadow">
+            <CardContent className="p-6">
+              <div className="flex items-center justify-between">
+                <div>
+                  <p className="text-sm font-semibold text-red-700 uppercase tracking-wide">গোপন তথ্য</p>
+                  <p className="text-3xl font-bold text-red-800">{spotInfos.length}</p>
+                  <p className="text-xs text-red-600 mt-1">সংবেদনশীল তথ্য</p>
+                </div>
+                <div className="w-12 h-12 bg-red-500 rounded-xl flex items-center justify-center">
+                  <Shield className="w-6 h-6 text-white" />
+                </div>
+              </div>
+            </CardContent>
+          </Card>
+          <Card className="bg-gradient-to-r from-green-50 to-green-100 border-green-200 hover:shadow-lg transition-shadow">
+            <CardContent className="p-6">
+              <div className="flex items-center justify-between">
+                <div>
+                  <p className="text-sm font-semibold text-green-700 uppercase tracking-wide">সফলতার গল্প</p>
+                  <p className="text-3xl font-bold text-green-800">{successStories.length}</p>
+                  <p className="text-xs text-green-600 mt-1">প্রকাশিত গল্প</p>
+                </div>
+                <div className="w-12 h-12 bg-green-500 rounded-xl flex items-center justify-center">
+                  <Trophy className="w-6 h-6 text-white" />
+                </div>
               </div>
             </CardContent>
           </Card>
 
-          <Card>
+          <Card className="bg-gradient-to-r from-purple-50 to-purple-100 border-purple-200 hover:shadow-lg transition-shadow">
             <CardContent className="p-6">
               <div className="flex items-center justify-between">
                 <div>
-                  <p className="text-sm font-medium text-gray-600">গোপন তথ্য</p>
-                  <p className="text-3xl font-bold text-red-600">{spotInfos.length}</p>
+                  <p className="text-sm font-semibold text-purple-700 uppercase tracking-wide">গ্যালারি আইটেম</p>
+                  <p className="text-3xl font-bold text-purple-800">{galleryItems.length}</p>
+                  <p className="text-xs text-purple-600 mt-1">মিডিয়া ফাইল</p>
                 </div>
-                <Shield className="w-8 h-8 text-red-600" />
-              </div>
-            </CardContent>
-          </Card>
-
-          <Card>
-            <CardContent className="p-6">
-              <div className="flex items-center justify-between">
-                <div>
-                  <p className="text-sm font-medium text-gray-600">সফলতার গল্প</p>
-                  <p className="text-3xl font-bold text-green-600">{successStories.length}</p>
+                <div className="w-12 h-12 bg-purple-500 rounded-xl flex items-center justify-center">
+                  <Camera className="w-6 h-6 text-white" />
                 </div>
-                <Trophy className="w-8 h-8 text-green-600" />
-              </div>
-            </CardContent>
-          </Card>
-
-          <Card>
-            <CardContent className="p-6">
-              <div className="flex items-center justify-between">
-                <div>
-                  <p className="text-sm font-medium text-gray-600">গ্যালারি আইটেম</p>
-                  <p className="text-3xl font-bold text-purple-600">{galleryItems.length}</p>
-                </div>
-                <Camera className="w-8 h-8 text-purple-600" />
               </div>
             </CardContent>
           </Card>
         </div>
-
         {/* Main Content Tabs */}
         <Tabs defaultValue="complaints" className="space-y-6">
           <TabsList className="grid w-full grid-cols-4">
@@ -343,46 +314,16 @@ export default function AdminPage() {
                 <CardTitle>অভিযোগ ব্যবস্থাপনা</CardTitle>
                 <CardDescription>সকল অভিযোগ দেখুন এবং ব্যবস্থা নিন</CardDescription>
               </CardHeader>
-              <CardContent>
-                <div className="space-y-4">
-                  {complaints.map((complaint) => (
-                    <Card key={complaint.id} className="border-l-4 border-l-blue-500">
-                      <CardContent className="p-4">
-                        <div className="flex items-start justify-between">
-                          <div className="flex-1">
-                            <h4 className="font-semibold text-lg">{complaint.title}</h4>
-                            <p className="text-gray-600 mt-1">{complaint.description}</p>
-                            <div className="flex items-center space-x-4 mt-2 text-sm text-gray-500">
-                              <span>জমাদাতা: {complaint.name}</span>
-                              <span>তারিখ: {complaint.dateSubmitted}</span>
-                            </div>
-                          </div>
-                          <div className="flex items-center space-x-2">
-                            <Select onValueChange={(value) => handleUpdateComplaintStatus(complaint.id, value)}>
-                              <SelectTrigger className="w-40">
-                                <SelectValue placeholder={complaint.status} />
-                              </SelectTrigger>
-                              <SelectContent>
-                                <SelectItem value="নতুন">নতুন</SelectItem>
-                                <SelectItem value="পর্যালোচনাধীন">পর্যালোচনাধীন</SelectItem>
-                                <SelectItem value="সমাধানাধীন">সমাধানাধীন</SelectItem>
-                                <SelectItem value="সমাধান হয়েছে">সমাধান হয়েছে</SelectItem>
-                                <SelectItem value="বাতিল">বাতিল</SelectItem>
-                              </SelectContent>
-                            </Select>
-                            <Button size="sm" variant="outline">
-                              <Eye className="w-4 h-4" />
-                            </Button>
-                            <Button size="sm" variant="destructive" onClick={() => handleDeleteComplaint(complaint.id)}>
-                              <Trash2 className="w-4 h-4" />
-                            </Button>
-                          </div>
-                        </div>
-                      </CardContent>
-                    </Card>
+
+              <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+                {complaints
+                  ?.slice()
+                  .reverse()
+                  .map((complaint) => (
+                    <ComplainCard complaint={complaint} refetch={refetch} />
                   ))}
-                </div>
-              </CardContent>
+              </div>
+
             </Card>
           </TabsContent>
 
@@ -410,7 +351,7 @@ export default function AdminPage() {
                           </div>
                           <div className="flex items-center space-x-2">
                             <Badge variant="destructive">গোপনীয়</Badge>
-                            <Select onValueChange={(value) => handleUpdateSpotInfoStatus(info.id, value)}>
+                            <Select onValueChange={(value) => handleUpdateSpotInfoStatus(info._id, value)}>
                               <SelectTrigger className="w-40">
                                 <SelectValue placeholder={info.status} />
                               </SelectTrigger>
@@ -425,7 +366,7 @@ export default function AdminPage() {
                             <Button size="sm" variant="outline">
                               <Eye className="w-4 h-4" />
                             </Button>
-                            <Button size="sm" variant="destructive" onClick={() => handleDeleteSpotInfo(info.id)}>
+                            <Button size="sm" variant="destructive" onClick={() => handleDeleteSpotInfo(info._id)}>
                               <Trash2 className="w-4 h-4" />
                             </Button>
                           </div>
@@ -516,7 +457,7 @@ export default function AdminPage() {
                             <Button size="sm" variant="outline">
                               <Edit className="w-4 h-4" />
                             </Button>
-                            <Button size="sm" variant="destructive" onClick={() => handleDeleteSuccessStory(story.id)}>
+                            <Button size="sm" variant="destructive" onClick={() => handleDeleteSuccessStory(story._id)}>
                               <Trash2 className="w-4 h-4" />
                             </Button>
                           </div>
@@ -562,7 +503,7 @@ export default function AdminPage() {
                           <Button size="sm" variant="outline">
                             <Edit className="w-4 h-4" />
                           </Button>
-                          <Button size="sm" variant="destructive" onClick={() => handleDeleteGalleryItem(item.id)}>
+                          <Button size="sm" variant="destructive" onClick={() => item._id && handleDeleteGalleryItem(Number(item._id))}>
                             <Trash2 className="w-4 h-4" />
                           </Button>
                         </div>
