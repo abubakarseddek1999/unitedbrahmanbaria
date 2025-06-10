@@ -109,15 +109,6 @@ export default function AdminPage() {
     })
   }
 
-  const handleUpdateComplaintStatus = (id: number, status: string) => {
-    updateComplaintStatus(id, status)
-    setComplaints(getComplaints())
-    toast({
-      title: "আপডেট সফল",
-      description: `অভিযোগের স্ট্যাটাস "${status}" এ পরিবর্তন করা হয়েছে।`,
-    })
-  }
-
   const handleUpdateSpotInfoStatus = (id: number, status: string) => {
     updateSpotInfoStatus(id, status)
     setSpotInfos(getSpotInfos())

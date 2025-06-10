@@ -10,7 +10,6 @@ import { useState } from "react"
 import Link from "next/link"
 import useAxiosPublic from "@/hooks/useAxios"
 import { useToast } from "@/hooks/use-toast"
-import useComplaints from "@/hooks/useComplaints"
 
 interface Complaint {
     _id: string
@@ -22,60 +21,37 @@ interface Complaint {
     images?: string[]
 }
 
-const getStatusColor = (status: string) => {
-    switch (status) {
-        case "নতুন":
-            return "bg-blue-100 text-blue-800 border-blue-200"
-        case "পর্যালোচনাধীন":
-            return "bg-yellow-100 text-yellow-800 border-yellow-200"
-        case "সমাধানাধীন":
-            return "bg-orange-100 text-orange-800 border-orange-200"
-        case "সমাধান হয়েছে":
-            return "bg-green-100 text-green-800 border-green-200"
-        case "বাতিল":
-            return "bg-red-100 text-red-800 border-red-200"
-        default:
-            return "bg-gray-100 text-gray-800 border-gray-200"
-    }
-}
-
 export default function ComplainCard({ complaint, refetch }: { complaint: Complaint; refetch: () => void }) {
-    const [status, setStatus] = useState(complaint.status)
     // const { data: complaints, isLoading, isError, refetch } = useComplaints()
     const axiosPublic = useAxiosPublic();
     const { toast } = useToast()
-    const handleStatusChange = (newStatus: string) => {
-        setStatus(newStatus)
-        // এখানে চাইলে backend call করে status update করতে পারো
-        // যেমন: await updateComplaintStatus(complaint._id, newStatus)
-    }
+    const handleStatusChange = async (newStatus: string) => {
+        try {
+          const res = await axiosPublic.put(`/complaint/${complaint._id}`, { status: newStatus });
+      
+          if (res.status === 200) {
+            toast({
+              title: "স্ট্যাটাস পরিবর্তন হয়েছে",
+              description: "অভিযোগের স্ট্যাটাস সফলভাবে পরিবর্তন হয়েছে।",
+            });
+            refetch(); // ডেটা আবার লোড করার জন্য (যদি প্রয়োজন হয়)
+          } else {
+            toast({
+              title: "ত্রুটি",
+              description: "স্ট্যাটাস পরিবর্তন করা যায়নি।",
+              variant: "destructive",
+            });
+          }
+        } catch (error) {
+          console.error("Status update error:", error);
+          toast({
+            title: "ত্রুটি",
+            description: "স্ট্যাটাস আপডেট করার সময় একটি সমস্যা হয়েছে।",
+            variant: "destructive",
+          });
+        }
+      };
 
-    // const handleDeleteComplaint = async (id: string) => {
-    //   try {
-    //     const res = await axiosPublic.delete(`/complaint/${id}`);
-    //     console.log(res.data)
-    //     if (res.data.status === 200) {
-    //       toast({
-    //         title: "মুছে ফেলা হয়েছে",
-    //         description: "অভিযোগটি সফলভাবে মুছে ফেলা হয়েছে।",
-    //       });
-    //       refetch()
-    //     } else {
-    //       toast({
-    //         title: "ত্রুটি",
-    //         description: "অভিযোগটি মুছে ফেলা যায়নি।",
-    //         variant: "destructive",
-    //       });
-    //     }
-    //   } catch (error) {
-    //     console.error("Delete error:", error);
-    //     toast({
-    //       title: "ত্রুটি",
-    //       description: "সার্ভার থেকে অভিযোগ মুছে ফেলার সময় একটি সমস্যা হয়েছে।",
-    //       variant: "destructive",
-    //     });
-    //   }
-    // };
 
     const swalWithTailwind = Swal.mixin({
         customClass: {
@@ -130,6 +106,7 @@ export default function ComplainCard({ complaint, refetch }: { complaint: Compla
             }
         });
     };
+
     return (
         <div className="p-4">
             <Card className="hover:shadow-md transition-shadow flex flex-col-reverse md:flex-row">
@@ -168,16 +145,16 @@ export default function ComplainCard({ complaint, refetch }: { complaint: Compla
 
                             {/* Action Buttons */}
                             <div className="flex items-center gap-3">
-                                <Select value={status} onValueChange={handleStatusChange}>
+                                <Select value={complaint.status} onValueChange={handleStatusChange}>
                                     <SelectTrigger className="w-44 h-9">
                                         <SelectValue placeholder="স্ট্যাটাস পরিবর্তন করুন" />
                                     </SelectTrigger>
                                     <SelectContent>
-                                        <SelectItem value="নতুন">নতুন</SelectItem>
-                                        <SelectItem value="পর্যালোচনাধীন">পর্যালোচনাধীন</SelectItem>
-                                        <SelectItem value="সমাধানাধীন">সমাধানাধীন</SelectItem>
-                                        <SelectItem value="সমাধান হয়েছে">সমাধান হয়েছে</SelectItem>
-                                        <SelectItem value="বাতিল">বাতিল</SelectItem>
+                                        <SelectItem value="new">নতুন</SelectItem>
+                                        <SelectItem value="reviewing">পর্যালোচনাধীন</SelectItem>
+                                        <SelectItem value="in-progress">সমাধানাধীন</SelectItem>
+                                        <SelectItem value="resolved">সমাধান হয়েছে</SelectItem>
+                                        <SelectItem value="cancelled">বাতিল</SelectItem>
                                     </SelectContent>
                                 </Select>
 

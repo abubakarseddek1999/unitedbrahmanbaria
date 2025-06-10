@@ -15,9 +15,6 @@ complaintRoutes.post('/create',
 
 complaintRoutes.get('/', getAllComplaintController);
 complaintRoutes.get('/:id', getComplaintByIdController);
-complaintRoutes.put('/:id',
-    uploader({ image: 'single' }),
-    formValidator,
-    updateComplaintByIdController);
+complaintRoutes.put('/:id',updateComplaintByIdController);
 complaintRoutes.delete('/:id', deleteComplaintByIdController);
 
