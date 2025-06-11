@@ -64,7 +64,20 @@ export const getSuccessdataByIdController: RequestHandler = catchAsync(async (re
 // update Successdata 
 
 export const updateSuccessdataByIdController: RequestHandler = catchAsync(async (req, res) => {
-  const result = await updateSuccessdataByIdService(req.params.id, req.body);
+  let formattedData = req.body;
+  if (req.files) {
+    const imageInfo: any = await handleMulterUpload(req.files);
+    console.log("Image Info:", imageInfo); // Debug line
+
+    formattedData = {
+      ...req.body,
+      images: imageInfo?.images || [], // ✅ Store as array of image URLs
+    };
+  }
+
+
+
+  const result = await updateSuccessdataByIdService(req.params.id, formattedData);
   sendResponse(res, {
     status: 200,
     success: true,
@@ -72,6 +85,54 @@ export const updateSuccessdataByIdController: RequestHandler = catchAsync(async 
     data: result,
   });
 });
+
+// update Successdata 
+
+// export const updateSuccessdataByIdController: RequestHandler = catchAsync(async (req, res) => {
+//   let formattedData = req.body;
+
+//   // ✅ Safely parse existingImages if it exists
+//   let existingImages: string[] = [];
+
+//   if (req.body.existingImages) {
+//     try {
+//       existingImages = Array.isArray(req.body.existingImages)
+//         ? req.body.existingImages
+//         : JSON.parse(req.body.existingImages);
+//     } catch (err) {
+//       console.warn("⚠️ existingImages parsing failed:", err);
+//       existingImages = [];
+//     }
+//   }
+
+//   // ✅ Handle new uploaded files (if any)
+//   if (req.files) {
+//     const imageInfo: any = await handleMulterUpload(req.files);
+//     console.log("Updated Image Info:", imageInfo);
+
+//     formattedData = {
+//       ...req.body,
+//       images: [...existingImages, ...(imageInfo?.images || [])],
+//     };
+//   } else {
+//     // Even if no new images, ensure existing ones are kept
+//     formattedData = {
+//       ...req.body,
+//       images: existingImages,
+//     };
+//   }
+
+//   const result = await updateSuccessdataByIdService(req.params.id, formattedData);
+
+//   sendResponse(res, {
+//     status: 200,
+//     success: true,
+//     message: '✅ successdata updated successfully',
+//     data: result,
+//   });
+// });
+
+
 
 // delete Successdata 
 

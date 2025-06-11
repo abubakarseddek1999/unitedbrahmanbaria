@@ -10,10 +10,12 @@ export const successdataRoutes: Router = Router();
 successdataRoutes.post('/create',
     uploader({ images: 'multiple' }),
     formValidator,
-     createSuccessdataController);
+    createSuccessdataController);
 successdataRoutes.get('/', getAllSuccessdataController)
 successdataRoutes.get('/:id', getSuccessdataByIdController); // Assuming you want to get by ID as well
-successdataRoutes.put('/:id', updateSuccessdataByIdController); // Assuming you want to update by ID as well
+successdataRoutes.put('/:id',
+    uploader({ images: 'multiple' }),
+    formValidator,
+    updateSuccessdataByIdController); // Assuming you want to update by ID as well
 successdataRoutes.delete('/:id', deleteSuccessdataByIdController); // Assuming you want to delete by ID as well
 
-  

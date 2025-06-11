@@ -45,10 +45,13 @@ import useSecretData from "@/hooks/useSecretData"
 import SecretData from "@/components/secretData/SecretData"
 import Image from "next/image"
 import useSuccessStories from "@/hooks/useSuccessData"
+import { SuccessStoryCard } from "@/components/success/SuccessStoryCard"
+import Gallery from "@/components/gallery/Gallery"
 
 export default function AdminPage() {
   const axiosPublic = useAxiosPublic();
   const [isDialogOpen, setIsDialogOpen] = useState(false)
+
   const [photoPreview, setPhotoPreview] = useState<string[]>([])
   const [photoFiles, setPhotoFiles] = useState<File[]>([])
   const [isLoggedIn, setIsLoggedIn] = useState(false)
@@ -141,63 +144,6 @@ export default function AdminPage() {
       description: "আপনি সফলভাবে লগআউট হয়েছেন।",
     })
   }
-
-  const handleUpdateSpotInfoStatus = (id: number, status: string) => {
-    updateSpotInfoStatus(id, status)
-    setSpotInfos(getSpotInfos())
-    toast({
-      title: "আপডেট সফল",
-      description: `গোপন তথ্যের স্ট্যাটাস "${status}" এ পরিবর্তন করা হয়েছে।`,
-    })
-  }
-
-
-
-  const handleDeleteComplaint = async (id: string) => {
-    try {
-      const res = await axiosPublic.delete(`/complaint/${id}`);
-      console.log(res.data)
-      if (res.data.status === 200) {
-        toast({
-          title: "মুছে ফেলা হয়েছে",
-          description: "অভিযোগটি সফলভাবে মুছে ফেলা হয়েছে।",
-        });
-      } else {
-        toast({
-          title: "ত্রুটি",
-          description: "অভিযোগটি মুছে ফেলা যায়নি।",
-          variant: "destructive",
-        });
-      }
-    } catch (error) {
-      console.error("Delete error:", error);
-      toast({
-        title: "ত্রুটি",
-        description: "সার্ভার থেকে অভিযোগ মুছে ফেলার সময় একটি সমস্যা হয়েছে।",
-        variant: "destructive",
-      });
-    }
-  };
-
-
-  const handleDeleteSpotInfo = (id: string) => {
-    const numericId = Number(id);
-    if (!isNaN(numericId)) {
-      deleteSpotInfo(numericId);
-      setSpotInfos(getSpotInfos());
-      toast({
-        title: "মুছে ফেলা হয়েছে",
-        description: "গোপন তথ্যটি সফলভাবে মুছে ফেলা হয়েছে।",
-      });
-    } else {
-      toast({
-        title: "ত্রুটি",
-        description: "ID টি সঠিক সংখ্যা নয়।",
-        variant: "destructive",
-      });
-    }
-  }
-
   const handleAddSuccessStory = async (e: React.FormEvent) => {
     e.preventDefault();
 
@@ -240,25 +186,6 @@ export default function AdminPage() {
 
 
 
-
-
-
-  const handleDeleteSuccessStory = (id: number) => {
-    deleteSuccessStory(id)
-    toast({
-      title: "মুছে ফেলা হয়েছে",
-      description: "সফলতার গল্পটি সফলভাবে মুছে ফেলা হয়েছে।",
-    })
-  }
-
-  const handleDeleteGalleryItem = (id: number) => {
-    deleteGalleryItem(id)
-    setGalleryItems(getGalleryItems())
-    toast({
-      title: "মুছে ফেলা হয়েছে",
-      description: "গ্যালারি আইটেমটি সফলভাবে মুছে ফেলা হয়েছে।",
-    })
-  }
 
   if (!isLoggedIn) {
     return (
@@ -504,52 +431,8 @@ export default function AdminPage() {
               <CardContent>
                 <div className="space-y-4 pb-6 grid grid-cols-1 lg:grid-cols-2 gap-6">
                   {(successStories ?? []).map((story) => (
-                    <Card key={story._id} className="border-l-4 border-l-green-500">
-                      <CardContent className="p-4">
-                        <div className=" flex flex-col-reverse md:flex-row gap-5 items-start justify-between">
 
-                          <div className=" flex flex-1 flex-col gap-5 items-start justify-between md:w-1/2">
-                            <div className="flex-1">
-                              <h4 className="font-semibold text-2xl">{story.title}</h4>
-                              <p className="text-gray-600 text-[14px] mt-1 line-clamp-4">{story.description}</p>
-                              <p className="text-[14px]">তারিখ: {new Date(story.dateSubmitted).toLocaleDateString("bn-BD", {
-                                year: "numeric",
-                                month: "long",
-                                day: "numeric",
-                              })}</p>
-                            </div>
-                            <div className="flex items-center space-x-2">
-                              <Button size="sm" variant="outline">
-                                <Edit className="w-4 h-4" />
-                              </Button>
-                              <Button size="sm" variant="destructive" onClick={() => handleDeleteSuccessStory(story._id)}>
-                                <Trash2 className="w-4 h-4" />
-                              </Button>
-                            </div>
-                          </div>
-
-                          <div className=" w-full md:w-1/2">
-                            {story.images ? (
-                              <div className="grid grid-cols-1  lg:grid-cols-1 gap-3">
-                                {story.images.map((image, index) => (
-                                  <div key={index} className="relative group">
-                                    <div className="relative w-full  bg-gray-100 rounded-lg overflow-hidden">
-
-                                      <Image src={image} alt="example" width={800} height={500} className="object-fill w-full h-[200px]" />
-
-
-                                    </div>
-                                  </div>
-                                ))}
-                              </div>
-                            ) : (
-                              <p className="text-gray-500">কোন ছবি নেই</p>
-                            )}
-
-                          </div>
-                        </div>
-                      </CardContent>
-                    </Card>
+                    <SuccessStoryCard key={story._id} story={story} />
                   ))}
                 </div>
               </CardContent>
@@ -558,47 +441,8 @@ export default function AdminPage() {
 
           {/* Gallery Management */}
           <TabsContent value="gallery">
-            <Card>
-              <CardHeader>
-                <div className="flex items-center justify-between">
-                  <div>
-                    <CardTitle>গ্যালারি ব্যবস্থাপনা</CardTitle>
-                    <CardDescription>ছবি ও ভিডিও আপলোড ও ব্যবস্থাপনা করুন</CardDescription>
-                  </div>
-                  <Button className="bg-purple-600 hover:bg-purple-700">
-                    <Plus className="w-4 h-4 mr-2" />
-                    নতুন মিডিয়া যোগ করুন
-                  </Button>
-                </div>
-              </CardHeader>
-              <CardContent>
-                <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-                  {galleryItems.map((item) => (
-                    <Card key={item.id}>
-                      <CardContent className="p-4">
-                        <div className="aspect-video bg-gray-200 rounded-lg mb-3 flex items-center justify-center overflow-hidden">
-                          <img
-                            src={item.url || "/placeholder.svg"}
-                            alt={item.caption}
-                            className="w-full h-full object-cover"
-                          />
-                        </div>
-                        <h4 className="font-medium">{item.caption}</h4>
-                        <p className="text-sm text-gray-500">আপলোড: {item.dateUploaded}</p>
-                        <div className="flex justify-end space-x-2 mt-3">
-                          <Button size="sm" variant="outline">
-                            <Edit className="w-4 h-4" />
-                          </Button>
-                          <Button size="sm" variant="destructive" onClick={() => item._id && handleDeleteGalleryItem(Number(item._id))}>
-                            <Trash2 className="w-4 h-4" />
-                          </Button>
-                        </div>
-                      </CardContent>
-                    </Card>
-                  ))}
-                </div>
-              </CardContent>
-            </Card>
+            <Gallery />
+
           </TabsContent>
         </Tabs>
       </div>
