@@ -297,7 +297,7 @@ export default function AdminPage() {
                   ?.slice()
                   .reverse()
                   .map((complaint) => (
-                    <ComplainCard complaint={complaint} refetch={refetch} />
+                    <ComplainCard key={complaint._id} complaint={complaint} refetch={refetch} />
                   ))}
               </div>
 

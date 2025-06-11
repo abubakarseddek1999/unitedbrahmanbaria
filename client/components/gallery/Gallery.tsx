@@ -1,43 +1,77 @@
 "use client"
-import { useState } from "react"
+import { useEffect, useState } from "react"
 import { Edit, Plus, Trash2 } from "lucide-react"
 import { Button } from "../ui/button"
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "../ui/card"
+import { Card, CardContent, CardDescription, CardHeader } from "../ui/card"
 import { useToast } from "../ui/use-toast"
 import useGalleryData from "@/hooks/useGalleryData"
 import AddPhoto from "./AddPhoto"
 import useAxiosPublic from "@/hooks/useAxios"
 import Swal from "sweetalert2"
 import EditPhoto from "./EditPhoto"
+import { useInView } from 'react-intersection-observer'
+
+type galleryItems = {
+    _id: string
+    photo?: string
+    title: string
+    dateSubmitted: string
+}
 
 const Gallery = () => {
     const { data: galleryItems, isLoading, error, refetch } = useGalleryData()
     const [isEditModalOpen, setIsEditModalOpen] = useState(false)
     const [isGalleryModalOpen, setIsGalleryModalOpen] = useState(false)
-    const [selectedItem, setSelectedItem] = useState<GalleryItem | null>(null)
+    const [selectedItem, setSelectedItem] = useState<galleryItems | null>(null)
     const { toast } = useToast()
     const axiosPublic = useAxiosPublic()
 
-    type GalleryItem = {
-        _id: string
-        photo?: string
-        title: string
-        dateSubmitted: string
-    }
+    const [allItems, setAllItems] = useState<galleryItems[]>(galleryItems || []);
 
-    const handleAddGalleryItem = async (formData: FormData) => {
+    const [hasMore, setHasMore] = useState(true)
+    const [loading, setLoading] = useState(false)
+    const [pages, setPages] = useState(0)
+
+    const itemsPerPage = 8
+    const [ref, inView] = useInView()
+
+    const fetchGalleryImages = async () => {
+        if (loading) return;
+
+        setLoading(true);
+        const nextPage = pages + 1;
+        console.log(nextPage)
         try {
-            const res = await fetch("/your-api-endpoint/gallery", {
-                method: "POST",
-                body: formData,
-            })
-            if (!res.ok) throw new Error("Upload failed")
-            toast({ title: "সফল", description: "নতুন মিডিয়া যোগ করা হয়েছে।" })
-            refetch()
-        } catch (err) {
-            toast({ title: "ত্রুটি", description: "মিডিয়া আপলোডে সমস্যা হয়েছে।" })
+            const response = await axiosPublic.get(`/gallerydata?page=${nextPage}&limit=${itemsPerPage}`)
+            const newItems = response.data || []
+            console.log(newItems)
+            if (newItems?.data?.length) {
+                setAllItems((prev) => [...prev, ...newItems.data]);
+                setPages(nextPage);
+            }
+        } catch (error) {
+            console.error("Error fetching gallery images:", error);
+        } finally {
+            setLoading(false);
         }
-    }
+    };
+
+    // useEffect(() => {
+    //     fetchGalleryImages(); // Initial load
+    // }, []);
+
+    // useEffect(() => {
+    //     if (inView && !loading) {
+    //         fetchGalleryImages();
+    //     }
+    // }, [inView]);
+
+    useEffect(() => {
+        if (inView) {
+            fetchGalleryImages();
+        }
+        // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, [inView]);
 
     const swalWithTailwind = Swal.mixin({
         customClass: {
@@ -60,26 +94,26 @@ const Gallery = () => {
             if (result.isConfirmed) {
                 try {
                     const res = await axiosPublic.delete(`/gallerydata/${id}`)
-
                     if (res.status === 200) {
                         toast({
                             title: "✅ সফলতা",
                             description: "মিডিয়াটি সফলভাবে মুছে ফেলা হয়েছে।",
-                            variant: "default",
+                            variant: "default"
                         })
                         refetch()
+                        setAllItems((prev) => prev.filter((item) => item._id !== id))
                     } else {
                         toast({
                             title: "❌ ত্রুটি",
                             description: "মিডিয়াটি মুছে ফেলা যায়নি।",
-                            variant: "destructive",
+                            variant: "destructive"
                         })
                     }
                 } catch (error) {
                     toast({
                         title: "⚠️ ত্রুটি",
                         description: "সার্ভার থেকে মিডিয়া মুছে ফেলার সময় একটি সমস্যা হয়েছে।",
-                        variant: "destructive",
+                        variant: "destructive"
                     })
                 }
             } else if (result.dismiss === Swal.DismissReason.cancel) {
@@ -91,7 +125,6 @@ const Gallery = () => {
             }
         })
     }
-  
 
     return (
         <div>
@@ -99,7 +132,9 @@ const Gallery = () => {
                 <CardHeader>
                     <div className="flex items-center justify-between my-5">
                         <div>
-                            <p className="text-xl md:text-2xl font-semibold leading-none tracking-tight">গ্যালারি ব্যবস্থাপনা</p>
+                            <p className="text-xl md:text-2xl font-semibold leading-none tracking-tight">
+                                গ্যালারি ব্যবস্থাপনা
+                            </p>
                             <CardDescription>ছবি ও ভিডিও আপলোড ও ব্যবস্থাপনা করুন</CardDescription>
                         </div>
                         <Button
@@ -113,58 +148,59 @@ const Gallery = () => {
                 </CardHeader>
                 <CardContent>
                     <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
-                        {galleryItems && galleryItems.slice().reverse().map((item) => (
-                            <Card key={item._id}>
-                                <CardContent className="p-4">
-                                    <div className="aspect-[4/3] bg-gray-200 rounded-lg mb-3 flex items-center justify-center overflow-hidden">
-                                        <img
-                                            src={item.photo || "/placeholder.svg"}
-                                            alt={item.title}
-                                            className="w-full h-full object-cover"
-                                        />
-                                    </div>
-                                    <h4 className="font-medium">{item.title}</h4>
-                                    <p className="text-sm text-gray-500">
-                                        আপলোড: {new Date(item.dateSubmitted).toLocaleDateString("bn-BD", {
-                                            day: "numeric",
-                                            month: "long",
-                                            year: "numeric",
-                                        })}
-                                    </p>
-                                    <div className="flex justify-end space-x-2 mt-3">
-                                        <Button size="sm" variant="outline" onClick={() => {
-                                            setSelectedItem(item)
-                                            setIsEditModalOpen(true)
-                                        }}>
-                                            <Edit className="w-4 h-4" />
-                                        </Button>
-                                        <Button size="sm" variant="destructive" onClick={() => handleDeleteComplaint(item._id)}>
-                                            <Trash2 className="w-4 h-4" />
-                                        </Button>
-                                    </div>
-                                </CardContent>
-                            </Card>
-                        ))}
+                        {allItems?.map((item, index) => {
+                            const isLast = index === allItems.length - 1
+                            return (
+                                <Card key={index} ref={isLast ? ref : undefined}>
+                                    <CardContent className="p-4">
+                                        <div className="aspect-[4/3] bg-gray-200 rounded-lg mb-3 flex items-center justify-center overflow-hidden">
+                                            <img
+                                                src={item.photo || "/placeholder.svg"}
+                                                alt={item.title}
+                                                className="w-full h-full object-cover"
+                                            />
+                                        </div>
+                                        <h4 className="font-medium">{item.title}</h4>
+                                        <p className="text-sm text-gray-500">
+                                            আপলোড:{" "}
+                                            {typeof window !== "undefined"
+                                                ? new Date(item.dateSubmitted).toLocaleDateString("bn-BD", {
+                                                    day: "numeric",
+                                                    month: "long",
+                                                    year: "numeric"
+                                                })
+                                                : ""}
+                                        </p>
+                                        <div className="flex justify-end space-x-2 mt-3">
+                                            <Button
+                                                size="sm"
+                                                variant="outline"
+                                                onClick={() => {
+                                                    setSelectedItem(item)
+                                                    setIsEditModalOpen(true)
+                                                }}
+                                            >
+                                                <Edit className="w-4 h-4" />
+                                            </Button>
+                                            <Button
+                                                size="sm"
+                                                variant="destructive"
+                                                onClick={() => handleDeleteComplaint(item._id)}
+                                            >
+                                                <Trash2 className="w-4 h-4" />
+                                            </Button>
+                                        </div>
+                                    </CardContent>
+                                </Card>
+                            )
+                        })}
                     </div>
                 </CardContent>
             </Card>
 
-            {/* Add New Media Modal */}
-            <AddPhoto
-                open={isGalleryModalOpen}
-                onClose={() => setIsGalleryModalOpen(false)}
-                refetch={refetch}
-            />
-
-            {/* Optional: Edit Modal (Not implemented in this code yet) */}
-            {/* You may add EditPhoto component and conditionally render it here */}
-            <EditPhoto
-                open={isEditModalOpen}
-                onClose={() => setIsEditModalOpen(false)}
-                item={selectedItem}
-                refetch={refetch}
-            />
-
+            {/* Modals */}
+            <AddPhoto open={isGalleryModalOpen} onClose={() => setIsGalleryModalOpen(false)} refetch={refetch} />
+            <EditPhoto open={isEditModalOpen} onClose={() => setIsEditModalOpen(false)} item={selectedItem} refetch={refetch} />
         </div>
     )
 }
