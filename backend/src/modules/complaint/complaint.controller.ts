@@ -70,13 +70,15 @@ export const createComplaintController: RequestHandler = catchAsync(async (req, 
 // Get All Complaint 
 
 export const getAllComplaintController: RequestHandler = catchAsync(async (req, res) => {
-  const result = await getAllComplaintService(req.query);
+  const { data, total } = await getAllComplaintService(req.query);
   sendResponse(res, {
     status: 200,
     success: true,
-    message: 'complaint retrived successfully',
-    data: result,
+    message: 'Complaints retrieved successfully',
+    data: data,
+    total: total,
   });
+
 });
 
 

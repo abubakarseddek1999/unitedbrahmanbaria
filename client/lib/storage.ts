@@ -38,6 +38,7 @@ export interface SuccessStory {
   description: string
   image?: string
   dateAdded: string
+  images?: any// Array of image URLs
 }
 
 export interface GalleryItem {

@@ -13,7 +13,7 @@ successdataRoutes.post('/create',
     createSuccessdataController);
 successdataRoutes.get('/', getAllSuccessdataController)
 successdataRoutes.get('/:id', getSuccessdataByIdController); // Assuming you want to get by ID as well
-successdataRoutes.put('/:id',
+successdataRoutes.patch('/:id',
     uploader({ images: 'multiple' }),
     formValidator,
     updateSuccessdataByIdController); // Assuming you want to update by ID as well

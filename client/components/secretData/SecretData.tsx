@@ -13,22 +13,29 @@ import Swal from "sweetalert2"
 import PhotoCollageMini from "./PhotoCollegeMini"
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog"
 import Link from "next/link"
+import usePaginatedData from "@/hooks/usePaginatedData"
 
 type SecretDataProps = {}
 
-interface SecretData {
-    _id: string
-    subject: string
-    description: string
-    location: string
-    submitterType: string
-    dateSubmitted: string
-    status: string
-    images?: string[]
-}
+type SecretDataItem = {
+    _id: string;
+    photo: string;
+    title: string;
+    description: string;
+    dateSubmitted: string;
+    location: string;
+    submitterType: string;
+    status: string;
+    images?: string[];
+    subject: string;
+};
 
 const SecretData: React.FC<SecretDataProps> = () => {
-    const { data: secretData, refetch } = useSecretData()
+    // const { data: secretData, refetch } = useSecretData()
+    const { data: secretData, loading, hasMore, ref, refetch } = usePaginatedData<SecretDataItem>({
+        endpoint: "/secretdata",
+        limit: 8,
+    });
     const axiosPublic = useAxiosPublic()
     const { toast } = useToast()
     const [isImageModalOpen, setIsImageModalOpen] = useState(false)
@@ -96,7 +103,7 @@ const SecretData: React.FC<SecretDataProps> = () => {
         setIsImageModalOpen(true)
     }
 
-    const handleStatusChange = async (newStatus: string,id: string) => {
+    const handleStatusChange = async (newStatus: string, id: string) => {
         try {
             const res = await axiosPublic.put(`/secretdata/${id}`, { status: newStatus });
 
@@ -136,76 +143,119 @@ const SecretData: React.FC<SecretDataProps> = () => {
                             secretData
                                 .slice()
                                 .reverse()
-                                .map((info) => (
-                                    <Card key={info._id} className="border-l-4 border-l-red-500">
-                                        <CardContent className="p-4 flex flex-col-reverse md:flex-row gap-6">
-                                            <div className="flex-1 min-w-0 flex-col gap-5 items-start justify-between">
-                                                <div className="flex-1 mb-2">
-                                                    <h4 className="font-semibold text-lg">{info.subject}</h4>
-                                                    <p className="text-gray-600 mt-1 line-clamp-4">{info.description}</p>
-                                                    <div className="mt-2 text-sm text-gray-500">
-                                                        <p>অবস্থান: {info.location}</p>
-                                                        <p>ধরন: {info.submitterType}</p>
-                                                        <p className="text-sm text-gray-500">
-                                                            জমা দেওয়ার তারিখ:{" "}
-                                                            {new Date(info.dateSubmitted).toLocaleDateString("bn-BD", {
-                                                                year: "numeric",
-                                                                month: "long",
-                                                                day: "numeric",
-                                                            })}
-                                                        </p>
+                                .map((info) => {
+                                    const isLast = info._id === secretData[secretData.length - 1]._id
+                                    return (
+                                        <div key={info._id} ref={isLast ? ref : undefined} >
+                                            <Card className="border-l-4 border-l-red-500">
+                                                <CardContent className="p-4 flex flex-col-reverse md:flex-row gap-6">
+                                                    <div className="flex-1 min-w-0 flex-col gap-5 items-start justify-between">
+                                                        <div className="flex-1 mb-2">
+                                                            <h4 className="font-semibold text-lg">{info.title}</h4>
+                                                            <p className="text-gray-600 mt-1 line-clamp-4">{info.description}</p>
+                                                            <div className="mt-2 text-sm text-gray-500">
+                                                                <p>অবস্থান: {info.location}</p>
+                                                                <p>ধরন: {info.submitterType}</p>
+                                                                <p className="text-sm text-gray-500">
+                                                                    জমা দেওয়ার তারিখ:{" "}
+                                                                    {new Date(info.dateSubmitted).toLocaleDateString("bn-BD", {
+                                                                        year: "numeric",
+                                                                        month: "long",
+                                                                        day: "numeric",
+                                                                    })}
+                                                                </p>
+                                                            </div>
+                                                        </div>
+                                                        <div className="flex items-center  flex-wrap gap-2">
+                                                            <Badge variant="destructive">গোপনীয়</Badge>
+                                                            {info.images && info.images.length > 0 && (
+                                                                <Badge variant="secondary" className="text-xs">
+                                                                    <ImageIcon className="w-3 h-3 mr-1" />
+                                                                    {info.images.length} ছবি
+                                                                </Badge>
+                                                            )}
+                                                            <Select onValueChange={(value => handleStatusChange(value, info._id))} defaultValue={info.status} >
+                                                                <SelectTrigger className="w-40">
+                                                                    <SelectValue placeholder={info.status} />
+                                                                </SelectTrigger>
+                                                                <SelectContent>
+                                                                    <SelectItem value="নতুন">নতুন</SelectItem>
+                                                                    <SelectItem value="পর্যালোচনাধীন">পর্যালোচনাধীন</SelectItem>
+                                                                    <SelectItem value="তদন্তাধীন">তদন্তাধীন</SelectItem>
+                                                                    <SelectItem value="সমাধান হয়েছে">সমাধান হয়েছে</SelectItem>
+                                                                    <SelectItem value="বাতিল">বাতিল</SelectItem>
+                                                                </SelectContent>
+                                                            </Select>
+                                                            <Link href={`/secretdata-details/${info._id}`}>
+                                                                <Button
+                                                                    size="sm"
+                                                                    variant="outline"
+                                                                    disabled={!info.images || info.images.length === 0}
+                                                                >
+                                                                    <Eye className="w-4 h-4" />
+                                                                </Button>
+                                                            </Link>
+                                                            <Button
+                                                                size="sm"
+                                                                variant="destructive"
+                                                                onClick={() => handleDeleteSecretData(info._id, refetch)}
+                                                            >
+                                                                <Trash2 className="w-4 h-4" />
+                                                            </Button>
+                                                        </div>
                                                     </div>
+
+                                                    <div className="flex-shrink-0 md:w-[50%]">
+                                                        <PhotoCollageMini
+                                                            images={info.images || []}
+                                                            maxDisplay={3}
+                                                            onViewAll={(images) => handleViewAllImages(images, info.subject || "Secrete Subject")}
+                                                        />
+                                                    </div>
+                                                </CardContent>
+                                            </Card>
+                                        </div>
+                                    )
+                                }
+                                )}
+                    </div>
+                    {/* skeleton */}
+                    {loading && (
+                        <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+                            {Array.from({ length: 8 }).map((_, i) => (
+                                <Card className="border-l-4 border-l-green-500 animate-pulse">
+                                    <CardContent className="p-4">
+                                        <div className="flex flex-col-reverse md:flex-row gap-5 items-start justify-between">
+
+                                            {/* Text Content Skeleton */}
+                                            <div className="flex-1 flex flex-col gap-5 md:w-1/2">
+                                                <div>
+                                                    <div className="h-6 bg-gray-300 rounded w-3/4 mb-2" /> {/* Title */}
+                                                    <div className="h-4 bg-gray-200 rounded w-full mb-1" /> {/* Description */}
+                                                    <div className="h-4 bg-gray-200 rounded w-5/6 mb-1" />
+                                                    <div className="h-4 bg-gray-200 rounded w-4/6 mb-4" />
+                                                    <div className="h-3 bg-gray-300 rounded w-1/3" /> {/* Date */}
                                                 </div>
-                                                <div className="flex items-center  flex-wrap gap-2">
-                                                    <Badge variant="destructive">গোপনীয়</Badge>
-                                                    {info.images && info.images.length > 0 && (
-                                                        <Badge variant="secondary" className="text-xs">
-                                                            <ImageIcon className="w-3 h-3 mr-1" />
-                                                            {info.images.length} ছবি
-                                                        </Badge>
-                                                    )}
-                                                    <Select onValueChange={(value => handleStatusChange(value, info._id))} defaultValue={info.status} >
-                                                        <SelectTrigger className="w-40">
-                                                            <SelectValue placeholder={info.status} />
-                                                        </SelectTrigger>
-                                                        <SelectContent>
-                                                            <SelectItem value="নতুন">নতুন</SelectItem>
-                                                            <SelectItem value="পর্যালোচনাধীন">পর্যালোচনাধীন</SelectItem>
-                                                            <SelectItem value="তদন্তাধীন">তদন্তাধীন</SelectItem>
-                                                            <SelectItem value="সমাধান হয়েছে">সমাধান হয়েছে</SelectItem>
-                                                            <SelectItem value="বাতিল">বাতিল</SelectItem>
-                                                        </SelectContent>
-                                                    </Select>
-                                                    <Link href={`/secretdata-details/${info._id}`}>
-                                                        <Button
-                                                            size="sm"
-                                                            variant="outline"
-                                                            disabled={!info.images || info.images.length === 0}
-                                                        >
-                                                            <Eye className="w-4 h-4" />
-                                                        </Button>
-                                                    </Link>
-                                                    <Button
-                                                        size="sm"
-                                                        variant="destructive"
-                                                        onClick={() => handleDeleteSecretData(info._id, refetch)}
-                                                    >
-                                                        <Trash2 className="w-4 h-4" />
-                                                    </Button>
+
+                                                <div className="flex items-center space-x-2">
+                                                    <div className="w-8 h-8 bg-gray-300 rounded-md" /> {/* Edit button */}
+                                                    <div className="w-8 h-8 bg-gray-300 rounded-md" /> {/* Delete button */}
+                                                    <div className="w-8 h-8 bg-gray-300 rounded-md" /> {/* Delete button */}
                                                 </div>
                                             </div>
 
-                                            <div className="flex-shrink-0 md:w-[50%]">
-                                                <PhotoCollageMini
-                                                    images={info.images || []}
-                                                    maxDisplay={3}
-                                                    onViewAll={(images) => handleViewAllImages(images, info.subject || "Secrete Subject")}
-                                                />
+                                            {/* Image Content Skeleton */}
+                                            <div className="w-full md:w-1/2">
+                                                <div className="w-full h-[200px] bg-gray-200 rounded-lg" />
                                             </div>
-                                        </CardContent>
-                                    </Card>
-                                ))}
-                    </div>
+                                        </div>
+                                    </CardContent>
+                                </Card>
+
+                            ))}
+                        </div>
+                    )}
+
                 </CardContent>
             </Card>
 

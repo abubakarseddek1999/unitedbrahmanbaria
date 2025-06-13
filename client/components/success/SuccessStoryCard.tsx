@@ -1,6 +1,6 @@
 "use client"
 
-import { Edit, Trash2, Upload } from "lucide-react"
+import { Edit, Loader2, Trash2, Upload } from "lucide-react"
 import { useState, useEffect } from "react"
 import { Button } from "../ui/button"
 import { Input } from "../ui/input"
@@ -13,13 +13,14 @@ import { useToast } from "@/hooks/use-toast"
 import Swal from "sweetalert2"
 import useAxiosPublic from "@/hooks/useAxios"
 
-export const SuccessStoryCard = ({ story }: { story: any }) => {
+export const SuccessStoryCard = ({ story, setRefresh }: { story: any, setRefresh: any }) => {
     const { toast } = useToast()
     const axiosPublic = useAxiosPublic()
     const [modalOpen, setModalOpen] = useState(false)
     const [newStory, setNewStory] = useState({ title: "", description: "", image: null })
     const [photoFiles, setPhotoFiles] = useState<File[]>([])
     const [photoPreview, setPhotoPreview] = useState<string[]>([])
+    const [isLoading, setIsLoading] = useState(false)
 
     useEffect(() => {
         if (story) {
@@ -43,46 +44,48 @@ export const SuccessStoryCard = ({ story }: { story: any }) => {
         buttonsStyling: false,
     })
 
-    const handleDeleteSuccessStory = (id: string) => {
-        swalWithTailwind
-            .fire({
-                title: "আপনি কি নিশ্চিত?",
-                text: "এই গল্পটি মুছে ফেলা হবে এবং পরে আর ফেরত আনা যাবে না!",
-                icon: "warning",
-                showCancelButton: true,
-                confirmButtonText: "হ্যাঁ, মুছে ফেলুন!",
-                cancelButtonText: "না, বাতিল করুন!",
-                reverseButtons: true,
-            })
-            .then(async (result) => {
-                if (result.isConfirmed) {
-                    try {
-                        const res = await axiosPublic.delete(`/successdata/${id}`)
-                        if (res.status === 200) {
-                            toast({ title: "✅ সফলতা", description: "গল্পটি সফলভাবে মুছে ফেলা হয়েছে।" })
-                        } else {
-                            toast({
-                                title: "❌ ত্রুটি",
-                                description: "গল্পটি মুছে ফেলা যায়নি।",
-                                variant: "destructive",
-                            })
-                        }
-                    } catch (error) {
-                        toast({
-                            title: "⚠️ ত্রুটি",
-                            description: "সার্ভার থেকে গল্পটি মুছে ফেলার সময় একটি সমস্যা হয়েছে।",
-                            variant: "destructive",
-                        })
-                    }
-                } else if (result.dismiss === Swal.DismissReason.cancel) {
-                    swalWithTailwind.fire({
-                        title: "বাতিল করা হয়েছে",
-                        text: "গল্পটি মুছে ফেলা হয়নি।",
-                        icon: "error",
-                    })
+    const handleDeleteSuccessStory = async (id: string) => {
+        const result = await swalWithTailwind.fire({
+            title: "আপনি কি নিশ্চিত?",
+            text: "এই গল্পটি মুছে ফেলা হবে এবং পরে আর ফেরত আনা যাবে না!",
+            icon: "warning",
+            showCancelButton: true,
+            confirmButtonText: "হ্যাঁ, মুছে ফেলুন!",
+            cancelButtonText: "না, বাতিল করুন!",
+            reverseButtons: true,
+        });
+
+        if (result.isConfirmed) {
+            try {
+                const res = await axiosPublic.delete(`/successdata/${id}`);
+                if (res.status === 200) {
+                    toast({
+                        title: "✅ সফলতা",
+                        description: "গল্পটি সফলভাবে মুছে ফেলা হয়েছে।",
+                    });
+                    setRefresh(true);
+                } else {
+                    toast({
+                        title: "❌ ত্রুটি",
+                        description: "গল্পটি মুছে ফেলা যায়নি।",
+                        variant: "destructive",
+                    });
                 }
-            })
-    }
+            } catch (error) {
+                toast({
+                    title: "⚠️ ত্রুটি",
+                    description: "সার্ভার থেকে গল্পটি মুছে ফেলার সময় একটি সমস্যা হয়েছে।",
+                    variant: "destructive",
+                });
+            }
+        } else if (result.dismiss === Swal.DismissReason.cancel) {
+            swalWithTailwind.fire({
+                title: "বাতিল করা হয়েছে",
+                text: "গল্পটি মুছে ফেলা হয়নি।",
+                icon: "error",
+            });
+        }
+    };
 
     const handlePhotoUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
         const files = e.target.files
@@ -106,46 +109,57 @@ export const SuccessStoryCard = ({ story }: { story: any }) => {
         setPhotoFiles(updatedFiles)
     }
 
-    const handleUpdateStory = async (e: React.FormEvent) => {
-        e.preventDefault();
-        try {
-            const updateData ={
-                title: newStory.title,
-                description: newStory.description,
-            }
+   const handleUpdateStory = async (e: React.FormEvent) => {
+    e.preventDefault();
+    setIsLoading(true);
 
-            const finalData = new FormData();
-            if (photoFiles.length > 0) {
-                // নতুন ছবি থাকলে শুধু সেগুলো পাঠাবেন
-                photoFiles.forEach((file) => {
-                    finalData.append("images", file);
-                });
-            }
-            finalData.append("data", JSON.stringify(updateData))
-            // নতুন ছবি না থাকলে images ফিল্ডটি না পাঠিয়ে ফেলা হবে
+    try {
+        const updateData = {
+            title: newStory.title,
+            description: newStory.description,
+        };
 
-            const res = await axiosPublic.put(`/successdata/${story._id}`, finalData, {
-                headers: { "Content-Type": "multipart/form-data" },
+        const finalData = new FormData();
+
+        if (photoFiles.length > 0) {
+            // নতুন ছবি থাকলে সেগুলো পাঠান
+            photoFiles.forEach((file) => {
+                finalData.append("images", file);
             });
+        } else if (story.images && story.images.length > 0) {
+            // যদি পুরনো ছবি থাকে, এবং নতুন না পাঠানো হয়
+            // তাহলে একটা ফিল্ড দিয়ে জানিয়ে দিন
+            finalData.append("existingImages", JSON.stringify(story.images));
+        }
 
-            if (res.status === 200) {
-                toast({ title: "✅ হালনাগাদ সফল", description: "গল্পটি সফলভাবে আপডেট হয়েছে।" });
-                setModalOpen(false);
-            } else {
-                toast({
-                    title: "❌ ত্রুটি",
-                    description: "গল্পটি হালনাগাদ করা যায়নি।",
-                    variant: "destructive",
-                });
-            }
-        } catch (error) {
+        finalData.append("data", JSON.stringify(updateData));
+
+        const res = await axiosPublic.patch(`/successdata/${story._id}`, finalData, {
+            headers: { "Content-Type": "multipart/form-data" },
+        });
+
+        if (res.status === 200) {
+            toast({ title: "✅ হালনাগাদ সফল", description: "গল্পটি সফলভাবে আপডেট হয়েছে।" });
+            setModalOpen(false);
+            setRefresh(true);
+        } else {
             toast({
-                title: "⚠️ ত্রুটি",
-                description: "আপডেট করার সময় সমস্যা হয়েছে।",
+                title: "❌ ত্রুটি",
+                description: "গল্পটি হালনাগাদ করা যায়নি।",
                 variant: "destructive",
             });
         }
-    };
+    } catch (error) {
+        toast({
+            title: "⚠️ ত্রুটি",
+            description: "আপডেট করার সময় সমস্যা হয়েছে।",
+            variant: "destructive",
+        });
+    } finally {
+        setIsLoading(false);
+    }
+};
+
 
 
     return (
@@ -288,7 +302,16 @@ export const SuccessStoryCard = ({ story }: { story: any }) => {
                             <Button type="button" variant="outline" onClick={() => setModalOpen(false)}>
                                 বাতিল করুন
                             </Button>
-                            <Button type="submit">হালনাগাদ করুন</Button>
+                            <Button type="submit">
+                                {isLoading ? (
+                                    <span className="flex items-center gap-2">
+                                        <Loader2 className="animate-spin w-4 h-4" />
+                                        হালনাগাদ হচ্ছে...
+                                    </span>
+                                ) : (
+                                    "হালনাগাদ করুন"
+                                )}
+                            </Button>
                         </div>
                     </form>
                 </DialogContent>

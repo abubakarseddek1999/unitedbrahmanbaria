@@ -1,15 +1,14 @@
 "use client"
-import { useEffect, useState } from "react"
+import { useState } from "react"
 import { Edit, Plus, Trash2 } from "lucide-react"
 import { Button } from "../ui/button"
 import { Card, CardContent, CardDescription, CardHeader } from "../ui/card"
 import { useToast } from "../ui/use-toast"
-import useGalleryData from "@/hooks/useGalleryData"
 import AddPhoto from "./AddPhoto"
-import useAxiosPublic from "@/hooks/useAxios"
-import Swal from "sweetalert2"
 import EditPhoto from "./EditPhoto"
-import { useInView } from 'react-intersection-observer'
+import Swal from "sweetalert2"
+import useAxiosPublic from "@/hooks/useAxios"
+import usePaginatedData from "@/hooks/usePaginatedData"
 
 type galleryItems = {
     _id: string
@@ -19,111 +18,69 @@ type galleryItems = {
 }
 
 const Gallery = () => {
-    const { data: galleryItems, isLoading, error, refetch } = useGalleryData()
     const [isEditModalOpen, setIsEditModalOpen] = useState(false)
     const [isGalleryModalOpen, setIsGalleryModalOpen] = useState(false)
     const [selectedItem, setSelectedItem] = useState<galleryItems | null>(null)
     const { toast } = useToast()
     const axiosPublic = useAxiosPublic()
-
-    const [allItems, setAllItems] = useState<galleryItems[]>(galleryItems || []);
-
-    const [hasMore, setHasMore] = useState(true)
-    const [loading, setLoading] = useState(false)
-    const [pages, setPages] = useState(0)
-
-    const itemsPerPage = 8
-    const [ref, inView] = useInView()
-
-    const fetchGalleryImages = async () => {
-        if (loading) return;
-
-        setLoading(true);
-        const nextPage = pages + 1;
-        console.log(nextPage)
-        try {
-            const response = await axiosPublic.get(`/gallerydata?page=${nextPage}&limit=${itemsPerPage}`)
-            const newItems = response.data || []
-            console.log(newItems)
-            if (newItems?.data?.length) {
-                setAllItems((prev) => [...prev, ...newItems.data]);
-                setPages(nextPage);
-            }
-        } catch (error) {
-            console.error("Error fetching gallery images:", error);
-        } finally {
-            setLoading(false);
-        }
-    };
-
-    // useEffect(() => {
-    //     fetchGalleryImages(); // Initial load
-    // }, []);
-
-    // useEffect(() => {
-    //     if (inView && !loading) {
-    //         fetchGalleryImages();
-    //     }
-    // }, [inView]);
-
-    useEffect(() => {
-        if (inView) {
-            fetchGalleryImages();
-        }
-        // eslint-disable-next-line react-hooks/exhaustive-deps
-    }, [inView]);
-
+    const { data: allItems, loading, hasMore, ref, refetch } = usePaginatedData<{ _id: string; photo: string; title: string; dateSubmitted: string }>({
+        endpoint: "/gallerydata",
+        limit: 8,
+    });
     const swalWithTailwind = Swal.mixin({
         customClass: {
-            confirmButton: "bg-green-600 ml-2 hover:bg-green-700 text-white font-semibold py-2 px-4 rounded mr-2",
-            cancelButton: "bg-red-600 hover:bg-red-700 text-white font-semibold py-2 px-4 rounded"
+            confirmButton:
+                "bg-green-600 ml-2 hover:bg-green-700 text-white font-semibold py-2 px-4 rounded mr-2",
+            cancelButton:
+                "bg-red-600 hover:bg-red-700 text-white font-semibold py-2 px-4 rounded",
         },
-        buttonsStyling: false
+        buttonsStyling: false,
     })
 
     const handleDeleteComplaint = (id: string) => {
-        swalWithTailwind.fire({
-            title: "আপনি কি নিশ্চিত?",
-            text: "এই মিডিয়াটি মুছে ফেলা হবে এবং পরে আর ফেরত আনা যাবে না!",
-            icon: "warning",
-            showCancelButton: true,
-            confirmButtonText: "হ্যাঁ, মুছে ফেলুন!",
-            cancelButtonText: "না, বাতিল করুন!",
-            reverseButtons: true
-        }).then(async (result) => {
-            if (result.isConfirmed) {
-                try {
-                    const res = await axiosPublic.delete(`/gallerydata/${id}`)
-                    if (res.status === 200) {
+        swalWithTailwind
+            .fire({
+                title: "আপনি কি নিশ্চিত?",
+                text: "এই মিডিয়াটি মুছে ফেলা হবে এবং পরে আর ফেরত আনা যাবে না!",
+                icon: "warning",
+                showCancelButton: true,
+                confirmButtonText: "হ্যাঁ, মুছে ফেলুন!",
+                cancelButtonText: "না, বাতিল করুন!",
+                reverseButtons: true,
+            })
+            .then(async (result) => {
+                if (result.isConfirmed) {
+                    try {
+                        const res = await axiosPublic.delete(`/gallerydata/${id}`)
+                        if (res.status === 200) {
+                            toast({
+                                title: "✅ সফলতা",
+                                description: "মিডিয়াটি সফলভাবে মুছে ফেলা হয়েছে।",
+                                variant: "default",
+                            })
+                            refetch()
+                        } else {
+                            toast({
+                                title: "❌ ত্রুটি",
+                                description: "মিডিয়াটি মুছে ফেলা যায়নি।",
+                                variant: "destructive",
+                            })
+                        }
+                    } catch (error) {
                         toast({
-                            title: "✅ সফলতা",
-                            description: "মিডিয়াটি সফলভাবে মুছে ফেলা হয়েছে।",
-                            variant: "default"
-                        })
-                        refetch()
-                        setAllItems((prev) => prev.filter((item) => item._id !== id))
-                    } else {
-                        toast({
-                            title: "❌ ত্রুটি",
-                            description: "মিডিয়াটি মুছে ফেলা যায়নি।",
-                            variant: "destructive"
+                            title: "⚠️ ত্রুটি",
+                            description: "সার্ভার থেকে মিডিয়া মুছে ফেলার সময় একটি সমস্যা হয়েছে।",
+                            variant: "destructive",
                         })
                     }
-                } catch (error) {
-                    toast({
-                        title: "⚠️ ত্রুটি",
-                        description: "সার্ভার থেকে মিডিয়া মুছে ফেলার সময় একটি সমস্যা হয়েছে।",
-                        variant: "destructive"
+                } else if (result.dismiss === Swal.DismissReason.cancel) {
+                    swalWithTailwind.fire({
+                        title: "বাতিল করা হয়েছে",
+                        text: "মিডিয়াটি মুছে ফেলা হয়নি।",
+                        icon: "error",
                     })
                 }
-            } else if (result.dismiss === Swal.DismissReason.cancel) {
-                swalWithTailwind.fire({
-                    title: "বাতিল করা হয়েছে",
-                    text: "মিডিয়াটি মুছে ফেলা হয়নি।",
-                    icon: "error"
-                })
-            }
-        })
+            })
     }
 
     return (
@@ -151,7 +108,7 @@ const Gallery = () => {
                         {allItems?.map((item, index) => {
                             const isLast = index === allItems.length - 1
                             return (
-                                <Card key={index} ref={isLast ? ref : undefined}>
+                                <Card key={item._id} ref={isLast ? ref : undefined}>
                                     <CardContent className="p-4">
                                         <div className="aspect-[4/3] bg-gray-200 rounded-lg mb-3 flex items-center justify-center overflow-hidden">
                                             <img
@@ -167,7 +124,7 @@ const Gallery = () => {
                                                 ? new Date(item.dateSubmitted).toLocaleDateString("bn-BD", {
                                                     day: "numeric",
                                                     month: "long",
-                                                    year: "numeric"
+                                                    year: "numeric",
                                                 })
                                                 : ""}
                                         </p>
@@ -195,13 +152,41 @@ const Gallery = () => {
                             )
                         })}
                     </div>
+                    {loading && (
+                        <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
+                            {Array.from({ length: 8 }).map((_, i) => (
+                                <CardContent key={i} className="p-4 animate-pulse">
+                                    <div className="aspect-[4/3] bg-gray-300 rounded-lg mb-3" />
+
+                                    <div className="h-4 bg-gray-300 rounded w-3/4 mb-2" />
+
+                                    <div className="h-3 bg-gray-200 rounded w-1/2 mb-4" />
+
+                                    <div className="flex justify-end space-x-2 mt-3">
+                                        <div className="w-8 h-8 bg-gray-300 rounded-md" />
+                                        <div className="w-8 h-8 bg-gray-300 rounded-md" />
+                                    </div>
+                                </CardContent>
+                            ))}
+                        </div>
+                    )}
+
                 </CardContent>
             </Card>
 
             {/* Modals */}
-            <AddPhoto open={isGalleryModalOpen} onClose={() => setIsGalleryModalOpen(false)} refetch={refetch} />
-            <EditPhoto open={isEditModalOpen} onClose={() => setIsEditModalOpen(false)} item={selectedItem} refetch={refetch} />
-        </div>
+            <AddPhoto
+                open={isGalleryModalOpen}
+                onClose={() => setIsGalleryModalOpen(false)}
+                refetch={refetch}
+            />
+            <EditPhoto
+                open={isEditModalOpen}
+                onClose={() => setIsEditModalOpen(false)}
+                item={selectedItem}
+                refetch={refetch}
+            />
+        </div >
     )
 }
 

@@ -18,8 +18,6 @@ export const createSuccessdataController: RequestHandler = catchAsync(async (req
 
   if (req.files) {
     const imageInfo: any = await handleMulterUpload(req.files);
-    console.log("Image Info:", imageInfo); // Debug line
-
     formattedData = {
       ...req.body,
       images: imageInfo?.images || [], // ✅ Store as array of image URLs
@@ -38,12 +36,13 @@ export const createSuccessdataController: RequestHandler = catchAsync(async (req
 // Get All Successdata 
 
 export const getAllSuccessdataController: RequestHandler = catchAsync(async (req, res) => {
-  const result = await getAllSuccessdataService(req.query);
+  const {data, total} = await getAllSuccessdataService(req.query);
   sendResponse(res, {
     status: 200,
     success: true,
     message: 'successdata retrived successfully',
-    data: result,
+    data: data,
+    total: total,
   });
 });
 
@@ -60,7 +59,6 @@ export const getSuccessdataByIdController: RequestHandler = catchAsync(async (re
   });
 });
 
-
 // update Successdata 
 
 export const updateSuccessdataByIdController: RequestHandler = catchAsync(async (req, res) => {
@@ -71,7 +69,7 @@ export const updateSuccessdataByIdController: RequestHandler = catchAsync(async 
 
     formattedData = {
       ...req.body,
-      images: imageInfo?.images || [], // ✅ Store as array of image URLs
+      images: imageInfo?.images // ✅ Store as array of image URLs
     };
   }
 

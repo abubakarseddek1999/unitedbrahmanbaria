@@ -1,58 +1,71 @@
 // gallerydata.service.ts
-    import { QueryBuilder } from "../../builder/QueryBuilder";
-    import { IGallerydata } from "./gallerydata.interface";
-    import { Gallerydata } from "./gallerydata.model";
+import { QueryBuilder } from "../../builder/QueryBuilder";
+import { IGallerydata } from "./gallerydata.interface";
+import { Gallerydata } from "./gallerydata.model";
 
-    // Create New gallerydata service
- 
-    export const createGallerydataService = async (payload: IGallerydata) => {
+// Create New gallerydata service
+
+export const createGallerydataService = async (payload: IGallerydata) => {
   const result = await Gallerydata.create(payload);
   return result;
 };
 
 // getAll gallerydata service
 
-    export const getAllGallerydataService = async (query: Record<string, unknown>) => {
-      const gallerydataQueries = new QueryBuilder(Gallerydata.find(), query)
-      .sort()
-      .filter()
-      .search([
-            // 'name',
-            // 'category',
-            // 'description',
-            // replace  with proper fields
-            ])
-      .fields()
-      .paginate()
+export const getAllGallerydataService = async (query: Record<string, unknown>) => {
+  const baseQuery = Gallerydata.find();
 
-      const result = await gallerydataQueries.modelQuery;
-      return result ;
+  // Initialize query builder for pagination and data fetching
+  const gallerydataQueries = new QueryBuilder(baseQuery, query)
+    .sort()
+    .filter()
+    .search([
+      // 'name',
+      // 'category',
+      // 'description',
+      // Replace with actual searchable fields
+    ])
+    .fields()
+    .paginate();
+
+  const data = await gallerydataQueries.modelQuery;
+
+  // For total count (before pagination)
+  const countQuery = new QueryBuilder(Gallerydata.find(), query)
+    .sort() // Optional depending on your logic
+    .filter()
+    .search([
+      // same searchable fields
+    ]);
+
+  const total = await countQuery.modelQuery.countDocuments();
+
+  return { data, total };
 };
 
 // get gallerydata by Id or single  service
 
-export const getGallerydataByIdService = async (id:string) => {
+export const getGallerydataByIdService = async (id: string) => {
   const result = await Gallerydata.findById(id);
   return result;
 };
 
 // delete gallerydata by Id or single  service
 
-export const deleteGallerydataByIdService = async (id:string) => {
+export const deleteGallerydataByIdService = async (id: string) => {
   const result = await Gallerydata.findByIdAndDelete(id);
   return result;
 };
 // update gallerydata by Id or single  service
 
-export const updateGallerydataByIdService = async (id:string,payload:Partial<IGallerydata>) => {
-  const result = await Gallerydata.findByIdAndUpdate(id,payload,{
-      
-      new: true,
-      runValidators: true,
-    
+export const updateGallerydataByIdService = async (id: string, payload: Partial<IGallerydata>) => {
+  const result = await Gallerydata.findByIdAndUpdate(id, payload, {
+
+    new: true,
+    runValidators: true,
+
   });
   return result;
 };
 
-    
-      
+

@@ -9,15 +9,24 @@ import { FileText, Shield, Users, ArrowRight, Phone, Mail, MapPin } from "lucide
 import { initializeData, getSuccessStories, getGalleryItems, type SuccessStory, type GalleryItem } from "@/lib/storage"
 import Banner from "@/components/home/Banner"
 import Navbar from "@/components/share/Navbar"
+import usePaginatedData from "@/hooks/usePaginatedData"
 
 export default function HomePage() {
-  const [successStories, setSuccessStories] = useState<SuccessStory[]>([])
-  const [galleryItems, setGalleryItems] = useState<GalleryItem[]>([])
+  // const [successStories, setSuccessStories] = useState<SuccessStory[]>([])
+  const { data: galleryItems, total: galleryDataTotal } = usePaginatedData<{ _id: string; photo: string; title: string; dateSubmitted: string }>({
+    endpoint: "/gallerydata",
+    limit: 10,
+  });
+  const { data: successStories, total: successStoriesTotal } = usePaginatedData<SuccessStory>({
+    endpoint: "/successdata",
+    limit: 8,
+  });
+
 
   useEffect(() => {
     initializeData()
-    setSuccessStories(getSuccessStories())
-    setGalleryItems(getGalleryItems())
+    // setSuccessStories(getSuccessStories())
+    // setGalleryItems(getGalleryItems())
   }, [])
 
   return (
@@ -75,49 +84,77 @@ export default function HomePage() {
 
       {/* Success Stories Section */}
       <section className="py-16 px-4 bg-gray-50">
-        <div className="container mx-auto">
-          <div className="flex items-center justify-between mb-12">
+        <div className="max-w-7xl mx-auto">
+          <div className="flex flex-col md:flex-row items-center justify-between mb-12 gap-4">
             <h3 className="text-3xl font-bold text-gray-800">সফলতার গল্প</h3>
             <Badge variant="secondary" className="text-sm">
               {successStories.length}টি সফল সমাধান
             </Badge>
           </div>
-          <div className="grid md:grid-cols-3 gap-8">
-            {successStories.slice(0, 3).map((story) => (
-              <Card key={story.id} className="hover:shadow-lg transition-shadow">
-                <div className="relative h-48 overflow-hidden rounded-t-lg">
-                  <Image src={story.image || "/placeholder.svg"} alt={story.title} fill className="object-cover" />
+
+          <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-6">
+            {successStories?.slice(0, 6).reverse().map((story) => (
+              <Card
+                key={story?._id}
+                className="hover:shadow-lg transition-shadow rounded-xl overflow-hidden flex flex-col"
+              >
+                <div className="relative aspect-[4/3] w-full">
+                  <Image
+                    src={story?.images[0] || "/placeholder.svg"}
+                    alt={story?.title}
+                    fill
+                    className="object-cover transition-transform duration-300 hover:scale-105"
+                  />
                 </div>
-                <CardHeader>
-                  <CardTitle className="text-lg">{story.title}</CardTitle>
-                  <CardDescription className="text-sm text-gray-500">{story.dateAdded}</CardDescription>
-                </CardHeader>
-                <CardContent>
-                  <p className="text-gray-600">{story.description}</p>
-                </CardContent>
+
+                <div className="flex flex-col flex-1 justify-between">
+                  <div>
+                    <CardHeader className="px-4 pt-4 pb-2">
+                      <CardTitle className="text-lg text-gray-800">{story?.title}</CardTitle>
+                      <CardDescription className="text-sm text-gray-500">{story.dateAdded}</CardDescription>
+                    </CardHeader>
+
+                    <CardContent className="px-4 pb-4">
+                      <p className="text-gray-600 text-sm line-clamp-3">
+                        {story?.description}
+                      </p>
+                    </CardContent>
+                  </div>
+
+                  <div className=" mt-auto">
+                    <button className="w-full bg-blue-600 text-white text-sm px-4 py-2 rounded hover:bg-blue-700 transition-colors">
+                      বিস্তারিত দেখুন
+                    </button>
+                  </div>
+                </div>
               </Card>
             ))}
           </div>
         </div>
       </section>
 
+
+
       {/* Gallery Section */}
       <section className="py-16 px-4 bg-white">
-        <div className="container mx-auto">
+        <div className="max-w-7xl mx-auto">
           <h3 className="text-3xl font-bold text-center text-gray-800 mb-12">গ্যালারি</h3>
-          <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
-            {galleryItems.slice(0, 8).map((item) => (
-              <div key={item.id} className="relative group overflow-hidden rounded-lg">
+
+          <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 xl:grid-cols-5 gap-5">
+            {galleryItems.slice(0, 10).reverse().map((item) => (
+              <div
+                key={item._id}
+                className="relative aspect-[4/3] group overflow-hidden rounded-xl shadow-sm hover:shadow-lg transition-shadow"
+              >
                 <Image
-                  src={item.url || "/placeholder.svg"}
-                  alt={item.caption}
-                  width={400}
-                  height={300}
-                  className="object-cover w-full h-48 group-hover:scale-105 transition-transform duration-300"
+                  src={item.photo || "/placeholder.svg"}
+                  alt={item.title}
+                  fill
+                  className="object-cover w-full h-full transition-transform duration-300 group-hover:scale-110"
                 />
-                <div className="absolute inset-0 bg-black bg-opacity-0 group-hover:bg-opacity-50 transition-all duration-300 flex items-end">
-                  <p className="text-white p-4 opacity-0 group-hover:opacity-100 transition-opacity duration-300">
-                    {item.caption}
+                <div className="absolute inset-0 bg-black bg-opacity-0 group-hover:bg-opacity-40 transition-all duration-300 flex items-center justify-center">
+                  <p className="text-white text-center text-sm sm:text-base font-semibold opacity-0 group-hover:opacity-100 transition-opacity duration-300 px-2">
+                    {item.title}
                   </p>
                 </div>
               </div>
@@ -125,6 +162,7 @@ export default function HomePage() {
           </div>
         </div>
       </section>
+
 
       {/* CTA Section */}
       <section className="py-20 px-4 bg-gradient-to-r from-green-600 to-blue-600 text-white">
