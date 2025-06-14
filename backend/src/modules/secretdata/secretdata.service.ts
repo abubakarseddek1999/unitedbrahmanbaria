@@ -15,11 +15,16 @@ export const createSecretdataService = async (payload: SecretData) => {
 
 export const getAllSecretdataService = async (query: Record<string, unknown>) => {
   // Main query for paginated data
-  const secretdataQueries = new QueryBuilder(Secretdata.find(), query)
+  const secretdataQueries = new QueryBuilder(
+    Secretdata.find().sort({ dateSubmitted: -1 }), // latest first
+    query
+  )
     .sort()
     .filter()
     .search([
-      // 'title', 'category', 'description' ইত্যাদি
+      'subject',
+      'location',
+      'description',
     ])
     .fields()
     .paginate();

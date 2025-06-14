@@ -8,10 +8,15 @@ import { CustomError } from '../../errors/CustomError';
 // import { cloudApiKey, cloudName, cloudSecret } from '../../config';
 // import sharp from 'sharp';
 
+// cloudinary.config({
+//   cloud_name: 'dmfdkdvbw',
+//   api_key: '196184767246316',
+//   api_secret: 'qQPRGyDp0v9xHIVymFel6tLAHUc',
+// });
 cloudinary.config({
-  cloud_name: 'dmfdkdvbw',
-  api_key: '196184767246316',
-  api_secret: 'qQPRGyDp0v9xHIVymFel6tLAHUc',
+  cloud_name: 'dekktdysr',
+  api_key: '556267579583869',
+  api_secret: 'yRL_2uXJYKv3ZmXL2z4w_tij17s',
 });
 
 const processedFile = async (file: any): Promise<string | unknown> => {

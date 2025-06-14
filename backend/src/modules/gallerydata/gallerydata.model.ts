@@ -1,5 +1,3 @@
-// gallerydata.model.ts
-
 import { Schema, model } from 'mongoose';
 import { IGallerydata } from './gallerydata.interface';
 
@@ -10,7 +8,6 @@ const gallerydataSchema = new Schema<IGallerydata>({
   },
   description: {
     type: String,
-    // required: false,
   },
   dateSubmitted: {
     type: Date,
@@ -22,6 +19,7 @@ const gallerydataSchema = new Schema<IGallerydata>({
   },
 });
 
+// ✅ Add descending index on dateSubmitted for latest first queries
+gallerydataSchema.index({ dateSubmitted: -1 });
 
 export const Gallerydata = model<IGallerydata>('Gallerydata', gallerydataSchema);
-

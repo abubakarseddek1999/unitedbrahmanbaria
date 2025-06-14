@@ -13,18 +13,16 @@ export const createComplaintService = async (payload: IComplaint) => {
 // getAll complaint service
 
 export const getAllComplaintService = async (query: Record<string, unknown>) => {
-  const complaintQueries = new QueryBuilder(Complaint.find(), query)
+  const complaintQueries = new QueryBuilder(
+    Complaint.find().sort({ dateSubmitted: -1 }), // Latest first
+    query
+  )
     .sort()
     .filter()
-    .search([
-      // 'name',
-      // 'category',
-      // 'description',
-      // replace  with proper fields
-    ])
+    .search(['title', 'description', 'email'])
     .fields()
-    .paginate()
-
+    .paginate();
+  
   const data = await complaintQueries.modelQuery;
   // 🔍 Total count without pagination
   const countQuery = new QueryBuilder(Complaint.find(), query)

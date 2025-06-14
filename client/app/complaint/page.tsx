@@ -18,18 +18,33 @@ import {
   DialogTitle,
   DialogTrigger,
 } from "@/components/ui/dialog"
-import { Plus, Calendar, User, Eye, EyeOff, Upload } from "lucide-react"
+import { Plus, Calendar, User, Eye, EyeOff, Upload, Loader2 } from "lucide-react"
 import { useToast } from "@/hooks/use-toast"
 import useAxiosPublic from "@/hooks/useAxios"
 import useComplaints from "@/hooks/useComplaints"
 import Link from "next/link"
+import usePaginatedData from "@/hooks/usePaginatedData"
+import PhotoCollageMini from "@/components/secretData/PhotoCollegeMini"
 
 export default function ComplaintPage() {
-  const { data, isLoading, isError, refetch } = useComplaints()
+  // const { data, isError, refetch } = useComplaints()
+  const { data, loading, hasMore, ref, refetch } = usePaginatedData<{ _id: string; photo: string; title: string; dateSubmitted: string }>({
+    endpoint: "/complaint",
+    limit: 8,
+  });
   const [photoPreview, setPhotoPreview] = useState<string[]>([])
   const [photoFiles, setPhotoFiles] = useState<File[]>([])
-  console.log(data)
+  const [isLoading, setIsLoading] = useState(false)
   const axiosPublic = useAxiosPublic()
+
+  const [isImageModalOpen, setIsImageModalOpen] = useState(false)
+  const [currentImages, setCurrentImages] = useState<string[]>([])
+  const [currentSubject, setCurrentSubject] = useState("")
+  const handleViewAllImages = (images: string[], subject: string) => {
+    setCurrentImages(images)
+    setCurrentSubject(subject)
+    setIsImageModalOpen(true)
+  }
 
   const [isDialogOpen, setIsDialogOpen] = useState(false)
   const [formData, setFormData] = useState({
@@ -78,6 +93,7 @@ export default function ComplaintPage() {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
+    setIsLoading(true)
 
     if (!formData.title || !formData.description) {
       toast({
@@ -128,9 +144,9 @@ export default function ComplaintPage() {
         title: "সফল!",
         description: "আপনার অভিযোগ সফলভাবে জমা দেওয়া হয়েছে।",
       })
-
+      refetch() // Refresh the complaints list
       setIsDialogOpen(false)
-
+      setIsLoading(false)
       setPhotoPreview([])
       setPhotoFiles([])
       setFormData({
@@ -324,9 +340,21 @@ export default function ComplaintPage() {
                     <Button type="button" variant="outline" onClick={() => setIsDialogOpen(false)}>
                       বাতিল
                     </Button>
-                    <Button type="submit" className="bg-green-600 hover:bg-green-700">
-                      অভিযোগ জমা দিন
+                    <Button
+                      type="submit"
+                      className="bg-green-600 hover:bg-green-700 disabled:opacity-50 disabled:cursor-not-allowed"
+                      disabled={isLoading}
+                    >
+                      {isLoading ? (
+                        <span className="flex items-center gap-2">
+                          <Loader2 className="animate-spin w-4 h-4" />
+                          অভিযোগ জমা হচ্ছে
+                        </span>
+                      ) : (
+                        "অভিযোগ জমা দিন"
+                      )}
                     </Button>
+
                   </div>
                 </form>
               </DialogContent>
@@ -346,7 +374,6 @@ export default function ComplaintPage() {
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
             {data
               ?.slice()
-              .reverse()
               .map((complaint: any) => (
                 <Card
                   key={complaint?._id}
@@ -380,7 +407,7 @@ export default function ComplaintPage() {
                       <CardDescription className="text-gray-700">
                         {complaint?.description
                           ? complaint.description.split(" ").slice(0, 10).join(" ") +
-                            (complaint.description.split(" ").length > 20 ? "..." : "")
+                          (complaint.description.split(" ").length > 20 ? "..." : "")
                           : ""}
                       </CardDescription>
                     </CardContent>
@@ -392,21 +419,13 @@ export default function ComplaintPage() {
                       </button>
                     </Link>
                   </div>
+                  {/* images */}
                   <div className="w-full md:w-1/2 p-5 ">
-                    {complaint?.images && complaint.images.length > 0 && (
-                      <div className=" flex flex-col md:flex-row space-x-2 overflow-x-auto">
-                        {complaint.images.slice(0, 1).map((imgUrl: string, index: number) => (
-                          <Image
-                            key={index}
-                            src={imgUrl || "/placeholder.svg"}
-                            alt={`অভিযোগের ছবি ${index + 1}`}
-                            width={120}
-                            height={80}
-                            className="rounded-lg w-full object-cover max-h-[300px] shadow-sm"
-                          />
-                        ))}
-                      </div>
-                    )}
+                    <PhotoCollageMini
+                      images={complaint.images || []}
+                      maxDisplay={3}
+                      onViewAll={(images) => handleViewAllImages(images, complaint.subject || "Secrete Subject")}
+                    />
                   </div>
                 </Card>
                 // <ComplaintCard complaint={complaint} />
@@ -414,6 +433,32 @@ export default function ComplaintPage() {
           </div>
         </div>
       </main>
+
+      {/* Image Viewer Modal */}
+      <Dialog open={isImageModalOpen} onOpenChange={setIsImageModalOpen}>
+        <DialogContent className="max-w-[90vw] lg:max-w-[800px] h-[90vh] flex flex-col">
+          <DialogHeader>
+            <DialogTitle className="flex justify-between items-center">
+              <span>{currentSubject} - সকল ছবি</span>
+
+            </DialogTitle>
+          </DialogHeader>
+          <div className="flex-1 overflow-y-auto p-4 space-y-4">
+            {currentImages.map((img, index) => (
+              <div key={index} className="flex flex-col items-center">
+                <img
+                  src={img}
+                  alt={`Image ${index + 1}`}
+                  className="max-w-full max-h-[70vh] object-contain rounded-lg shadow-md"
+                />
+                <p className="text-center mt-2 text-gray-500 text-sm">
+                  Image {index + 1}/{currentImages.length}
+                </p>
+              </div>
+            ))}
+          </div>
+        </DialogContent>
+      </Dialog>
     </div>
   )
 }

@@ -115,7 +115,7 @@ const SuccessCardHeader = ( {setRefresh}:{setRefresh:any}) => {
         <div>
             <div className="flex items-center justify-between">
                 <div>
-                    <CardTitle>সফলতার গল্প ব্যবস্থাপনা</CardTitle>
+                    <p className="my-2 text-xl font-bold">সফলতার গল্প ব্যবস্থাপনা</p>
                     <CardDescription>সফল সমাধানের গল্প যোগ ও সম্পাদনা করুন</CardDescription>
                 </div>
                 <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>

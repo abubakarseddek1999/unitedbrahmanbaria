@@ -13,17 +13,15 @@ export const createGallerydataService = async (payload: IGallerydata) => {
 // getAll gallerydata service
 
 export const getAllGallerydataService = async (query: Record<string, unknown>) => {
-  const baseQuery = Gallerydata.find();
+  const baseQuery = Gallerydata.find().sort({ dateSubmitted: -1 }); // latest first
 
   // Initialize query builder for pagination and data fetching
   const gallerydataQueries = new QueryBuilder(baseQuery, query)
     .sort()
     .filter()
     .search([
-      // 'name',
-      // 'category',
-      // 'description',
-      // Replace with actual searchable fields
+      'title',
+      'description',
     ])
     .fields()
     .paginate();
@@ -32,16 +30,17 @@ export const getAllGallerydataService = async (query: Record<string, unknown>) =
 
   // For total count (before pagination)
   const countQuery = new QueryBuilder(Gallerydata.find(), query)
-    .sort() // Optional depending on your logic
     .filter()
     .search([
-      // same searchable fields
+      'title',
+      'description',
     ]);
 
   const total = await countQuery.modelQuery.countDocuments();
 
   return { data, total };
 };
+
 
 // get gallerydata by Id or single  service
 

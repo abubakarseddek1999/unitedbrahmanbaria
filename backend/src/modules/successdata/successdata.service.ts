@@ -13,22 +13,20 @@ export const createSuccessdataService = async (payload: ISuccessdata) => {
 // getAll successdata service
 
 export const getAllSuccessdataService = async (query: Record<string, unknown>) => {
-  // For paginated data
-  const successdataQueries = new QueryBuilder(Successdata.find(), query)
-    .sort()
+  // For paginated data (default sort by latest)
+  const successdataQueries = new QueryBuilder(
+    Successdata.find().sort({ dateSubmitted: -1 }), // Default: latest first
+    query
+  )
+    .sort() // if user gives sort query, it'll override
     .filter()
-    .search([
-      'name',
-      'category',
-      'description',
-      // add more searchable fields if needed
-    ])
+    .search(['title', 'description'])
     .fields()
     .paginate();
-
+  
   const data = await successdataQueries.modelQuery;
 
-  // For total count (excluding pagination)
+  // For total count (no pagination)
   const countQuery = new QueryBuilder(Successdata.find(), query)
     .sort()
     .filter()

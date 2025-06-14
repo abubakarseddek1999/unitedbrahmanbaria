@@ -3,23 +3,12 @@ import type React from "react"
 import { useState, useEffect } from "react"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
-import { Input } from "@/components/ui/input"
-import { Label } from "@/components/ui/label"
-import { Textarea } from "@/components/ui/textarea"
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
-import {
-  Dialog,
-  DialogContent,
-  DialogDescription,
-  DialogHeader,
-  DialogTitle,
-  DialogTrigger,
-} from "@/components/ui/dialog"
+
 import { FileText, Shield, Trophy, Camera, Plus, Upload } from "lucide-react"
 import { useToast } from "@/hooks/use-toast"
 import {
   getSpotInfos,
-  getGalleryItems,
   isAdminLoggedIn,
   setAdminLoggedIn,
   initializeData,
@@ -27,13 +16,9 @@ import {
   type GalleryItem,
 } from "@/lib/storage"
 import { Login } from "@/components/login/Login"
-import useComplaints from "@/hooks/useComplaints"
 import ComplainCard from "@/components/complaint/ComplainCard"
-import useAxiosPublic from "@/hooks/useAxios"
 import useSecretData from "@/hooks/useSecretData"
 import SecretData from "@/components/secretData/SecretData"
-import Image from "next/image"
-import useSuccessStories from "@/hooks/useSuccessData"
 import Gallery from "@/components/gallery/Gallery"
 import SuccessStoryContent from "@/components/success/SuccessStoryContent"
 import SuccessCardHeader from "@/components/success/SuccessCardHeader"
@@ -60,8 +45,6 @@ export default function AdminPage() {
     name: string;
     status: string;
   }
-  const { data, isLoading, isError, error } = useGalleryData()
-
 
   const { data: complaints, loading, ref, refetch, total: complaintsTotal } = usePaginatedData<Complaint>({
     endpoint: "/complaint",
@@ -161,7 +144,7 @@ export default function AdminPage() {
       </header>
       {/* Dashboard Stats */}
       <div className="container mx-auto px-4 py-6">
-        <div className="grid grid-cols-1 md:grid-cols-4 gap-6 mb-8">
+        <div className="grid grid-cols-2 md:grid-cols-4 gap-6 mb-8">
           <Card className="bg-gradient-to-r from-blue-50 to-blue-100 border-blue-200 hover:shadow-lg transition-shadow">
             <CardContent className="p-6">
               <div className="flex items-center justify-between">
@@ -234,14 +217,13 @@ export default function AdminPage() {
           <TabsContent value="complaints">
             <Card>
               <CardHeader>
-                <CardTitle>অভিযোগ ব্যবস্থাপনা</CardTitle>
+                <p className="my-2 text-xl font-semibold">অভিযোগ ব্যবস্থাপনা</p>
                 <CardDescription>সকল অভিযোগ দেখুন এবং ব্যবস্থা নিন</CardDescription>
               </CardHeader>
 
               <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
                 {complaints
                   ?.slice()
-                  .reverse()
                   .map((complaint, index) => {
                     const isLast = index === complaints.length - 1
                     return (

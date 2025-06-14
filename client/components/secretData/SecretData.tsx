@@ -135,14 +135,13 @@ const SecretData: React.FC<SecretDataProps> = () => {
             <Card className="pb-6">
                 <CardHeader>
                     <CardTitle>গোপন তথ্য পর্যালোচনা</CardTitle>
-                    <CardDescription>সংবেদনশীল তথ্য পর্যালোচনা করুন</CardDescription>
+                    <p className=" text-sm mb-5 text-gray-700">সংবেদনশীল তথ্য পর্যালোচনা করুন</p>
                 </CardHeader>
                 <CardContent>
                     <div className="space-y-4 grid grid-cols-1 lg:grid-cols-2 gap-6">
                         {secretData &&
                             secretData
                                 .slice()
-                                .reverse()
                                 .map((info) => {
                                     const isLast = info._id === secretData[secretData.length - 1]._id
                                     return (

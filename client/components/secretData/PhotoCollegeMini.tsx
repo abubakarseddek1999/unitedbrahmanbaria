@@ -32,7 +32,7 @@ export default function PhotoCollageMini({ images, maxDisplay = 5, onViewAll }: 
   // Single image layout
   if (images.length === 1) {
     return (
-      <div className="relative w-full h-48 rounded-lg overflow-hidden">
+      <div className="relative w-full h-[300px] md:h-48 rounded-lg overflow-hidden">
         <Image
           src={images[0] || "/placeholder.svg?height=200&width=300"}
           alt="Secret data image"

@@ -10,7 +10,7 @@ import { Label } from "@/components/ui/label"
 import { Textarea } from "@/components/ui/textarea"
 import { Checkbox } from "@/components/ui/checkbox"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
-import { ArrowLeft, Shield, Upload, AlertTriangle, Lock, X, Eye, Loader2, FileImage, FileVideo } from 'lucide-react'
+import { ArrowLeft, Shield, Upload, AlertTriangle, Lock, X, Eye, Loader2, FileImage, FileVideo, Star } from 'lucide-react'
 import { useToast } from "@/hooks/use-toast"
 import { addSpotInfo, initializeData } from "@/lib/storage"
 import useAxiosPublic from "@/hooks/useAxios"
@@ -134,8 +134,16 @@ export default function SpotInfoPage() {
         <div className="container mx-auto px-4 py-6">
           <div className="flex items-center justify-between">
             <div className="flex items-center space-x-4">
-              <div className="w-12 h-12 bg-gradient-to-r from-blue-600 to-indigo-600 rounded-xl flex items-center justify-center">
-                <Shield className="w-6 h-6 text-white" />
+              <div className="flex items-center space-x-4">
+                <div className="relative">
+                  <div className="w-14 h-14 bg-gradient-to-br from-blue-600 to-indigo-600 rounded-xl flex items-center justify-center shadow-lg transform hover:rotate-6 transition-all duration-300">
+                    <Shield className="w-7 h-7 text-white" />
+                  </div>
+                  <div className="absolute -top-2 -right-2 w-6 h-6 bg-yellow-400 rounded-full flex items-center justify-center animate-bounce">
+                    <Star className="w-3 h-3 text-yellow-800" />
+                  </div>
+                </div>
+
               </div>
               <div>
                 <h1 className="text-3xl font-bold bg-gradient-to-r from-gray-800 to-gray-600 bg-clip-text text-transparent">
@@ -156,31 +164,31 @@ export default function SpotInfoPage() {
       <main className="container mx-auto px-4 py-8">
         <div className="max-w-5xl mx-auto">
           {/* Enhanced Security Notice */}
-          <Card className="mb-8 pb-6 border-blue-200 bg-gradient-to-r from-blue-50 to-indigo-50 shadow-lg">
-            <CardHeader className="pb-4">
-              <div className="flex items-center space-x-3">
-                <div className="w-10 h-10 bg-blue-600 rounded-lg flex items-center justify-center">
-                  <Shield className="w-5 h-5 text-white" />
-                </div>
-                <div>
-                  <CardTitle className="text-blue-800 text-xl">নিরাপত্তা নিশ্চয়তা</CardTitle>
-                  <p className="text-blue-600 text-sm">আপনার তথ্য সম্পূর্ণ সুরক্ষিত</p>
-                </div>
-              </div>
-            </CardHeader>
+          {/* Enhanced Security Notice with Animation */}
+          <Card className="border-0 mb-8 pb-5 pt-2 bg-gradient-to-br from-blue-50/80 via-indigo-50/80 to-purple-50/80 backdrop-blur-xl shadow-2xl animate-fade-in-up delay-300">
             <CardContent>
               <div className="grid md:grid-cols-2 gap-6">
                 {[
-                  { icon: Lock, text: "আপনার সকল তথ্য এনক্রিপ্ট করে সংরক্ষণ করা হয়" },
-                  { icon: Shield, text: "আপনার পরিচয় সম্পূর্ণ গোপন রাখা হবে" },
-                  { icon: AlertTriangle, text: "শুধুমাত্র অনুমোদিত ব্যক্তিরা এই তথ্য দেখতে পারবেন" },
-                  { icon: Lock, text: "কোনো তথ্য তৃতীয় পক্ষের সাথে শেয়ার করা হয় না" }
+                  { icon: Lock, text: "আপনার সকল তথ্য এনক্রিপ্ট করে সংরক্ষণ করা হয়", color: "from-blue-500 to-cyan-500" },
+                  { icon: Shield, text: "আপনার পরিচয় সম্পূর্ণ গোপন রাখা হবে", color: "from-green-500 to-emerald-500" },
+                  {
+                    icon: AlertTriangle,
+                    text: "শুধুমাত্র অনুমোদিত ব্যক্তিরা এই তথ্য দেখতে পারবেন",
+                    color: "from-amber-500 to-orange-500",
+                  },
+                  { icon: Lock, text: "কোনো তথ্য তৃতীয় পক্ষের সাথে শেয়ার করা হয় না", color: "from-purple-500 to-pink-500" },
                 ].map((item, index) => (
-                  <div key={index} className="flex items-start space-x-3 bg-white/60 backdrop-blur-sm rounded-lg p-4">
-                    <div className="w-8 h-8 bg-blue-100 rounded-lg flex items-center justify-center flex-shrink-0">
-                      <item.icon className="w-4 h-4 text-blue-600" />
+                  <div
+                    key={index}
+                    className={`group flex items-start space-x-4 bg-white/70 backdrop-blur-sm rounded-xl p-5 shadow-lg hover:shadow-xl transform hover:-translate-y-1 transition-all duration-300 animate-fade-in-up`}
+                    style={{ animationDelay: `${400 + index * 100}ms` }}
+                  >
+                    <div
+                      className={`w-10 h-10 bg-gradient-to-br ${item.color} rounded-xl flex items-center justify-center flex-shrink-0 shadow-lg group-hover:scale-110 transition-transform duration-300`}
+                    >
+                      <item.icon className="w-5 h-5 text-white" />
                     </div>
-                    <p className="text-blue-700 font-medium">{item.text}</p>
+                    <p className="text-gray-700 font-medium leading-relaxed">{item.text}</p>
                   </div>
                 ))}
               </div>
@@ -188,7 +196,7 @@ export default function SpotInfoPage() {
           </Card>
 
           {/* Enhanced Form */}
-          <Card className="shadow-xl border-0 bg-white/80 backdrop-blur-sm">
+          <Card className="shadow-xl mb-8 border-0 bg-white/80 backdrop-blur-sm">
             <CardHeader className="bg-gradient-to-r from-gray-50 to-blue-50 rounded-t-lg">
               <CardTitle className="flex items-center space-x-3 text-2xl">
                 <div className="w-8 h-8 bg-gradient-to-r from-blue-600 to-indigo-600 rounded-lg flex items-center justify-center">
@@ -384,50 +392,67 @@ export default function SpotInfoPage() {
             </CardContent>
           </Card>
 
+
           {/* Enhanced Additional Information */}
-          <Card className="mt-8 pb-6 shadow-lg border-0 bg-white/80 backdrop-blur-sm">
+          <Card className="border-0 bg-white/70 backdrop-blur-xl shadow-2xl pb-5 my-2 animate-fade-in-up delay-700">
             <CardHeader>
-              <CardTitle className="text-xl flex items-center space-x-2">
-                <AlertTriangle className="w-5 h-5 text-amber-600" />
-                <span>গুরুত্বপূর্ণ নির্দেশনা</span>
+              <CardTitle className="text-2xl flex items-center space-x-3">
+                <div className="w-8 h-8 bg-gradient-to-br from-amber-500 to-orange-500 rounded-lg flex items-center justify-center">
+                  <AlertTriangle className="w-5 h-5 text-white" />
+                </div>
+                <span className="bg-gradient-to-r from-gray-800 to-amber-800 bg-clip-text text-transparent">
+                  গুরুত্বপূর্ণ নির্দেশনা
+                </span>
               </CardTitle>
             </CardHeader>
             <CardContent>
-              <div className="grid md:grid-cols-2 gap-8">
-                <div className="space-y-4">
-                  <h4 className="font-bold text-gray-800 text-lg mb-3 flex items-center space-x-2">
-                    <div className="w-2 h-2 bg-blue-500 rounded-full"></div>
+              <div className="grid md:grid-cols-2 gap-10">
+                <div className="space-y-6">
+                  <h4 className="font-bold text-gray-800 text-xl mb-4 flex items-center space-x-3">
+                    <div className="w-3 h-3 bg-blue-500 rounded-full animate-pulse"></div>
                     <span>কী ধরনের তথ্য দিতে পারেন:</span>
                   </h4>
-                  <div className="space-y-3">
+                  <div className="space-y-4">
                     {[
-                      "দুর্নীতি সংক্রান্ত তথ্য",
-                      "অনিয়ম ও অপরাধের তথ্য",
-                      "সরকারি সেবায় সমস্যা",
-                      "জনস্বার্থ বিরোধী কার্যকলাপ"
+                      { text: "দুর্নীতি সংক্রান্ত তথ্য", color: "from-red-500 to-pink-500" },
+                      { text: "অনিয়ম ও অপরাধের তথ্য", color: "from-orange-500 to-red-500" },
+                      { text: "সরকারি সেবায় সমস্যা", color: "from-blue-500 to-indigo-500" },
+                      { text: "জনস্বার্থ বিরোধী কার্যকলাপ", color: "from-purple-500 to-pink-500" },
                     ].map((item, index) => (
-                      <div key={index} className="flex items-center space-x-3 bg-blue-50 p-3 rounded-lg">
-                        <div className="w-2 h-2 bg-blue-500 rounded-full flex-shrink-0"></div>
-                        <span className="text-gray-700 font-medium">{item}</span>
+                      <div
+                        key={index}
+                        className={`group flex items-center space-x-4 bg-gradient-to-r from-blue-50/80 to-indigo-50/80 backdrop-blur-sm p-4 rounded-xl shadow-md hover:shadow-lg transition-all duration-300 transform hover:-translate-y-1 animate-fade-in-up`}
+                        style={{ animationDelay: `${800 + index * 100}ms` }}
+                      >
+                        <div
+                          className={`w-3 h-3 bg-gradient-to-r ${item.color} rounded-full flex-shrink-0 group-hover:scale-125 transition-transform duration-300`}
+                        ></div>
+                        <span className="text-gray-700 font-medium">{item.text}</span>
                       </div>
                     ))}
                   </div>
                 </div>
-                <div className="space-y-4">
-                  <h4 className="font-bold text-gray-800 text-lg mb-3 flex items-center space-x-2">
-                    <div className="w-2 h-2 bg-green-500 rounded-full"></div>
+                <div className="space-y-6">
+                  <h4 className="font-bold text-gray-800 text-xl mb-4 flex items-center space-x-3">
+                    <div className="w-3 h-3 bg-green-500 rounded-full animate-pulse"></div>
                     <span>আমাদের প্রতিশ্রুতি:</span>
                   </h4>
-                  <div className="space-y-3">
+                  <div className="space-y-4">
                     {[
-                      "২৪ ঘন্টার মধ্যে তথ্য পর্যালোচনা",
-                      "সম্পূর্ণ গোপনীয়তা রক্ষা",
-                      "যথাযথ ব্যবস্থা গ্রহণ",
-                      "প্রয়োজনে আইনি সহায়তা"
+                      { text: "২৪ ঘন্টার মধ্যে তথ্য পর্যালোচনা", color: "from-green-500 to-emerald-500" },
+                      { text: "সম্পূর্ণ গোপনীয়তা রক্ষা", color: "from-blue-500 to-cyan-500" },
+                      { text: "যথাযথ ব্যবস্থা গ্রহণ", color: "from-indigo-500 to-purple-500" },
+                      { text: "প্রয়োজনে আইনি সহায়তা", color: "from-purple-500 to-pink-500" },
                     ].map((item, index) => (
-                      <div key={index} className="flex items-center space-x-3 bg-green-50 p-3 rounded-lg">
-                        <div className="w-2 h-2 bg-green-500 rounded-full flex-shrink-0"></div>
-                        <span className="text-gray-700 font-medium">{item}</span>
+                      <div
+                        key={index}
+                        className={`group flex items-center space-x-4 bg-gradient-to-r from-green-50/80 to-emerald-50/80 backdrop-blur-sm p-4 rounded-xl shadow-md hover:shadow-lg transition-all duration-300 transform hover:-translate-y-1 animate-fade-in-up`}
+                        style={{ animationDelay: `${1200 + index * 100}ms` }}
+                      >
+                        <div
+                          className={`w-3 h-3 bg-gradient-to-r ${item.color} rounded-full flex-shrink-0 group-hover:scale-125 transition-transform duration-300`}
+                        ></div>
+                        <span className="text-gray-700 font-medium">{item.text}</span>
                       </div>
                     ))}
                   </div>

@@ -1,16 +1,12 @@
-// complaint.model.ts
-
-  import { Schema, model } from 'mongoose';
+import { Schema, model } from 'mongoose';
 import { IComplaint } from './complaint.interface';
 
 const complaintSchema = new Schema<IComplaint>({
   email: {
     type: String,
-    // required: true,
   },
   name: {
     type: String,
-    // required: true,
   },
   title: {
     type: String,
@@ -22,19 +18,18 @@ const complaintSchema = new Schema<IComplaint>({
   },
   phone: {
     type: String,
-    // required: true,
   },
   images: {
-    type: [String],  // <-- এটা array of strings হবে, না যে শুধু string
+    type: [String],
     default: [],
   },
   status: {
     type: String,
-    // required: true,
+    default: 'নতুন', // Default status is 'pending'
   },
   dateSubmitted: {
-    type: String,
-    // required: true,
+    type: Date, // ✅ CHANGED from String to Date
+    default: () => Date.now(),
   },
   hidePhone: {
     type: Boolean,
@@ -44,10 +39,9 @@ const complaintSchema = new Schema<IComplaint>({
     type: Boolean,
     default: false,
   },
-
 });
 
+// ✅ Index to get latest complaints first
+complaintSchema.index({ dateSubmitted: -1 });
 
-  export const Complaint = model<IComplaint>('Complaint', complaintSchema);
-
-  
+export const Complaint = model<IComplaint>('Complaint', complaintSchema);

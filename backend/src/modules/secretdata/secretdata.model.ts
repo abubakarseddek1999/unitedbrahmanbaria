@@ -1,11 +1,9 @@
-// secretdata.model.ts
-
 import { Schema, model } from 'mongoose';
 import { SecretData } from './secretdata.interface';
 
 const secretdataSchema = new Schema<SecretData>({
   images: {
-    type: [String],  // <-- এটা array of strings হবে, না যে শুধু string
+    type: [String],
     default: [],
   },
   subject: {
@@ -36,9 +34,9 @@ const secretdataSchema = new Schema<SecretData>({
     type: String,
     required: true,
   },
-  // update your content here
 });
 
+// ✅ Add descending index for latest-first sort
+secretdataSchema.index({ dateSubmitted: -1 });
 
 export const Secretdata = model<SecretData>('Secretdata', secretdataSchema);
-

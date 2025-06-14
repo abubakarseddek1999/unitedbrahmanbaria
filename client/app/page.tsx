@@ -88,12 +88,12 @@ export default function HomePage() {
           <div className="flex flex-col md:flex-row items-center justify-between mb-12 gap-4">
             <h3 className="text-3xl font-bold text-gray-800">সফলতার গল্প</h3>
             <Badge variant="secondary" className="text-sm">
-              {successStories.length}টি সফল সমাধান
+              {successStories.length} টি নতুন  সফল সমাধান
             </Badge>
           </div>
 
           <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-6">
-            {successStories?.slice(0, 6).reverse().map((story) => (
+            {successStories?.slice(0, 6).map((story) => (
               <Card
                 key={story?._id}
                 className="hover:shadow-lg transition-shadow rounded-xl overflow-hidden flex flex-col"
@@ -120,12 +120,13 @@ export default function HomePage() {
                       </p>
                     </CardContent>
                   </div>
-
-                  <div className=" mt-auto">
-                    <button className="w-full bg-blue-600 text-white text-sm px-4 py-2 rounded hover:bg-blue-700 transition-colors">
-                      বিস্তারিত দেখুন
-                    </button>
-                  </div>
+                  <Link href={`/seccess-details/${story?._id}`}>
+                    <div className=" mt-auto">
+                      <button className="w-full bg-blue-600 text-white text-sm px-4 py-2 rounded hover:bg-blue-700 transition-colors">
+                        বিস্তারিত দেখুন
+                      </button>
+                    </div>
+                  </Link>
                 </div>
               </Card>
             ))}
@@ -230,17 +231,16 @@ export default function HomePage() {
                 </li>
               </ul>
             </div>
-
             <div>
               <h5 className="font-semibold mb-4">যোগাযোগ</h5>
               <ul className="space-y-2 text-gray-400">
                 <li className="flex items-center">
                   <Phone className="w-4 h-4 mr-2" />
-                  +৮৮০ ১৭১২-৩৪৫৬৭২
+                  +8801728306504
                 </li>
                 <li className="flex items-center">
                   <Mail className="w-4 h-4 mr-2" />
-                  info@brahmanbaria.gov.bd
+                  abubakarseddek1999@gmail.com
                 </li>
                 <li className="flex items-center">
                   <MapPin className="w-4 h-4 mr-2" />

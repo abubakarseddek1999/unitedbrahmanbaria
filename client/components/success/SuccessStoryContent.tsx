@@ -19,7 +19,7 @@ const SuccessStoryContent = ({ refresh, setRefresh }: { refresh: boolean; setRef
     return (
         <div>
             <div className="space-y-4 pb-6 grid grid-cols-1 lg:grid-cols-2 gap-6">
-                {(successStories ?? []).slice().reverse().map((story, index) => {
+                {(successStories ?? []).slice().map((story, index) => {
                     const isLast = index === successStories.length - 1
                     return (
 
