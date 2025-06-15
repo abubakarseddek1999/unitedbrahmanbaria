@@ -16,7 +16,7 @@ import { handleDuplicateError } from '../errors/duplicateErrors';
  * =========================== === === Global Error === === =====================
  */
 
-export const errorHandler: ErrorRequestHandler = (error, req, res, _next) => {
+export const errorHandler = (error: any, req: any, res: any, _next: any): void => {
   let status = 500;
   let message = 'Something went wrong';
   const success = false;

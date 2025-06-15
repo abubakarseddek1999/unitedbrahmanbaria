@@ -58,7 +58,7 @@ const auth = (...requiredRoles: IUserRole[]) => {
         );
       }
 
-      req.user = decoded as JwtPayload;
+      // req.user = decoded as JwtPayload;
       next();
     },
   );

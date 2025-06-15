@@ -99,5 +99,14 @@
   "bugs": {
     "url": "https://github.com/mahamodulhasanmoon/rapid-mongo-expresskit/issues"
   },
-  "homepage": "https://github.com/mahamodulhasanmoon/rapid-mongo-expresskit#readme"
+  "homepage": "https://github.com/mahamodulhasanmoon/rapid-mongo-expresskit#readme",
+  "pnpm": {
+    "onlyBuiltDependencies": [
+      "bcrypt",
+      "sharp"
+    ],
+    "ignoredBuiltDependencies": [
+      "@scarf/scarf"
+    ]
+  }
 }
