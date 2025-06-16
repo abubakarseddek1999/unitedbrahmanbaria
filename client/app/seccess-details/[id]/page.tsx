@@ -144,6 +144,12 @@ const SuccessDetailsPage = ({ params }: PageProps) => {
     setLiked(false)
     // Update URL without page reload
     window.history.pushState(null, "", `/success-details/${story._id}`)
+
+    // Scroll to top smoothly
+    window.scrollTo({
+      top: 0,
+      behavior: "smooth",
+    })
   }
 
   const handleLike = () => {
@@ -238,7 +244,9 @@ const SuccessDetailsPage = ({ params }: PageProps) => {
                 {/* Content Section */}
                 <div className="p-8">
                   <div className="prose prose-lg max-w-none mb-8">
-                    <p className="text-gray-700 leading-relaxed text-justify text-lg">{selectedStory.description}</p>
+                    <p className="text-gray-700 leading-relaxed text-justify text-lg whitespace-pre-line">
+                      {selectedStory.description}
+                    </p>
                   </div>
 
                   {/* Image Gallery */}

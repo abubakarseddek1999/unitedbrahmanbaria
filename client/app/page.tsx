@@ -109,10 +109,16 @@ export default function HomePage() {
 
                 <div className="flex flex-col flex-1 justify-between">
                   <div>
-                    <CardHeader className="px-4 pt-4 pb-2">
+                    <div className="px-4">
                       <CardTitle className="text-lg text-gray-800">{story?.title}</CardTitle>
-                      <CardDescription className="text-sm text-gray-500">{story.dateAdded}</CardDescription>
-                    </CardHeader>
+                      <CardDescription className="text-sm text-gray-500">📅 তারিখ:
+                        {story?.dateSubmitted && new Date(story.dateSubmitted).toLocaleDateString('bn-BD', {
+                          day: 'numeric',
+                          month: 'long',
+                          year: 'numeric',
+                        })}
+                      </CardDescription>
+                    </div>
 
                     <CardContent className="px-4 pb-4">
                       <p className="text-gray-600 text-sm line-clamp-3">
@@ -130,19 +136,56 @@ export default function HomePage() {
                 </div>
               </Card>
             ))}
+
           </div>
+          <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-6">
+            {
+              successStories.length === 0 &&
+              // Render 3 skeleton cards to fill all grid spots responsively
+              [1, 2, 3].map((_, i) => (
+                <div
+                  key={i}
+                  className="animate-pulse hover:shadow-lg transition-shadow rounded-xl overflow-hidden flex flex-col"
+                >
+                  {/* Image skeleton */}
+                  <div className="relative aspect-[4/3] w-full bg-gray-300 rounded-t-xl" />
+
+                  <div className="flex flex-col flex-1 justify-between p-4">
+                    <div>
+                      {/* Title skeleton */}
+                      <div className="h-6 w-3/4 bg-gray-300 rounded mb-2"></div>
+
+                      {/* Date skeleton */}
+                      <div className="h-4 w-1/2 bg-gray-300 rounded mb-4"></div>
+
+                      {/* Description skeleton */}
+                      <div className="space-y-2">
+                        <div className="h-3 bg-gray-300 rounded"></div>
+                        <div className="h-3 bg-gray-300 rounded"></div>
+                        <div className="h-3 w-5/6 bg-gray-300 rounded"></div>
+                      </div>
+                    </div>
+
+                    {/* Button skeleton */}
+                    <div className="mt-auto">
+                      <div className="h-8 bg-gray-300 rounded w-full"></div>
+                    </div>
+                  </div>
+                </div>
+              ))
+            }
+          </div>
+
+
         </div>
       </section>
-
-
-
       {/* Gallery Section */}
       <section className="py-16 px-4 bg-white">
         <div className="max-w-7xl mx-auto">
           <h3 className="text-3xl font-bold text-center text-gray-800 mb-12">গ্যালারি</h3>
 
           <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 xl:grid-cols-5 gap-5">
-            {galleryItems.slice(0, 10).reverse().map((item) => (
+            {galleryItems.slice(0, 10).map((item) => (
               <div
                 key={item._id}
                 className="relative aspect-[4/3] group overflow-hidden rounded-xl shadow-sm hover:shadow-lg transition-shadow"
@@ -157,6 +200,26 @@ export default function HomePage() {
                   <p className="text-white text-center text-sm sm:text-base font-semibold opacity-0 group-hover:opacity-100 transition-opacity duration-300 px-2">
                     {item.title}
                   </p>
+                </div>
+              </div>
+            ))}
+          </div>
+
+          <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 xl:grid-cols-5 gap-5">
+            {
+              galleryItems.length === 0 &&
+             // Render 3 skeleton cards to fill all grid spots responsively
+             [...Array(10)].map((_, i) => (
+              <div
+                key={i}
+                className="relative aspect-[4/3] overflow-hidden rounded-xl shadow-sm bg-gray-300 animate-pulse"
+              >
+                {/* Image placeholder */}
+                <div className="w-full h-full bg-gray-300" />
+
+                {/* Title placeholder overlay */}
+                <div className="absolute inset-x-0 bottom-0  bg-opacity-20 h-8 rounded-b-xl flex items-center justify-center">
+                  <div className="h-4 w-3/4 bg-gray-400 rounded"></div>
                 </div>
               </div>
             ))}

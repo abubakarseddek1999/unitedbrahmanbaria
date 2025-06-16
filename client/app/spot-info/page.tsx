@@ -60,7 +60,7 @@ export default function SpotInfoPage() {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
-    setIsSubmitting(true)
+
 
     try {
       if (!formData.subject || !formData.description || !formData.location) {
@@ -71,7 +71,7 @@ export default function SpotInfoPage() {
         })
         return
       }
-
+      setIsSubmitting(true)
       // Add spot info to localStorage
       addSpotInfo({
         subject: formData.subject,

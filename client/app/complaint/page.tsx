@@ -93,8 +93,6 @@ export default function ComplaintPage() {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
-    setIsLoading(true)
-
     if (!formData.title || !formData.description) {
       toast({
         title: "ত্রুটি",
@@ -112,7 +110,7 @@ export default function ComplaintPage() {
       })
       return
     }
-
+    setIsLoading(true)
     // বাকী তথ্য JSON string হিসেবে পাঠানোর জন্য
     const complaintData = {
       status: "নতুন ",
@@ -146,7 +144,6 @@ export default function ComplaintPage() {
       })
       refetch() // Refresh the complaints list
       setIsDialogOpen(false)
-      setIsLoading(false)
       setPhotoPreview([])
       setPhotoFiles([])
       setFormData({
@@ -166,6 +163,7 @@ export default function ComplaintPage() {
         variant: "destructive",
       })
     }
+    setIsLoading(false)
   }
 
   const getStatusColor = (status: string) => {
@@ -430,6 +428,49 @@ export default function ComplaintPage() {
                 </Card>
                 // <ComplaintCard complaint={complaint} />
               ))}
+
+
+            {!data?.length &&
+              [...Array(4)].map((_, i) => (
+                <div
+                  key={i}
+                  className="animate-pulse hover:shadow-md transition-shadow flex flex-col-reverse md:flex-row bg-white rounded-md overflow-hidden"
+                >
+                  {/* Left (text) section */}
+                  <div className="w-full md:w-1/2 p-4">
+                    <div className="mb-4">
+                      {/* Title */}
+                      <div className="h-5 w-3/4 bg-gray-300 rounded mb-3"></div>
+
+                      {/* Name and Date */}
+                      <div className="flex flex-col sm:flex-row gap-3 text-sm mb-4">
+                        <div className="h-4 w-1/3 bg-gray-300 rounded"></div>
+                        <div className="h-4 w-1/4 bg-gray-300 rounded"></div>
+                      </div>
+
+                      {/* Status Badge */}
+                      <div className="h-6 w-20 bg-gray-300 rounded-full mb-4"></div>
+                    </div>
+
+                    {/* Description */}
+                    <div className="space-y-2 mb-6">
+                      <div className="h-3 w-full bg-gray-300 rounded"></div>
+                      <div className="h-3 w-5/6 bg-gray-300 rounded"></div>
+                    </div>
+
+                    {/* Button */}
+                    <div className="h-8 w-32 bg-gray-300 rounded-sm"></div>
+                  </div>
+
+                  {/* Right (image) section */}
+                  <div className="w-full md:w-1/2 p-5 grid grid-cols-2 gap-2">
+                    <div className="aspect-[4/3] bg-gray-300 rounded"></div>
+                    <div className="aspect-[4/3] bg-gray-300 rounded"></div>
+                    <div className="aspect-[4/3] bg-gray-300 rounded"></div>
+                  </div>
+                </div>
+              ))}
+
           </div>
         </div>
       </main>

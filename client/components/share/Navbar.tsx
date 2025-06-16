@@ -20,7 +20,7 @@ const Navbar = () => {
                 <div className="flex items-center justify-between">
                     <div className="flex items-center space-x-3">
                         <div className="w-12 h-12 bg-green-600 rounded-full flex items-center justify-center">
-                            <Shield className="w-6 h-6 text-white" />
+                            <Link href="/"><Shield className="w-6 h-6 text-white" /></Link>
                         </div>
                         <div>
                             <h1 className="text-xl font-bold text-gray-800">ঐক্যবদ্ধ সদর ব্রাহ্মণবাড়িয়া</h1>
@@ -30,10 +30,10 @@ const Navbar = () => {
 
                     {/* Desktop menu */}
                     <nav className="hidden md:flex space-x-6">
-                        <Link href="/" className="text-gray-700 hover:text-green-600 font-medium">হোম</Link>
-                        <Link href="/complaint" className="text-gray-700 hover:text-green-600 font-medium">অভিযোগ</Link>
-                        <Link href="/spot-info" className="text-gray-700 hover:text-green-600 font-medium">গোপন তথ্য</Link>
-                        <Link href="/admin" className="text-gray-700 hover:text-green-600 font-medium">অ্যাডমিন</Link>
+                        <Link href="/" className=" hover:text-green-600 font-medium">হোম</Link>
+                        <Link href="/complaint" className=" hover:text-green-600 font-medium">অভিযোগ</Link>
+                        <Link href="/spot-info" className=" hover:text-green-600 font-medium">গোপন তথ্য</Link>
+                        <Link href="/admin" className=" hover:text-green-600 font-medium">অ্যাডমিন</Link>
                     </nav>
 
                     {/* Mobile menu button */}
@@ -47,7 +47,7 @@ const Navbar = () => {
                 {/* Mobile dropdown */}
                 {isMenuOpen && (
                     <div className="md:hidden mt-4 bg-white rounded-lg overflow-hidden transition-all">
-                        <Link href="/" className="block px-4 py-3 hover:bg-green-100 hover:text-green-700">হোম</Link>
+                        <Link href="/" className="block  font-bold px-4 py-3 hover:bg-green-100 hover:text-green-700">হোম</Link>
                         <Link href="/complaint" className="block px-4 py-3 hover:bg-green-100 hover:text-green-700">অভিযোগ</Link>
                         <Link href="/spot-info" className="block px-4 py-3 hover:bg-green-100 hover:text-green-700">গোপন তথ্য</Link>
                         <Link href="/admin" className="block px-4 py-3 hover:bg-green-100 hover:text-green-700">অ্যাডমিন</Link>

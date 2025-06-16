@@ -37,7 +37,7 @@ export interface SuccessStory {
   title: string
   description: string
   image?: string
-  dateAdded: string
+  dateSubmitted?: string
   images?: any// Array of image URLs
 }
 
@@ -113,21 +113,21 @@ const defaultSuccessStories: SuccessStory[] = [
     title: "রাস্তার গর্ত মেরামত",
     description: "স্থানীয় বাসিন্দাদের অভিযোগের পর প্রধান সড়কের গর্তগুলো মেরামত করা হয়েছে।",
     image: "https://images.unsplash.com/photo-1581094794329-c8112a89af12?w=400&h=250&fit=crop",
-    dateAdded: "২০২৪-০১-১৫",
+    dateSubmitted: "২০২৪-০১-১৫",
   },
   {
     id: 2,
     title: "দুর্নীতি প্রতিরোধ",
     description: "গোপন তথ্যের ভিত্তিতে স্থানীয় দুর্নীতি বন্ধ করা হয়েছে।",
     image: "https://images.unsplash.com/photo-1450101499163-c8848c66ca85?w=400&h=250&fit=crop",
-    dateAdded: "২০২৪-০১-১০",
+    dateSubmitted: "২০২৪-০১-১০",
   },
   {
     id: 3,
     title: "পানি সরবরাহ উন্নতি",
     description: "জনগণের অভিযোগের পর এলাকায় নতুন পানির লাইন স্থাপন করা হয়েছে।",
     image: "https://images.unsplash.com/photo-1541888946425-d81bb19240f5?w=400&h=250&fit=crop",
-    dateAdded: "২০২৪-০১-০৫",
+    dateSubmitted: "২০২৪-০১-০৫",
   },
 ]
 
@@ -284,7 +284,7 @@ export const addSuccessStory = (story: Omit<SuccessStory, "id" | "dateAdded">): 
   const newStory: SuccessStory = {
     ...story,
     id: Date.now(),
-    dateAdded: new Date().toLocaleDateString("bn-BD"),
+    dateSubmitted: new Date().toLocaleDateString("bn-BD"),
   }
   stories.unshift(newStory)
   localStorage.setItem("successStories", JSON.stringify(stories))
