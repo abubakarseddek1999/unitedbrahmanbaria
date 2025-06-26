@@ -9,19 +9,21 @@ import { FileText, Shield, Users, ArrowRight, Phone, Mail, MapPin } from "lucide
 import { initializeData, getSuccessStories, getGalleryItems, type SuccessStory, type GalleryItem } from "@/lib/storage"
 import Banner from "@/components/home/Banner"
 import Navbar from "@/components/share/Navbar"
+import logo from "@/app/asset/images/logo.png";
 import usePaginatedData from "@/hooks/usePaginatedData"
+import Testimonials from "@/components/home/Testimonial"
 
 export default function HomePage() {
   // const [successStories, setSuccessStories] = useState<SuccessStory[]>([])
   const { data: galleryItems, total: galleryDataTotal } = usePaginatedData<{ _id: string; photo: string; title: string; dateSubmitted: string }>({
     endpoint: "/gallerydata",
-    limit: 10,
+    limit: 15,
   });
   const { data: successStories, total: successStoriesTotal } = usePaginatedData<SuccessStory>({
     endpoint: "/successdata",
     limit: 8,
   });
-
+  const [selectedImage, setSelectedImage] = useState<null | { photo: string; title: string }>(null)
 
   useEffect(() => {
     initializeData()
@@ -29,6 +31,17 @@ export default function HomePage() {
     // setGalleryItems(getGalleryItems())
   }, [])
 
+  // Prevent body scroll when modal is open
+  useEffect(() => {
+    if (selectedImage) {
+      document.body.style.overflow = "hidden"
+    } else {
+      document.body.style.overflow = "auto"
+    }
+    return () => {
+      document.body.style.overflow = "auto"
+    }
+  }, [selectedImage])
   return (
     <div className="min-h-screen bg-gradient-to-br from-green-50 to-blue-50">
       <Banner />
@@ -179,16 +192,19 @@ export default function HomePage() {
 
         </div>
       </section>
+
       {/* Gallery Section */}
       <section className="py-16 px-4 bg-white">
         <div className="max-w-7xl mx-auto">
           <h3 className="text-3xl font-bold text-center text-gray-800 mb-12">গ্যালারি</h3>
 
+          {/* Images */}
           <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 xl:grid-cols-5 gap-5">
-            {galleryItems.slice(0, 10).map((item) => (
+            {galleryItems.slice(0, 15).map((item) => (
               <div
                 key={item._id}
-                className="relative aspect-[4/3] group overflow-hidden rounded-xl shadow-sm hover:shadow-lg transition-shadow"
+                className="relative aspect-[4/3] group overflow-hidden rounded-xl shadow-sm hover:shadow-lg transition-shadow cursor-pointer"
+                onClick={() => setSelectedImage({ photo: item.photo, title: item.title })}
               >
                 <Image
                   src={item.photo || "/placeholder.svg"}
@@ -205,27 +221,57 @@ export default function HomePage() {
             ))}
           </div>
 
-          <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 xl:grid-cols-5 gap-5">
-            {
-              galleryItems.length === 0 &&
-             // Render 3 skeleton cards to fill all grid spots responsively
-             [...Array(10)].map((_, i) => (
-              <div
-                key={i}
-                className="relative aspect-[4/3] overflow-hidden rounded-xl shadow-sm bg-gray-300 animate-pulse"
-              >
-                {/* Image placeholder */}
-                <div className="w-full h-full bg-gray-300" />
-
-                {/* Title placeholder overlay */}
-                <div className="absolute inset-x-0 bottom-0  bg-opacity-20 h-8 rounded-b-xl flex items-center justify-center">
-                  <div className="h-4 w-3/4 bg-gray-400 rounded"></div>
+          {/* Skeleton Loaders (if no galleryItems) */}
+          {galleryItems.length === 0 && (
+            <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 xl:grid-cols-5 gap-5 mt-8">
+              {[...Array(10)].map((_, i) => (
+                <div
+                  key={i}
+                  className="relative aspect-[4/3] overflow-hidden rounded-xl shadow-sm bg-gray-300 animate-pulse"
+                >
+                  <div className="w-full h-full bg-gray-300" />
+                  <div className="absolute inset-x-0 bottom-0 bg-opacity-20 h-8 rounded-b-xl flex items-center justify-center">
+                    <div className="h-4 w-3/4 bg-gray-400 rounded"></div>
+                  </div>
                 </div>
-              </div>
-            ))}
-          </div>
+              ))}
+            </div>
+          )}
         </div>
       </section>
+
+      {/* Modal */}
+      {selectedImage && (
+        <div
+          className="fixed inset-0 z-50 bg-black bg-opacity-90 flex items-center justify-center px-4"
+          onClick={(e) => {
+            if (e.target === e.currentTarget) {
+              setSelectedImage(null)
+            }
+          }}
+        >
+          <div className="relative bg-white rounded-lg overflow-hidden max-w-4xl w-full">
+            <button
+              onClick={() => setSelectedImage(null)}
+              className="absolute top-2 right-2 z-10 w-5 h-5 text-gray-600 hover:text-gray-900 bg-white rounded-full  shadow"
+            >
+              ✕
+            </button>
+            <Image
+              src={selectedImage.photo}
+              alt={selectedImage.title}
+              width={1200}
+              height={900}
+              className="w-full h-auto"
+            />
+            <div className="p-4">
+              <h4 className="text-lg font-medium text-gray-800 text-center">{selectedImage.title}</h4>
+            </div>
+          </div>
+        </div>
+      )}
+      {/* testimonial section */}
+      <Testimonials />
 
 
       {/* CTA Section */}
@@ -263,6 +309,7 @@ export default function HomePage() {
               <div className="flex items-center space-x-3 mb-4">
                 <div className="w-10 h-10 bg-green-600 rounded-full flex items-center justify-center">
                   <Shield className="w-5 h-5 text-white" />
+                  <Image src={logo} alt="Logo" width={40} height={40} />
                 </div>
                 <h4 className="text-lg font-bold">একযোগে সদর ব্রাহ্মণবাড়িয়া</h4>
               </div>
@@ -299,11 +346,11 @@ export default function HomePage() {
               <ul className="space-y-2 text-gray-400">
                 <li className="flex items-center">
                   <Phone className="w-4 h-4 mr-2" />
-                  +8801728306504
+                  +8801632090523
                 </li>
                 <li className="flex items-center">
                   <Mail className="w-4 h-4 mr-2" />
-                  abubakarseddek1999@gmail.com
+                  skarifbillah1234@gmail.com
                 </li>
                 <li className="flex items-center">
                   <MapPin className="w-4 h-4 mr-2" />

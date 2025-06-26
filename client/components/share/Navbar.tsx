@@ -4,6 +4,8 @@ import { Shield, Menu, X } from "lucide-react";
 import Link from "next/link";
 import { useState, useEffect } from "react";
 import { usePathname, useRouter } from "next/navigation";
+import Image from "next/image";
+import logo from "@/app/asset/images/logo.png"; // adjust path if needed
 
 const Navbar = () => {
     const [isMenuOpen, setIsMenuOpen] = useState(false);
@@ -20,10 +22,13 @@ const Navbar = () => {
                 <div className="flex items-center justify-between">
                     <div className="flex items-center space-x-3">
                         <div className="w-12 h-12 bg-green-600 rounded-full flex items-center justify-center">
-                            <Link href="/"><Shield className="w-6 h-6 text-white" /></Link>
+                            <Link href="/">
+                                {/* <Shield className="w-6 h-6 text-white" /> */}
+                                <Image src={logo} alt="Logo" width={40} height={40} />
+                            </Link>
                         </div>
                         <div>
-                            <h1 className="text-xl font-bold text-gray-800">ঐক্যবদ্ধ সদর ব্রাহ্মণবাড়িয়া</h1>
+                            <h1 className="text-[16px] md:text-xl font-bold text-gray-800">ঐক্যবদ্ধ সদর ব্রাহ্মণবাড়িয়া</h1>
                             <p className="text-sm text-gray-600">স্বচ্ছতা ও জবাবদিহিতার প্ল্যাটফর্ম</p>
                         </div>
                     </div>
