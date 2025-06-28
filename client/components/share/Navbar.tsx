@@ -36,6 +36,7 @@ const Navbar = () => {
                     {/* Desktop menu */}
                     <nav className="hidden md:flex space-x-6">
                         <Link href="/" className=" hover:text-green-600 font-medium">হোম</Link>
+                        <Link href="/team" className=" hover:text-green-600 font-medium">টিম </Link>
                         <Link href="/complaint" className=" hover:text-green-600 font-medium">অভিযোগ</Link>
                         <Link href="/spot-info" className=" hover:text-green-600 font-medium">গোপন তথ্য</Link>
                         <Link href="/admin" className=" hover:text-green-600 font-medium">অ্যাডমিন</Link>
@@ -53,6 +54,7 @@ const Navbar = () => {
                 {isMenuOpen && (
                     <div className="md:hidden mt-4 bg-white rounded-lg overflow-hidden transition-all">
                         <Link href="/" className="block  font-bold px-4 py-3 hover:bg-green-100 hover:text-green-700">হোম</Link>
+                        <Link href="/team" className=" hover:text-green-600 font-medium">টিম </Link>
                         <Link href="/complaint" className="block px-4 py-3 hover:bg-green-100 hover:text-green-700">অভিযোগ</Link>
                         <Link href="/spot-info" className="block px-4 py-3 hover:bg-green-100 hover:text-green-700">গোপন তথ্য</Link>
                         <Link href="/admin" className="block px-4 py-3 hover:bg-green-100 hover:text-green-700">অ্যাডমিন</Link>
