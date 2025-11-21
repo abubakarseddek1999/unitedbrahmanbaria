@@ -12,22 +12,15 @@ import {
     Target,
     Zap,
     Trophy,
-    BookOpen,
-    Globe,
-    Lightbulb,
-    HeartHandshake,
-    Leaf,
-    ShieldCheck,
-    MonitorSmartphone,
 } from "lucide-react"
 import Image from "next/image"
+import saberImg from "@/app/asset/images/saber.jpg"
+import AjijiImg from "@/app/asset/images/Ajiji.jpg"
 import { useState, useEffect } from "react"
-
 export default function TeamPage() {
     const [isVisible, setIsVisible] = useState(false)
     const [hoveredCard, setHoveredCard] = useState<number | null>(null)
     const [currentSlide, setCurrentSlide] = useState(0)
-
     useEffect(() => {
         setIsVisible(true)
 
@@ -35,167 +28,75 @@ export default function TeamPage() {
         const interval = setInterval(() => {
             setCurrentSlide((prev) => (prev + 1) % 4)
         }, 3000)
-
         return () => clearInterval(interval)
     }, [])
-
     const teamMembers = [
         {
             id: 1,
-            name: "ড. মোহাম্মদ রহিম উদ্দিন",
-            profession: "প্রতিষ্ঠাতা ও প্রধান নির্বাহী",
-            image: "/placeholder.svg?height=400&width=400",
+            name: "Sheikh Arif Billah  (আজিজী)",
+            profession: "প্রধান নির্বাহী",
+            image: AjijiImg,
             email: "rahim@unitybb.com",
             phone: "+880 1711-123456",
-            location: "ঢাকা, বাংলাদেশ",
+            location: "ব্রাহ্মণবাড়িয়া, বাংলাদেশ",
             gradient: "from-green-400 to-green-600",
         },
         {
             id: 2,
-            name: "প্রফেসর ড. ফাতেমা খাতুন",
-            profession: "একাডেমিক পরিচালক",
-            image: "/placeholder.svg?height=400&width=400",
+            name: "Md Saber Hossain  (সাবের)",
+            profession: "পরিচালক",
+            image: saberImg,
             email: "fatema@unitybb.com",
             phone: "+880 1712-234567",
-            location: "চট্টগ্রাম, বাংলাদেশ",
+            location: "ব্রাহ্মণবাড়িয়া, বাংলাদেশ",
             gradient: "from-green-500 to-emerald-600",
         },
         {
             id: 3,
             name: "মোঃ আব্দুল করিম",
             profession: "প্রযুক্তি পরিচালক",
-            image: "/placeholder.svg?height=400&width=400",
+            image: "https://i.postimg.cc/65rX96Vt/504265699-122114399060890857-3835222468541346831-n.jpg",
             email: "karim@unitybb.com",
             phone: "+880 1713-345678",
-            location: "সিলেট, বাংলাদেশ",
+            location: "ব্রাহ্মণবাড়িয়া, বাংলাদেশ",
             gradient: "from-teal-400 to-green-600",
         },
         {
             id: 4,
             name: "সালমা আক্তার",
             profession: "শিক্ষার্থী সেবা পরিচালক",
-            image: "/placeholder.svg?height=400&width=400",
+            image: "https://i.postimg.cc/65rX96Vt/504265699-122114399060890857-3835222468541346831-n.jpg",
             email: "salma@unitybb.com",
             phone: "+880 1714-456789",
-            location: "রাজশাহী, বাংলাদেশ",
+            location: "ব্রাহ্মণবাড়িয়া, বাংলাদেশ",
             gradient: "from-emerald-400 to-green-600",
         },
         {
             id: 5,
             name: "ড. নাসির উদ্দিন আহমেদ",
             profession: "গবেষণা পরিচালক",
-            image: "/placeholder.svg?height=400&width=400",
+            image: "https://i.postimg.cc/65rX96Vt/504265699-122114399060890857-3835222468541346831-n.jpg",
             email: "nasir@unitybb.com",
             phone: "+880 1715-567890",
-            location: "খুলনা, বাংলাদেশ",
+            location: "ব্রাহ্মণবাড়িয়া, বাংলাদেশ",
             gradient: "from-green-400 to-teal-600",
         },
         {
             id: 6,
             name: "রাশিদা বেগম",
             profession: "প্রশাসনিক পরিচালক",
-            image: "/placeholder.svg?height=400&width=400",
+            image: "https://i.postimg.cc/65rX96Vt/504265699-122114399060890857-3835222468541346831-n.jpg",
             email: "rashida@unitybb.com",
             phone: "+880 1716-678901",
-            location: "বরিশাল, বাংলাদেশ",
+            location: "ব্রাহ্মণবাড়িয়া, বাংলাদেশ",
             gradient: "from-green-500 to-green-700",
         },
     ]
-
     const bannerStats = [
         { label: "দক্ষ মেম্বার ", value: "৫০+", icon: Users, color: "text-green-600" },
         { label: "বছরের অভিজ্ঞতা", value: "১৫+", icon: Calendar, color: "text-blue-600" },
         { label: "সফল প্রকল্প", value: "২০০+", icon: Award, color: "text-purple-600" },
         { label: "সন্তুষ্ট", value: "৫০০+", icon: Heart, color: "text-red-600" },
-    ]
-
-    const achievements = [
-        {
-          year: "২০২৫",
-          title: "টিমের আত্মপ্রকাশ",
-          description: "মানবতার পাশে দাঁড়ানোর সংকল্প নিয়ে আমাদের যাত্রা শুরু হয় ২০২৫ সালে",
-          icon: Users,
-          color: "from-teal-400 to-cyan-500",
-        },
-    
-        {
-          year: "২০২৫",
-          title: "পরিবেশ সচেতনতা অভিযান",
-          description: "রাস্তায় গাছ লাগানো, দেওয়াল আর্ট রক্ষা ও পরিচ্ছন্নতা কার্যক্রম চালানো হয়",
-          icon: Leaf,
-          color: "from-green-400 to-emerald-500",
-        },
-        {
-          year: "২০২৫",
-          title: "গোপন অভিযোগ গ্রহণ ব্যবস্থা চালু",
-          description: "নিপীড়িতদের সহায়তায় একটি অনলাইন গোপন অভিযোগ ফর্ম চালু করা হয়",
-          icon: ShieldCheck,
-          color: "from-purple-500 to-indigo-600",
-        },
-        {
-          year: "২০২৫",
-          title: "মানবিক সহযোগিতায় প্রযুক্তি ব্যবহার",
-          description: "ওয়েবসাইট ও ফেসবুক পেজ চালু করে আরও সহজে মানুষের পাশে দাঁড়ানোর পথ তৈরি হয়",
-          icon: MonitorSmartphone,
-          color: "from-blue-400 to-sky-600",
-        },
-        {
-          year: "২০২৫",
-          title: "কালোবাজারি ধরা পড়ে",
-          description: "রেলস্টেশনে টিকিট কালোবাজারি ধরতে সক্রিয় ভূমিকা পালন করি",
-          icon: ShieldCheck,
-          color: "from-red-400 to-pink-500",
-        },
-        {
-          year: "২০২৫",
-          title: "রেলওয়ে কর্তৃপক্ষের সাথে বৈঠক",
-          description: "সেবার মানোন্নয়ন ও জন-অসুবিধা লাঘবে আলোচনা সভায় অংশ নেই",
-          icon: Users,
-          color: "from-slate-500 to-gray-700",
-        },
-     
-        {
-          year: "২০২৫",
-          title: "অপরাধীকে জনগণের সহায়তায় আটক",
-          description: "রেলস্টেশন এলাকায় অপরাধীকে ধাওয়া করে জনগণের সহায়তায় পুলিশের হাতে তুলে দেওয়া হয়",
-          icon: ShieldCheck,
-          color: "from-orange-400 to-amber-500",
-        },
-        {
-          year: "২০২৫",
-          title: "গোপন তথ্য দিয়ে অপরাধী ধরতে সহায়তা",
-          description: "অনেক অপরাধী গোপন তথ্যের ভিত্তিতে আইনশৃঙ্খলা বাহিনীর হাতে ধরা পড়ে",
-          icon: MonitorSmartphone,
-          color: "from-yellow-500 to-amber-600",
-        },
-      ];
-      
-
-    const values = [
-        {
-            icon: Target,
-            title: "লক্ষ্য অর্জন",
-            description: "আমরা প্রতিটি প্রকল্পে সর্বোচ্চ মানের সেবা প্রদানে প্রতিশ্রুতিবদ্ধ",
-            color: "from-green-400 to-green-600",
-        },
-        {
-            icon: Zap,
-            title: "উদ্ভাবন",
-            description: "নতুন প্রযুক্তি ও পদ্ধতি ব্যবহার করে আধুনিক সমাধান প্রদান",
-            color: "from-emerald-400 to-green-600",
-        },
-        {
-            icon: Heart,
-            title: "সেবার মনোভাব",
-            description: "শিক্ষার্থী ও ক্লায়েন্টদের সন্তুষ্টিই আমাদের প্রধান লক্ষ্য",
-            color: "from-teal-400 to-green-600",
-        },
-        {
-            icon: Star,
-            title: "উৎকর্ষতা",
-            description: "প্রতিটি কাজে সর্বোচ্চ মানের নিশ্চয়তা প্রদান",
-            color: "from-green-500 to-emerald-600",
-        },
     ]
 
     return (
@@ -351,82 +252,9 @@ export default function TeamPage() {
                 </div>
             </div>
 
-            {/* New Achievements Section */}
-            <div className="relative z-10 py-20 bg-gradient-to-br from-gray-50 to-green-50">
-                <div className="container mx-auto px-4">
-                    <div className="text-center mb-16">
-                        <h2 className="text-4xl md:text-5xl font-bold mb-2 bg-gradient-to-r from-green-600 p-2 to-green-800 bg-clip-text text-transparent leading-relaxed">
-                            আমাদের গৌরবময় অর্জন
-                        </h2>
 
 
-                        <p className="text-lg text-gray-600 max-w-2xl mx-auto">বছরের পর বছর ধরে আমাদের নিরলস প্রচেষ্টার ফসল</p>
-                    </div>
-
-                    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
-                        {achievements.map((achievement, index) => (
-                            <div
-                                key={index}
-                                className={`group relative transition-all duration-700 hover:scale-105 ${isVisible ? "opacity-100 translate-y-0" : "opacity-0 translate-y-10"}`}
-                                style={{ animationDelay: `${index * 200}ms` }}
-                            >
-                                <div className="backdrop-blur-sm bg-white/90 border border-green-200/50 rounded-2xl p-6 hover:bg-white hover:border-green-300/70 transition-all duration-500 hover:shadow-2xl shadow-lg h-full">
-                                    {/* Year Badge */}
-                                    <div className="inline-flex items-center gap-2 bg-green-100 text-green-700 px-3 py-1 rounded-full text-sm font-bold mb-4">
-                                        {achievement.year}
-                                    </div>
-
-                                    {/* Icon */}
-                                    <div
-                                        className={`bg-gradient-to-br ${achievement.color} w-16 h-16 rounded-2xl flex items-center justify-center mb-4 group-hover:rotate-12 transition-transform duration-300 shadow-lg`}
-                                    >
-                                        <achievement.icon className="w-8 h-8 text-white" />
-                                    </div>
-
-                                    {/* Content */}
-                                    <h3 className="text-xl font-bold text-gray-800 mb-3 group-hover:text-green-700 transition-colors duration-300">
-                                        {achievement.title}
-                                    </h3>
-                                    <p className="text-gray-600 text-sm leading-relaxed">{achievement.description}</p>
-
-                                    {/* Hover Effect Border */}
-                                    <div className="absolute inset-0 rounded-2xl bg-gradient-to-r from-green-400 via-emerald-500 to-green-600 opacity-0 group-hover:opacity-10 transition-opacity duration-500 -z-10"></div>
-                                </div>
-                            </div>
-                        ))}
-                    </div>
-                </div>
-            </div>
-
-            {/* Values Section */}
-            <div className="relative z-10 py-16 bg-gradient-to-br from-green-50 to-emerald-50">
-                <div className="container mx-auto px-4">
-                    <div className="text-center mb-16">
-                        <h2 className="text-4xl pb-2 md:text-5xl font-bold text-gray-800 mb-2 bg-gradient-to-r from-green-600 to-green-800 bg-clip-text text-transparent">
-                            আমাদের মূল্যবোধ
-                        </h2>
-                        <p className="text-lg text-gray-600 max-w-2xl mx-auto">যে নীতিমালার উপর ভিত্তি করে আমরা কাজ করি</p>
-                    </div>
-
-                    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-                        {values.map((value, index) => (
-                            <div
-                                key={index}
-                                className="group backdrop-blur-sm bg-white/80 border border-green-200/50 rounded-2xl p-6 hover:bg-white/95 hover:border-green-300/70 transition-all duration-500 hover:scale-105 hover:-translate-y-2 shadow-lg hover:shadow-xl"
-                            >
-                                <div
-                                    className={`bg-gradient-to-br ${value.color} w-12 h-12 rounded-xl flex items-center justify-center mb-4 group-hover:rotate-12 transition-transform duration-300 shadow-md`}
-                                >
-                                    <value.icon className="w-6 h-6 text-white" />
-                                </div>
-                                <h3 className="text-xl font-bold text-gray-800 mb-3">{value.title}</h3>
-                                <p className="text-gray-600 text-sm leading-relaxed">{value.description}</p>
-                            </div>
-                        ))}
-                    </div>
-                </div>
-            </div>
-
+        
             {/* Team Members Section */}
             <div className="relative z-10 py-16">
                 <div className="container mx-auto px-4">
@@ -437,11 +265,11 @@ export default function TeamPage() {
                         <p className="text-lg text-gray-600 max-w-2xl mx-auto">অভিজ্ঞতা ও দক্ষতার সমন্বয়ে গঠিত আমাদের নেতৃত্ব দল</p>
                     </div>
 
-                    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+                    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-2 md:gap-8">
                         {teamMembers.map((member, index) => (
                             <div
                                 key={member.id}
-                                className={`group relative transition-all duration-700 hover:scale-105 ${isVisible ? "opacity-100 translate-y-0" : "opacity-0 translate-y-10"}`}
+                                className={``}
                                 style={{ animationDelay: `${index * 150}ms` }}
                                 onMouseEnter={() => setHoveredCard(member.id)}
                                 onMouseLeave={() => setHoveredCard(null)}
@@ -450,14 +278,14 @@ export default function TeamPage() {
                                 <div className="backdrop-blur-sm bg-white/80 border border-green-200/50 rounded-3xl overflow-hidden hover:bg-white/95 hover:border-green-300/70 transition-all duration-500 hover:shadow-2xl hover:shadow-green-500/10 shadow-lg">
                                     {/* Profile Image with Gradient Overlay */}
                                     <div className="relative overflow-hidden">
-                                        <div className={`absolute inset-0 bg-gradient-to-br ${member.gradient} opacity-10 z-10`}></div>
+                                        <div className={`absolute inset-0 bg-gradient-to-br ${member.gradient} opacity-10 z-10 `}></div>
                                         <Image
                                             // src={member.image || "/placeholder.svg"}
-                                            src="https://i.postimg.cc/65rX96Vt/504265699-122114399060890857-3835222468541346831-n.jpg"
+                                            src={member.image}
                                             alt={member.name}
                                             width={400}
                                             height={300}
-                                            className="w-full h-64 object-cover transition-transform duration-700 group-hover:scale-110"
+                                            className="w-full h-[350px] object-contain transition-transform duration-700 group-hover:scale-110"
                                         />
 
                                         {/* Floating Animation on Hover */}
@@ -469,7 +297,7 @@ export default function TeamPage() {
                                             </div>
                                         </div>
 
-                                       
+
                                     </div>
 
                                     {/* Contact Information */}
@@ -524,7 +352,7 @@ export default function TeamPage() {
                             আমাদের সাথে যোগ দিন
                         </h2>
                         <p className="text-xl text-gray-600 mb-8 max-w-2xl mx-auto">
-                            আপনিও আমাদের দলের অংশ হয়ে বাংলাদেশের শিক্ষা উন্নয়নে অবদান রাখুন
+                            আপনিও আমাদের দলের অংশ হয়ে ব্রাহ্মণবাড়িয়ার উন্নয়নে অবদান রাখুন
                         </p>
                         <div className="flex flex-col sm:flex-row gap-4 justify-center">
                             <Button
