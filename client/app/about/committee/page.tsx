@@ -1,6 +1,6 @@
-import { TeamCard } from "@/components/TeamCard"
+// import { TeamCard } from "@/components/TeamCard"
 import jobaerimg from "@/assets/commiteeimg/jobaerimg.png"
-import { committeeData } from "@/data/CommiteeData"
+// import { committeeData } from "@/data/CommiteeData"
 import Image from "next/image"
 
 export default function CommitteePage() {
@@ -40,11 +40,11 @@ export default function CommitteePage() {
 
 
             <p className="text-4xl font-bold mb-5">পরিচালনা পরিষদ</p>
-            <div className="grid gap-8 sm:grid-cols-2 lg:grid-cols-3">
+            {/* <div className="grid gap-8 sm:grid-cols-2 lg:grid-cols-3">
               {committeeData.map((member) => (
                 <TeamCard key={member.id} member={member} />
               ))}
-            </div>
+            </div> */}
           </div>
         </section>
       </main>
