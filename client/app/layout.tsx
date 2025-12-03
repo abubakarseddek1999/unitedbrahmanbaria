@@ -79,6 +79,10 @@ import "./globals.css"
 import { Toaster } from "@/components/ui/toaster"
 import Navbar from "@/components/share/Navbar"
 import icon from "@/app/asset/images/logo.png"
+import Topbar from "@/components/share/Topbar"
+import Footer from "@/components/share/Footer"
+import { GoogleTranslate } from "@/components/language/GoogleTranslate"
+
 // Configure Hind Siliguri with all weights and subsets
 const hindSiliguri = Hind_Siliguri({
   subsets: ["bengali", "latin"],
@@ -97,7 +101,14 @@ const geist = Geist({
 
 const inter = Inter({ subsets: ["latin"] })
 const queryClient = new QueryClient()
-
+// export const metadata: Metadata = {
+//   title: {
+//     default: "ঐক্যবদ্ধ সদর ব্রাহ্মণবাড়িয়া",
+//     template: "%s | ঐক্যবদ্ধ সদর ব্রাহ্মণবাড়িয়া",
+//   },
+//   description: "স্বচ্ছতা ও জবাবদিহিতার প্ল্যাটফর্ম",
+//   keywords: "স্বচ্ছতা, জবাবদিহিতা, প্ল্যাটফর্ম,ঐক্যবদ্ধ, ব্রাহ্মণবাড়িয়া",
+// }
 export default function RootLayout({
   children,
 }: {
@@ -123,14 +134,17 @@ export default function RootLayout({
         />
       </head>
       <body className={inter.className}>
+        <GoogleTranslate />
         <QueryClientProvider client={queryClient}>
-          <Navbar />
+          {/* <Navbar /> */}
+          <Topbar />
           {children}
           <Toaster />
+          <Footer />
         </QueryClientProvider>
 
-         {/* Load Google Translate Script */}
-         <script
+        {/* Load Google Translate Script */}
+        <script
           src="https://translate.google.com/translate_a/element.js?cb=googleTranslateElementInit"
           async
           defer

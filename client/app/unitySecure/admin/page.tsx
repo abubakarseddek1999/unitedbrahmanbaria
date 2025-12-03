@@ -24,6 +24,7 @@ import SuccessStoryContent from "@/components/success/SuccessStoryContent"
 import SuccessCardHeader from "@/components/success/SuccessCardHeader"
 import usePaginatedData from "@/hooks/usePaginatedData"
 import useGalleryData from "@/hooks/useGalleryData"
+import Members from "@/components/membr/Members"
 
 export default function AdminPage() {
   const [refresh, setRefresh] = useState(false)
@@ -56,6 +57,10 @@ export default function AdminPage() {
   });
   const { data: successStories, total: successStoriesTotal } = usePaginatedData({
     endpoint: "/successdata",
+    limit: 8,
+  });
+  const { data: memberData, total: memberDataTotal } = usePaginatedData({
+    endpoint: "/member",
     limit: 8,
   });
 
@@ -144,7 +149,7 @@ export default function AdminPage() {
       </header>
       {/* Dashboard Stats */}
       <div className="container mx-auto px-4 py-6">
-        <div className="grid grid-cols-2 md:grid-cols-4 gap-6 mb-8">
+        <div className="grid grid-cols-3 md:grid-cols-3 lg:grid-cols-5 gap-6 mb-8">
           <Card className="bg-gradient-to-r from-blue-50 to-blue-100 border-blue-200 hover:shadow-lg transition-shadow">
             <CardContent className="p-6">
               <div className="flex items-center justify-between">
@@ -203,14 +208,29 @@ export default function AdminPage() {
               </div>
             </CardContent>
           </Card>
+          <Card className="bg-gradient-to-r from-blue-50 to-blue-100 border-blue-200 hover:shadow-lg transition-shadow">
+            <CardContent className="p-6">
+              <div className="flex items-center justify-between">
+                <div>
+                  <p className="text-sm font-semibold text-blue-700 uppercase tracking-wide">মোট সদস্য</p>
+                  <p className="text-3xl font-bold text-blue-800">{memberDataTotal || 0}</p>
+                  <p className="text-xs text-blue-600 mt-1">সর্বমোট সদস্য</p>
+                </div>
+                <div className="w-12 h-12 bg-blue-500 rounded-xl flex items-center justify-center">
+                  <FileText className="w-6 h-6 text-white" />
+                </div>
+              </div>
+            </CardContent>
+          </Card>
         </div>
         {/* Main Content Tabs */}
-        <Tabs defaultValue="complaints" className="space-y-6">
-          <TabsList className="grid w-full grid-cols-4 gap-5">
+        <Tabs defaultValue="complaints" className="space-y-6 mb-5">
+          <TabsList className="grid w-full grid-cols-5 gap-5">
             <TabsTrigger value="complaints">অভিযোগ </TabsTrigger>
             <TabsTrigger value="spotinfo">গোপন তথ্য</TabsTrigger>
             <TabsTrigger value="stories">সফলতার গল্প</TabsTrigger>
             <TabsTrigger value="gallery">গ্যালারি</TabsTrigger>
+            <TabsTrigger value="members">সদস্য বৃন্দ</TabsTrigger>
           </TabsList>
 
           {/* Complaints Management */}
@@ -294,6 +314,10 @@ export default function AdminPage() {
           <TabsContent value="gallery">
             <Gallery />
 
+          </TabsContent>
+          {/* Team Members Management */}
+          <TabsContent value="members">
+            <Members />
           </TabsContent>
         </Tabs>
       </div>

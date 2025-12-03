@@ -2,6 +2,7 @@
 @tailwind components;
 @tailwind utilities;
 
+/* -------------------- Custom Properties -------------------- */
 @layer base {
   :root {
     --background: 0 0% 100%;
@@ -59,21 +60,29 @@
   }
 }
 
+/* -------------------- Base Styles -------------------- */
 @layer base {
   * {
     @apply border-border;
+    transition: all 0.2s ease-in-out;
   }
+
   body {
     @apply bg-background text-foreground;
+    font-family: "Inter", "Kalpurush", "SolaimanLipi", sans-serif;
+    top: 0 !important;
+  }
+
+  button:focus,
+  input:focus,
+  textarea:focus,
+  select:focus {
+    outline: 2px solid #3b82f6;
+    outline-offset: 2px;
   }
 }
 
-/* Bengali font support */
-body {
-  font-family: "Inter", "Kalpurush", "SolaimanLipi", sans-serif;
-}
-
-/* Custom scrollbar */
+/* -------------------- Custom Scrollbar -------------------- */
 ::-webkit-scrollbar {
   width: 6px;
 }
@@ -91,23 +100,17 @@ body {
   background: #a8a8a8;
 }
 
-/* Smooth transitions */
-* {
-  transition: all 0.2s ease-in-out;
-}
-
-/* Focus styles for accessibility */
-button:focus,
-input:focus,
-textarea:focus,
-select:focus {
-  outline: 2px solid #3b82f6;
-  outline-offset: 2px;
-}
-
-/* Print styles */
+/* -------------------- Print Styles -------------------- */
 @media print {
   .no-print {
     display: none !important;
   }
 }
+
+/* -------------------- Google Translate Hiding -------------------- */
+/* Hide top banner iframe */
+.skiptranslate {
+  display: none !important;
+}
+
+

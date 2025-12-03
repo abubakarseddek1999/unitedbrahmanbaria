@@ -1,5 +1,5 @@
 // import { TeamCard } from "@/components/TeamCard"
-import jobaerimg from "@/assets/commiteeimg/jobaerimg.png"
+// import jobaerimg from "@/assets/commiteeimg/jobaerimg.png"
 // import { committeeData } from "@/data/CommiteeData"
 import Image from "next/image"
 
@@ -23,11 +23,11 @@ export default function CommitteePage() {
 
             {/* Image Container */}
             <div className="flex justify-center items-center overflow-hidden rounded-t-xl">
-              <Image
+              {/* <Image
                 src={jobaerimg}
                 alt="jobaerimg"
                 className="object-cover border-8 border-[#6EC1E4] rounded-md w-full max-w-md "
-              />
+              /> */}
             </div>
 
           </div>

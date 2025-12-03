@@ -205,7 +205,7 @@ export const SuccessStoryCard = ({ story, setRefresh }: { story: any, setRefresh
                                                     alt="example"
                                                     width={800}
                                                     height={500}
-                                                    className="object-fill w-full h-[200px]"
+                                                    className="object-fill w-full aspect-[4/3]"
                                                 />
                                             </div>
                                         </div>
