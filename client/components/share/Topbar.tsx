@@ -22,7 +22,7 @@ const Topbar = () => {
     // Navigation + Dropdown structure
     const navLinks = [
         { href: "/", label: "হোম" },
-        { href: "/join", label: "যোগ দিন" },
+        { href: "/joinWithUs", label: "যোগ দিন" },
         {
             href: "/team/members",
             label: "টিম",

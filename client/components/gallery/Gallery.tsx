@@ -86,24 +86,24 @@ const Gallery = () => {
     return (
         <div>
             <Card>
-                <CardHeader>
+                <CardHeader className="px-2 md:px-6">
                     <div className="flex items-center justify-between my-5">
                         <div>
                             <p className="text-xl md:text-2xl font-semibold leading-none tracking-tight">
                                 গ্যালারি ব্যবস্থাপনা
                             </p>
-                            <CardDescription>ছবি ও ভিডিও আপলোড ও ব্যবস্থাপনা করুন</CardDescription>
+                            <CardDescription className="hidden md:flex">ছবি ও ভিডিও আপলোড ও ব্যবস্থাপনা করুন</CardDescription>
                         </div>
                         <Button
                             onClick={() => setIsGalleryModalOpen(true)}
                             className="bg-purple-600 hover:bg-purple-700"
                         >
-                            <Plus className="w-4 h-4 mr-2" />
-                            নতুন মিডিয়া যোগ করুন
+                            <Plus className="w-4 h-4" />
+                            যোগ করুন
                         </Button>
                     </div>
                 </CardHeader>
-                <CardContent>
+                <CardContent className="px-2 md:px-6 pb-6">
                     <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
                         {allItems?.map((item, index) => {
                             const isLast = index === allItems.length - 1

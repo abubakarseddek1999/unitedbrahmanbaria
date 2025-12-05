@@ -1,9 +1,10 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { Dialog, DialogContent, DialogHeader, DialogTitle } from "../ui/dialog";
+import { Dialog, DialogContent } from "../ui/dialog";
 import { Button } from "../ui/button";
-import { useToast } from "@/hooks/use-toast"
+import { DialogHeader, DialogTitle } from "../ui/dialog";
+import { useToast } from "@/hooks/use-toast";
 import useAxiosPublic from "@/hooks/useAxios";
 
 interface EditMemberProps {
@@ -28,7 +29,7 @@ const EditMember = ({ open, onClose, item, refetch }: EditMemberProps) => {
         photo: null as File | null,
     });
 
-    // Load previous values
+    // Load initial data
     useEffect(() => {
         if (item) {
             setFormData({
@@ -38,53 +39,43 @@ const EditMember = ({ open, onClose, item, refetch }: EditMemberProps) => {
                 gender: item.gender || "",
                 photo: null,
             });
-
             setPhotoPreview(item.photo || null);
         }
     }, [item]);
 
-    // Input Change
     const handleInputChange = (e: any) => {
         const { name, value } = e.target;
-        setFormData((prev) => ({ ...prev, [name]: value }));
+        setFormData((p) => ({ ...p, [name]: value }));
     };
 
-    // Gender Change
     const handlegenderChange = (e: any) => {
-        const { value } = e.target;
-        setFormData((prev) => ({ ...prev, gender: value }));
+        setFormData((p) => ({ ...p, gender: e.target.value }));
     };
 
-    // Photo Upload + Preview
     const handlePhotoUpload = (e: any) => {
         const file = e.target.files[0];
         if (file) {
-            setFormData((prev) => ({ ...prev, photo: file }));
+            setFormData((p) => ({ ...p, photo: file }));
             setPhotoPreview(URL.createObjectURL(file));
         }
     };
 
-    // Submit Handler
     const handleSubmit = async () => {
         if (!item) return;
 
         setLoading(true);
-
         try {
             const fd = new FormData();
 
-            // send all fields
             const finalData = {
                 name: formData.name,
                 designation: formData.designation,
                 gender: formData.gender,
                 phone: formData.phone,
-            }
+            };
+
             fd.append("data", JSON.stringify(finalData));
-            // send photo only if updated
-            if (formData.photo) {
-                fd.append("photo", formData.photo as Blob);
-            }
+            if (formData.photo) fd.append("photo", formData.photo);
 
             const res = await axiosPublic.patch(`/member/${item._id}`, fd);
 
@@ -96,7 +87,7 @@ const EditMember = ({ open, onClose, item, refetch }: EditMemberProps) => {
                 refetch();
                 onClose();
             }
-        } catch (error) {
+        } catch (err) {
             toast({
                 title: "❌ ত্রুটি",
                 description: "তথ্য আপডেট করতে সমস্যা হয়েছে।",
@@ -109,12 +100,16 @@ const EditMember = ({ open, onClose, item, refetch }: EditMemberProps) => {
 
     return (
         <Dialog open={open} onOpenChange={onClose}>
-            <DialogContent>
-                <DialogHeader>
+            <DialogContent className="max-w-lg w-full max-h-[90vh] p-0 flex flex-col overflow-hidden">
+
+                {/* HEADER — Sticky */}
+                <DialogHeader className="sticky top-0 bg-white border-b px-6 py-4 z-10">
                     <DialogTitle>সদস্য সম্পাদনা করুন</DialogTitle>
                 </DialogHeader>
 
-                <div className="space-y-3">
+                {/* BODY — Scrollable */}
+                <div className="flex-1 overflow-y-auto px-6 py-4 space-y-4">
+
                     {/* Name */}
                     <div>
                         <span className="text-sm text-gray-600">সদস্যের নাম</span>
@@ -139,9 +134,8 @@ const EditMember = ({ open, onClose, item, refetch }: EditMemberProps) => {
                         >
                             <option value="">পদবি নির্বাচন করুন</option>
                             <option value="নতুন-আবেদনকারী">নতুন আবেদনকারী</option>
-                            <option value="তত্ত্বাবধায়ক ">তত্ত্বাবধায়ক </option>
-                            {/* <option value="সদস্য">সদস্য</option> */}
-                            <option value="কার্যকরী-সদস্য">কার্যকরী  সদস্য</option>
+                            <option value="তত্ত্বাবধায়ক">তত্ত্বাবধায়ক</option>
+                            <option value="কার্যকরী-সদস্য">কার্যকরী সদস্য</option>
                             <option value="প্রধান-নির্বাহী">প্রধান নির্বাহী</option>
                             <option value="পরিচালক">পরিচালক</option>
                             <option value="উপদেষ্টা">উপদেষ্টা</option>
@@ -188,22 +182,21 @@ const EditMember = ({ open, onClose, item, refetch }: EditMemberProps) => {
                         />
                     </div>
 
-                    {/* Photo Preview */}
+                    {/* Preview */}
                     {photoPreview && (
                         <div className="mt-2 w-32 h-32 border rounded overflow-hidden">
                             <img
                                 src={photoPreview}
-                                alt="Preview"
                                 className="w-full h-full object-cover"
+                                alt="Preview"
                             />
                         </div>
                     )}
                 </div>
 
-                <div className="flex justify-end gap-2 mt-4">
-                    <Button variant="outline" onClick={onClose}>
-                        বাতিল
-                    </Button>
+                {/* FOOTER — Sticky */}
+                <div className="sticky bottom-0 bg-white border-t px-6 py-4 flex justify-end gap-2">
+                    <Button variant="outline" onClick={onClose}>বাতিল</Button>
                     <Button onClick={handleSubmit} disabled={loading}>
                         {loading ? "আপডেট হচ্ছে..." : "আপডেট করুন"}
                     </Button>

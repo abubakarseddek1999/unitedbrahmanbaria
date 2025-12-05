@@ -118,15 +118,15 @@ export default function ComplainCard({ complaint, refetch }: { complaint: Compla
     };
 
     return (
-        <div className="p-4">
-            <Card className="hover:shadow-md transition-shadow flex flex-col-reverse md:flex-row gap-2  border-l-4 border-l-red-500 p-5">
+        <div className=" p-2 md:p-4">
+            <Card className="hover:shadow-md transition-shadow flex flex-col-reverse md:flex-row gap-2  border-l-4 border-l-red-500 p-2 md:p-5">
                 {/* Left Content Section */}
                 <div className="w-full md:w-1/2">
-                    <div className="flex items-start justify-between mb-3">
-                        <h4 className="font-bold text-xl text-gray-900 leading-tight pr-4">{complaint.title}</h4>
+                    <div className="flex items-start justify-between my-3">
+                        <h4 className="font-bold text-base md:text-xl text-gray-900 leading-tight pr-4">{complaint.title}</h4>
                     </div>
 
-                    <p className="text-gray-700 leading-relaxed mb-4 line-clamp-4 text-base">{complaint.description}</p>
+                    <p className="text-gray-700 leading-relaxed mb-4 line-clamp-4 text-xs md:text-base">{complaint.description}</p>
 
                     {/* Meta Information */}
                     <div className="flex flex-wrap items-center gap-4 mb-4 text-sm text-gray-600">
@@ -152,7 +152,7 @@ export default function ComplainCard({ complaint, refetch }: { complaint: Compla
                     </div>
 
                     {/* Action Buttons */}
-                    <div className="flex items-center gap-3">
+                    <div className="flex items-center gap-2 md:gap-3">
                         <Select value={complaint.status} onValueChange={handleStatusChange}>
                             <SelectTrigger className="w-44 h-9">
                                 <SelectValue placeholder="স্ট্যাটাস পরিবর্তন করুন" />
@@ -167,13 +167,13 @@ export default function ComplainCard({ complaint, refetch }: { complaint: Compla
                         </Select>
 
                         <Link href={`/complaint-details/${complaint._id}`}>
-                            <Button size="sm" variant="outline" className="h-9 px-3">
+                            <Button size="sm" variant="outline" className="h-9 px-2 md:px-3">
                                 <Eye className="w-4 h-4 mr-1" />
                                 দেখুন
                             </Button>
                         </Link>
                         <button
-                            className="relative z-10 flex justify-center items-center bg-red-600 text-white py-1.5 px-4 rounded"
+                            className="relative z-10 flex justify-center items-center bg-red-600 text-white py-1.5 px-2 md:px-3 rounded"
                             onClick={() => handleDeleteComplaint(complaint._id)}
                         >
                             <Trash2 className="w-4 h-4 mr-1" />

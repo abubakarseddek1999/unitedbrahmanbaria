@@ -1,24 +1,40 @@
 // member.model.ts
 export interface IMember {
-  name: string;
+  fullName: string;
+  fatherName: string;
+  motherName?: string;
+  fatherProfession?: string;
+  motherProfession?: string;
+  mobileNumber: string;
   email?: string;
-  phone?: string;
-  profession?: string;
+  photo?: string;
   designation?: string;
-  address?: string;
-  city?: string;
-  state?: string;
-  country?: string;
-  zipcode?: string;
-  gender?: string;
-  dob?: string;
-  about?: string;
-  photo: string;
+  birthDate: string; // You can use Date if you plan to store it as a Date object
+  gender: string;
+  age: number;
+  bloodGroup?: string;
+  nationality?: string;
+  presentVillage?: string;
+  presentPost?: string;
+  presentThana?: string;
+  presentDistrict?: string;
+  permanentVillage?: string;
+  permanentPost?: string;
+  permanentThana?: string;
+  permanentDistrict?: string;
+  birthCertificateNo?: string;
+  nidCertificateNo?: string;
+  passportNo?: string;
+  isProbashi?: boolean;
+  currentProfession?: string;
+  organizationName?: string;
+  workAddress?: string;
+  educationQualification?: string;
+  interestReason?: string;
+  joinedDate?: string;
   status?: string;
-  dateJoined?: string;
 
 
   // update your content here 
 }
 
-  

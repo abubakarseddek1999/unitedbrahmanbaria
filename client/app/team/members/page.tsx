@@ -48,24 +48,19 @@ export default function TeamPage() {
         })
 
     // filtering only পরিচালক members
-    const directors = teamMembers.filter((member) => member.designation === "পরিচালক")
-    const bannerStats = [
-        { label: "দক্ষ মেম্বার ", value: "৫০+", icon: Users, color: "text-green-600" },
-        { label: "বছরের অভিজ্ঞতা", value: "১৫+", icon: Calendar, color: "text-blue-600" },
-        { label: "সফল প্রকল্প", value: "২০০+", icon: Award, color: "text-purple-600" },
-        { label: "সন্তুষ্ট", value: "৫০০+", icon: Heart, color: "text-red-600" },
-    ]
+    const directors = teamMembers.filter((member) => member.designation === "পরিচালক" || member.designation === "তত্ত্বাবধায়ক")
+  
 
     return (
         <div className="min-h-screen bg-white relative overflow-hidden">
             <section className="border-b border-slate-200 bg-white py-12 md:py-16">
                 <div className="container mx-auto flex flex-col-reverse md:flex-row justify-between gap-5 px-4 sm:px-6 lg:px-8">
                     <div className="md:max-w-2xl space-y-4 md:w-1/2 p-x-2 text-center md:text-left">
-                        <h1 className="text-4xl font-bold text-slate-900 md:text-5xl">তত্ত্বাবধায়ক</h1>
+                        <h1 className="text-4xl font-bold text-slate-900 md:text-5xl">প্রধান-নির্বাহী</h1>
                         <h3 className="text-xl lg:text-4xl font-bold text-slate-900">Sheikh Arif Billah(আজিজী)
                         </h3>
                         {/* <p className="text-sm font-semibold text-blue-600 uppercase tracking-wide">উপদেষ্টা</p> */}
-                        <p className="text-md font-medium text-black">তত্ত্বাবধায়ক, ঐক্যবদ্ধ সদর ব্রাহ্মণবাড়িয়া </p>
+                        <p className="text-md font-medium text-black">প্রধান-নির্বাহী, ঐক্যবদ্ধ সদর ব্রাহ্মণবাড়িয়া </p>
                         <p className="mt-4 text-lg text-slate-600 hidden md:flex">
                             আমাদের নিবেদিত পরিচালনা পরিষদ, সংস্থার দৈনন্দিন কার্যক্রম তত্ত্বাবধান করে এবং সংগঠনের সুষ্ঠু পরিচালনা নিশ্চিত করে। তারা বিভিন্ন
                             বিভাগে দক্ষতা এবং অভিজ্ঞতা নিয়ে কাজ করেন।
@@ -76,7 +71,7 @@ export default function TeamPage() {
                         <Image
                             src={AjijiImg}
                             alt="jobaerimg"
-                            className="object-cover border-8 border-[#6EC1E4] rounded-md w-full max-w-md "
+                            className="object-cover border-8 border-[#95ABB6] rounded-md w-full max-w-md "
                         />
                     </div>
                 </div>
@@ -101,9 +96,9 @@ export default function TeamPage() {
                                 onMouseLeave={() => setHoveredCard(null)}
                             >
                                 {/* Glassmorphism Card */}
-                                <div className="backdrop-blur-sm bg-white/80 border border-green-200/50 rounded-3xl overflow-hidden hover:bg-white/95 hover:border-green-300/70 transition-all duration-500 hover:shadow-2xl hover:shadow-green-500/10 shadow-lg">
+                                <div className="backdrop-blur-sm bg-white/80 border border-green-200/50 rounded-3xl overflow-hidden hover:bg-white/95 hover:border-green-300/70 transition-all duration-500 hover:shadow-2xl hover:shadow-green-500/10 shadow-lg ">
                                     {/* Profile Image with Gradient Overlay */}
-                                    <div className="relative overflow-hidden">
+                                    <div className="relative overflow-hidden ">
                                         <div className={`absolute inset-0 bg-gradient-to-br opacity-10 z-10 `}></div>
                                         <Image
                                             // src={member.image || "/placeholder.svg"}
@@ -111,7 +106,7 @@ export default function TeamPage() {
                                             alt={member?.name}
                                             width={400}
                                             height={300}
-                                            className="w-full h-[350px] object-contain transition-transform duration-700 group-hover:scale-110"
+                                            className="w-full h-[350px]  object-contain transition-transform duration-700 group-hover:scale-110"
                                         />
 
                                         {/* Floating Animation on Hover */}
@@ -127,10 +122,10 @@ export default function TeamPage() {
                                     </div>
 
                                     {/* Contact Information */}
-                                    <div className="p-6 space-y-4">
+                                    <div className="p-5 space-y-2">
                                         {/* Name and Position Overlay */}
 
-                                        <h3 className="text-xl font-bold  mb-1  transition-colors duration-300">
+                                        <h3 className="text-xl font-bold transition-colors duration-300">
                                             {member.name}
                                         </h3>
                                         <p className="  transition-colors duration-300">
@@ -146,7 +141,7 @@ export default function TeamPage() {
                                         </div>
 
                                         {/* Contact Buttons */}
-                                        <div className="flex gap-2 pt-4">
+                                        <div className="flex gap-2 pt-2">
                                             <Button size="sm" className="bg-green-600 hover:bg-green-700 flex-1">
                                                 <Mail className="w-4 h-4 mr-2" />
                                                 যোগাযোগ

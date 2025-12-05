@@ -149,41 +149,41 @@ export default function AdminPage() {
       </header>
       {/* Dashboard Stats */}
       <div className="container mx-auto px-4 py-6">
-        <div className="grid grid-cols-3 md:grid-cols-3 lg:grid-cols-5 gap-6 mb-8">
+        <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-2 md:gap-6 mb-8">
           <Card className="bg-gradient-to-r from-blue-50 to-blue-100 border-blue-200 hover:shadow-lg transition-shadow">
-            <CardContent className="p-6">
+            <CardContent className="p-2 md:p-6">
               <div className="flex items-center justify-between">
                 <div>
-                  <p className="text-sm font-semibold text-blue-700 uppercase tracking-wide">মোট অভিযোগ</p>
-                  <p className="text-3xl font-bold text-blue-800">{complaintsTotal || 0}</p>
+                  <p className="text-sm whitespace-nowrap font-semibold text-blue-700 uppercase tracking-wide">মোট অভিযোগ</p>
+                  <p className="text-xl md:text-3xl font-bold text-blue-800">{complaintsTotal || 0}</p>
                   <p className="text-xs text-blue-600 mt-1">সর্বমোট জমাকৃত</p>
                 </div>
                 <div className="w-12 h-12 bg-blue-500 rounded-xl flex items-center justify-center">
-                  <FileText className="w-6 h-6 text-white" />
+                  <FileText className="w-6 h-6 md:w-6 md:h-6 text-white" />
                 </div>
               </div>
             </CardContent>
           </Card>
           <Card className="bg-gradient-to-r from-red-50 to-red-100 border-red-200 hover:shadow-lg transition-shadow">
-            <CardContent className="p-6">
+            <CardContent className="p-2 md:p-6">
               <div className="flex items-center justify-between">
                 <div>
-                  <p className="text-sm font-semibold text-red-700 uppercase tracking-wide">গোপন তথ্য</p>
-                  <p className="text-3xl font-bold text-red-800">{seceretdataTotal || 0}</p>
+                  <p className="text-sm whitespace-nowrap font-semibold text-red-700 uppercase tracking-wide">গোপন তথ্য</p>
+                  <p className="text-xl md:text-3xl font-bold text-red-800">{seceretdataTotal || 0}</p>
                   <p className="text-xs text-red-600 mt-1">সংবেদনশীল তথ্য</p>
                 </div>
                 <div className="w-12 h-12 bg-red-500 rounded-xl flex items-center justify-center">
-                  <Shield className="w-6 h-6 text-white" />
+                  <Shield className="w-6 h-6 md:w-6 md:h-6 text-white" />
                 </div>
               </div>
             </CardContent>
           </Card>
           <Card className="bg-gradient-to-r from-green-50 to-green-100 border-green-200 hover:shadow-lg transition-shadow">
-            <CardContent className="p-6">
+            <CardContent className="p-2 md:p-6">
               <div className="flex items-center justify-between">
                 <div>
-                  <p className="text-sm font-semibold text-green-700 uppercase tracking-wide">সফলতার গল্প</p>
-                  <p className="text-3xl font-bold text-green-800">{successStoriesTotal || 0}</p>
+                  <p className="text-sm whitespace-nowrap font-semibold text-green-700 uppercase tracking-wide">সফলতার গল্প</p>
+                  <p className="text-xl md:text-3xl font-bold text-green-800">{successStoriesTotal || 0}</p>
                   <p className="text-xs text-green-600 mt-1">প্রকাশিত গল্প</p>
                 </div>
                 <div className="w-12 h-12 bg-green-500 rounded-xl flex items-center justify-center">
@@ -194,12 +194,12 @@ export default function AdminPage() {
           </Card>
 
           <Card className="bg-gradient-to-r from-purple-50 to-purple-100 border-purple-200 hover:shadow-lg transition-shadow">
-            <CardContent className="p-6">
+            <CardContent className="p-2 md:p-6">
               <div className="flex items-center justify-between">
                 <div>
-                  <p className="text-sm font-semibold text-purple-700 uppercase tracking-wide">গ্যালারি আইটেম</p>
+                  <p className="text-sm whitespace-nowrap font-semibold text-purple-700 uppercase tracking-wide">গ্যালারি আইটেম</p>
                   {/* <p className="text-3xl font-bold text-purple-800">{galleryItems?.length || 0}</p> */}
-                  <p className="text-3xl font-bold text-purple-800">{galleryDataTotal || 0}</p>
+                  <p className="text-xl md:text-3xl font-bold text-purple-800">{galleryDataTotal || 0}</p>
                   <p className="text-xs text-purple-600 mt-1">মিডিয়া ফাইল</p>
                 </div>
                 <div className="w-12 h-12 bg-purple-500 rounded-xl flex items-center justify-center">
@@ -209,11 +209,11 @@ export default function AdminPage() {
             </CardContent>
           </Card>
           <Card className="bg-gradient-to-r from-blue-50 to-blue-100 border-blue-200 hover:shadow-lg transition-shadow">
-            <CardContent className="p-6">
+            <CardContent className="p-2 md:p-6">
               <div className="flex items-center justify-between">
                 <div>
-                  <p className="text-sm font-semibold text-blue-700 uppercase tracking-wide">মোট সদস্য</p>
-                  <p className="text-3xl font-bold text-blue-800">{memberDataTotal || 0}</p>
+                  <p className="text-sm whitespace-nowrap font-semibold text-blue-700 uppercase tracking-wide">মোট সদস্য</p>
+                  <p className="text-xl md:text-3xl font-bold text-blue-800">{memberDataTotal || 0}</p>
                   <p className="text-xs text-blue-600 mt-1">সর্বমোট সদস্য</p>
                 </div>
                 <div className="w-12 h-12 bg-blue-500 rounded-xl flex items-center justify-center">
@@ -225,13 +225,14 @@ export default function AdminPage() {
         </div>
         {/* Main Content Tabs */}
         <Tabs defaultValue="complaints" className="space-y-6 mb-5">
-          <TabsList className="grid w-full grid-cols-5 gap-5">
-            <TabsTrigger value="complaints">অভিযোগ </TabsTrigger>
-            <TabsTrigger value="spotinfo">গোপন তথ্য</TabsTrigger>
-            <TabsTrigger value="stories">সফলতার গল্প</TabsTrigger>
-            <TabsTrigger value="gallery">গ্যালারি</TabsTrigger>
-            <TabsTrigger value="members">সদস্য বৃন্দ</TabsTrigger>
+          <TabsList className="grid w-full grid-cols-3 md:grid-cols-5 gap-x-4 gap-y-1 ">
+            <TabsTrigger className="border px-2" value="complaints">অভিযোগ </TabsTrigger>
+            <TabsTrigger className="border" value="spotinfo">গোপন তথ্য</TabsTrigger>
+            <TabsTrigger className="border px-2" value="stories">সফলতার গল্প</TabsTrigger>
+            <TabsTrigger className="border" value="gallery">গ্যালারি</TabsTrigger>
+            <TabsTrigger className="border" value="members">সদস্য</TabsTrigger>
           </TabsList>
+          
 
           {/* Complaints Management */}
           <TabsContent value="complaints">

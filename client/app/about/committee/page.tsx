@@ -31,7 +31,6 @@ export default function CommitteePage() {
             </div>
 
           </div>
-
         </section>
 
         {/* Team Grid Section */}

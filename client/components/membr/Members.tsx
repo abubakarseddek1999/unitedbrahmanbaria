@@ -83,8 +83,8 @@ const Members = () => {
 
     return (
         <div>
-            <Card>
-                <CardHeader>
+            <Card className="">
+                <CardHeader className="px-2 md:px-6 ">
                     <div className="flex items-center justify-between my-5">
                         <div>
                             <p className="text-xl md:text-2xl font-semibold">
@@ -98,20 +98,20 @@ const Members = () => {
                             onClick={() => setIsAddModalOpen(true)}
                             className="bg-purple-600 hover:bg-purple-700"
                         >
-                            <Plus className="w-4 h-4 mr-2" />
-                            নতুন সদস্য যোগ করুন
+                            <Plus className="w-4 h-4 " />
+                            নতুন সদস্য 
                         </Button>
                     </div>
                 </CardHeader>
 
-                <CardContent>
-                    <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 py-5">
+                <CardContent className="px-2 md:px-6">
+                    <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-2 py-5">
                         {allItems?.map((item, index) => {
                             const isLast = index === allItems.length - 1
 
                             return (
                                 <Card key={item._id} ref={isLast ? ref : undefined}>
-                                    <CardContent className="p-4 flex flex-col justify-between h-full">
+                                    <CardContent className="p-2 md:p-4 flex flex-col justify-between h-full">
                                         {/* CLICKABLE AREA for DETAILS MODAL */}
                                         <div
                                             className="cursor-pointer"
@@ -120,20 +120,21 @@ const Members = () => {
                                                 setIsDetailsModalOpen(true)
                                             }}
                                         >
-                                            <div className="aspect-square bg-gray-200 rounded-lg mb-3 overflow-hidden">
+                                            <div className="aspect-[4/3]  rounded-lg mb-3 overflow-hidden">
                                                 <img
                                                     src={item.photo || "/placeholder.svg"}
                                                     alt={item.name}
-                                                    className="w-full h-full object-cover"
+                                                    className="min-w-[50px] w-full h-full object-contain"
                                                 />
                                             </div>
-                                            <h4 className="font-semibold">{item.name}</h4>
+                                            <h4 className="font-semibold text-sm md:text-base">{item.name}</h4>
                                             <p className="text-sm">{item.designation}</p>
                                         </div>
 
                                         {/* BUTTONS SECTION - ALWAYS BOTTOM */}
-                                        <div className="flex justify-end space-x-2 mt-3">
+                                        <div className="flex justify-end space-x-2 mt-3 mb-2 gap-2 md:gap-5">
                                             <Button
+                                            className="w-2 h-2 md:w-4 md:h-4 p-2"
                                                 size="sm"
                                                 variant="outline"
                                                 onClick={(e) => {
@@ -142,10 +143,11 @@ const Members = () => {
                                                     setIsDetailsModalOpen(true)
                                                 }}
                                             >
-                                                <Eye className="w-4 h-4" />
+                                                <Eye className="w-2 h-2 md:w-4 md:h-4 " />
                                             </Button>
                                             <Button
-                                                size="sm"
+                                            className="w-2 h-2 md:w-4 md:h-4 p-2"
+                                                // size="sm"
                                                 variant="outline"
                                                 onClick={(e) => {
                                                     e.stopPropagation()
@@ -157,14 +159,15 @@ const Members = () => {
                                             </Button>
 
                                             <Button
-                                                size="sm"
-                                                variant="destructive"
+                                            className="w-2 h-2 md:w-4 md:h-4 p-2 bg-white"
+                                                // size="sm"
+                                                variant="outline"
                                                 onClick={(e) => {
                                                     e.stopPropagation()
                                                     handleDelete(item._id)
                                                 }}
                                             >
-                                                <Trash2 className="w-4 h-4" />
+                                                <Trash2 className="w-2 md:w-4 md:h-4  text-red-500" />
                                             </Button>
                                         </div>
                                     </CardContent>

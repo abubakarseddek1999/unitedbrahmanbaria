@@ -133,11 +133,11 @@ const SecretData: React.FC<SecretDataProps> = () => {
     return (
         <div>
             <Card className="pb-6">
-                <CardHeader>
+                <CardHeader className="mb-5">
                     <CardTitle>গোপন তথ্য পর্যালোচনা</CardTitle>
-                    <p className=" text-sm mb-5 text-gray-700">সংবেদনশীল তথ্য পর্যালোচনা করুন</p>
+                    <p className=" text-sm text-gray-700">সংবেদনশীল তথ্য পর্যালোচনা করুন</p>
                 </CardHeader>
-                <CardContent>
+                <CardContent className="px-2 md:px-6">
                     <div className="space-y-4 grid grid-cols-1 lg:grid-cols-2 gap-6">
                         {secretData &&
                             secretData
@@ -147,7 +147,7 @@ const SecretData: React.FC<SecretDataProps> = () => {
                                     return (
                                         <div key={info._id} ref={isLast ? ref : undefined} >
                                             <Card className="border-l-4 border-l-red-500">
-                                                <CardContent className="p-4 flex flex-col-reverse md:flex-row gap-6">
+                                                <CardContent className="p-2 md:p-4 flex flex-col-reverse md:flex-row gap-6">
                                                     <div className="flex-1 min-w-0 flex-col gap-5 items-start justify-between">
                                                         <div className="flex-1 mb-2">
                                                             <h4 className="font-semibold text-lg">{info.title}</h4>
@@ -164,8 +164,6 @@ const SecretData: React.FC<SecretDataProps> = () => {
                                                                     })}
                                                                 </p>
                                                             </div>
-                                                        </div>
-                                                        <div className="flex items-center  flex-wrap gap-2">
                                                             <Badge variant="destructive">গোপনীয়</Badge>
                                                             {info.images && info.images.length > 0 && (
                                                                 <Badge variant="secondary" className="text-xs">
@@ -173,6 +171,9 @@ const SecretData: React.FC<SecretDataProps> = () => {
                                                                     {info.images.length} ছবি
                                                                 </Badge>
                                                             )}
+                                                        </div>
+                                                        <div className="flex items-center  flex-wrap gap-2">
+                                                         
                                                             <Select onValueChange={(value => handleStatusChange(value, info._id))} defaultValue={info.status} >
                                                                 <SelectTrigger className="w-40">
                                                                     <SelectValue placeholder={info.status} />

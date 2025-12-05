@@ -45,17 +45,19 @@ export default function TeamPage() {
 
     return (
         <div className="min-h-screen bg-white relative overflow-hidden">
-            
+
             {/* Team Members Section */}
             <div className="relative z-10 py-16">
                 <div className="container mx-auto px-4">
                     <div className="text-center mb-16">
                         <h2 className="text-4xl p-2 md:text-5xl font-bold text-gray-800 mb-2 bg-gradient-to-r from-green-600 to-green-800 bg-clip-text text-transparent">
-                        উপদেষ্টা মন্ডলী 
+                            উপদেষ্টা মন্ডলী
                         </h2>
                         <p className="text-lg text-gray-600 max-w-2xl mx-auto">অভিজ্ঞতা ও দক্ষতার সমন্বয়ে গঠিত আমাদের উপদেষ্টা মন্ডলী পরিষদ</p>
                     </div>
-
+                    {!loading && directors.length === 0 && (
+                        <p className="text-center text-gray-500">কোনো উপদেষ্টা সদস্য পাওয়া যায়নি। </p>
+                    )}
                     <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-2 md:gap-8">
                         {directors.map((member, index) => (
                             <div
@@ -76,7 +78,7 @@ export default function TeamPage() {
                                             alt={member?.name}
                                             width={400}
                                             height={300}
-                                            className="w-full h-[350px] object-contain transition-transform duration-700 group-hover:scale-110"
+                                            className="w-full h-[300px] object-contain transition-transform duration-700 group-hover:scale-110 mt-5"
                                         />
 
                                         {/* Floating Animation on Hover */}
@@ -92,7 +94,7 @@ export default function TeamPage() {
                                     </div>
 
                                     {/* Contact Information */}
-                                    <div className="p-6 space-y-4">
+                                    <div className="p-6 space-y-2">
                                         {/* Name and Position Overlay */}
 
                                         <h3 className="text-xl font-bold  mb-1  transition-colors duration-300">
@@ -111,7 +113,7 @@ export default function TeamPage() {
                                         </div>
 
                                         {/* Contact Buttons */}
-                                        <div className="flex gap-2 pt-4">
+                                        <div className="flex gap-2 pt-2">
                                             <Button size="sm" className="bg-green-600 hover:bg-green-700 flex-1">
                                                 <Mail className="w-4 h-4 mr-2" />
                                                 যোগাযোগ

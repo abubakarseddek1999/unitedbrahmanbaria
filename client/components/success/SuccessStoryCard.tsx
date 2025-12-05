@@ -109,63 +109,61 @@ export const SuccessStoryCard = ({ story, setRefresh }: { story: any, setRefresh
         setPhotoFiles(updatedFiles)
     }
 
-   const handleUpdateStory = async (e: React.FormEvent) => {
-    e.preventDefault();
-    setIsLoading(true);
+    const handleUpdateStory = async (e: React.FormEvent) => {
+        e.preventDefault();
+        setIsLoading(true);
 
-    try {
-        const updateData = {
-            title: newStory.title,
-            description: newStory.description,
-        };
+        try {
+            const updateData = {
+                title: newStory.title,
+                description: newStory.description,
+            };
 
-        const finalData = new FormData();
+            const finalData = new FormData();
 
-        if (photoFiles.length > 0) {
-            // নতুন ছবি থাকলে সেগুলো পাঠান
-            photoFiles.forEach((file) => {
-                finalData.append("images", file);
+            if (photoFiles.length > 0) {
+                // নতুন ছবি থাকলে সেগুলো পাঠান
+                photoFiles.forEach((file) => {
+                    finalData.append("images", file);
+                });
+            } else if (story.images && story.images.length > 0) {
+                // যদি পুরনো ছবি থাকে, এবং নতুন না পাঠানো হয়
+                // তাহলে একটা ফিল্ড দিয়ে জানিয়ে দিন
+                finalData.append("existingImages", JSON.stringify(story.images));
+            }
+
+            finalData.append("data", JSON.stringify(updateData));
+
+            const res = await axiosPublic.patch(`/successdata/${story._id}`, finalData, {
+                headers: { "Content-Type": "multipart/form-data" },
             });
-        } else if (story.images && story.images.length > 0) {
-            // যদি পুরনো ছবি থাকে, এবং নতুন না পাঠানো হয়
-            // তাহলে একটা ফিল্ড দিয়ে জানিয়ে দিন
-            finalData.append("existingImages", JSON.stringify(story.images));
-        }
 
-        finalData.append("data", JSON.stringify(updateData));
-
-        const res = await axiosPublic.patch(`/successdata/${story._id}`, finalData, {
-            headers: { "Content-Type": "multipart/form-data" },
-        });
-
-        if (res.status === 200) {
-            toast({ title: "✅ হালনাগাদ সফল", description: "গল্পটি সফলভাবে আপডেট হয়েছে।" });
-            setModalOpen(false);
-            setRefresh(true);
-        } else {
+            if (res.status === 200) {
+                toast({ title: "✅ হালনাগাদ সফল", description: "গল্পটি সফলভাবে আপডেট হয়েছে।" });
+                setModalOpen(false);
+                setRefresh(true);
+            } else {
+                toast({
+                    title: "❌ ত্রুটি",
+                    description: "গল্পটি হালনাগাদ করা যায়নি।",
+                    variant: "destructive",
+                });
+            }
+        } catch (error) {
             toast({
-                title: "❌ ত্রুটি",
-                description: "গল্পটি হালনাগাদ করা যায়নি।",
+                title: "⚠️ ত্রুটি",
+                description: "আপডেট করার সময় সমস্যা হয়েছে।",
                 variant: "destructive",
             });
+        } finally {
+            setIsLoading(false);
         }
-    } catch (error) {
-        toast({
-            title: "⚠️ ত্রুটি",
-            description: "আপডেট করার সময় সমস্যা হয়েছে।",
-            variant: "destructive",
-        });
-    } finally {
-        setIsLoading(false);
-    }
-};
-
-
+    };
 
     return (
         <>
             <Card className="border-l-4 border-l-green-500">
-                <CardContent className="p-4">
+                <CardContent className="p-2 md:p-4">
                     <div className="flex flex-col-reverse md:flex-row gap-5 items-start justify-between">
                         <div className="flex-1 flex flex-col gap-5 md:w-1/2">
                             <div>

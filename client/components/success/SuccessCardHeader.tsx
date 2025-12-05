@@ -114,15 +114,15 @@ const SuccessCardHeader = ( {setRefresh}:{setRefresh:any}) => {
     return (
         <div>
             <div className="flex items-center justify-between">
-                <div>
+                <div className="my-4">
                     <p className="my-2 text-xl font-bold">সফলতার গল্প ব্যবস্থাপনা</p>
-                    <CardDescription>সফল সমাধানের গল্প যোগ ও সম্পাদনা করুন</CardDescription>
+                    <CardDescription className="hidden md:flex">সফল সমাধানের গল্প যোগ ও সম্পাদনা করুন</CardDescription>
                 </div>
                 <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
                     <DialogTrigger asChild>
                         <Button className="bg-green-600 hover:bg-green-700">
-                            <Plus className="w-4 h-4 mr-2" />
-                            নতুন গল্প যোগ করুন
+                            <Plus className="w-4 h-4 " />
+                             গল্প যোগ করুন
                         </Button>
                     </DialogTrigger>
                     <DialogContent>
