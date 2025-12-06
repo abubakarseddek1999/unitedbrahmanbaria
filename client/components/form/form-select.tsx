@@ -8,27 +8,31 @@ interface FormSelectProps {
   className?: string
   value?: string
   onValueChange?: (value: string) => void
+  onChange?: (e: React.ChangeEvent<HTMLSelectElement>) => void
 }
 
 export const FormSelect = forwardRef<HTMLSelectElement, FormSelectProps>(
-  ({ label, value, onValueChange, required = false, error, options, className, ...props }, ref) => {
+  ({ label, value, onValueChange, onChange, required = false, error, options, className, ...props }, ref) => {
     return (
       <div className={className}>
-        <label className="text-sm font-medium text-gray-700 dark:text-white mb-4 block">
+        <label className="text-sm font-medium text-gray-700 dark:text-white mb-2 block">
           {label} {required && <span className="text-red-500">*</span>}
         </label>
         <select
           ref={ref}
-          value={value || ""} // <-- value সেট করতে হবে
-          onChange={(e) => onValueChange && onValueChange(e.target.value)} // <-- onValueChange handle করতে হবে
-          className={`w-full h-12 leading-[2.8] border dark:text-white dark:bg-[#202A37] border-gray-300 rounded-lg px-3 focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent ${error ? "border-red-500 focus:ring-red-500" : ""
-            }`}
-          {...props}
+          {...props} // react-hook-form register will attach onChange, ref, name
+          {...(value !== undefined ? { value } : {})} // only set value if defined (controlled)
+          onChange={(e) => {
+            onChange?.(e)          // for react-hook-form
+            onValueChange?.(e.target.value) // for controlled usage
+          }}
+          className={`w-full h-12 px-3 rounded-lg border border-gray-300 dark:border-gray-600 dark:bg-[#202A37] dark:text-white focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent ${
+            error ? "border-red-500 focus:ring-red-500" : ""
+          }`}
         >
-
-          <option className="m-2" value="">নির্বাচন করুন</option>
+          <option value="">নির্বাচন করুন</option>
           {options.map((option) => (
-            <option className="m-2 p-5" key={option.value} value={option.value}>
+            <option key={option.value} value={option.value}>
               {option.label}
             </option>
           ))}

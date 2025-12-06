@@ -13,7 +13,7 @@ export default function MemberDetails({ open, onClose, item }: MemberDetailsProp
 
     return (
         <Dialog open={open} onOpenChange={onClose}>
-            <DialogContent className="max-w-3xl w-full max-h-[90vh] p-0 flex flex-col overflow-hidden">
+            <DialogContent className="max-w-4xl w-full max-h-[90vh] p-0 flex flex-col overflow-hidden">
                 {/* HEADER — Sticky */}
                 <DialogHeader className="sticky top-0 bg-gradient-to-r from-blue-50 to-indigo-50 border-b px-6 py-4 z-10">
                     <DialogTitle className="text-xl font-bold text-gray-800">সদস্যের বিস্তারিত তথ্য</DialogTitle>
@@ -51,9 +51,9 @@ export default function MemberDetails({ open, onClose, item }: MemberDetailsProp
                     </div>
 
                     {/* BASIC INFO */}
-                    <div>
+                    <div className="mb-8 space-y-5">
                         <h3 className="text-lg font-semibold text-gray-800 mb-3">মৌলিক তথ্য</h3>
-                        <div className="grid md:grid-cols-2 gap-4">
+                        <div className="grid grid-cols-2 gap-4">
                             <div>
                                 <p className="text-xs font-semibold text-gray-500 uppercase">সম্পূর্ণ নাম</p>
                                 <p className="text-gray-800 mt-1">{item.fullName || item.name || "N/A"}</p>
@@ -70,21 +70,26 @@ export default function MemberDetails({ open, onClose, item }: MemberDetailsProp
                                 <p className="text-xs font-semibold text-gray-500 uppercase">মোবাইল নম্বর</p>
                                 <p className="text-gray-800 mt-1">{item.mobileNumber || item.phone || "N/A"}</p>
                             </div>
-                            <div>
-                                <p className="text-xs font-semibold text-gray-500 uppercase">ইমেইল</p>
-                                <p className="text-gray-800 mt-1">{item.email || "N/A"}</p>
-                            </div>
+
                             <div>
                                 <p className="text-xs font-semibold text-gray-500 uppercase">জাতীয়তা</p>
                                 <p className="text-gray-800 mt-1">{item.nationality || "N/A"}</p>
                             </div>
+                            <div>
+                                <p className="text-xs font-semibold text-gray-500 uppercase">পদবি</p>
+                                <p className="text-gray-800 mt-1">{item.designation || "N/A"}</p>
+                            </div>
+                        </div>
+                        <div>
+                            <p className="text-xs font-semibold text-gray-500 uppercase">ইমেইল</p>
+                            <p className="text-gray-800 mt-1">{item.email || "N/A"}</p>
                         </div>
                     </div>
 
                     {/* PERSONAL DETAILS */}
                     <div>
                         <h3 className="text-lg font-semibold text-gray-800 mb-3">ব্যক্তিগত তথ্য</h3>
-                        <div className="grid md:grid-cols-2 gap-4">
+                        <div className="grid grid-cols-2 gap-4">
                             <div>
                                 <p className="text-xs font-semibold text-gray-500 uppercase">জন্মদিন</p>
                                 <p className="text-gray-800 mt-1">
@@ -105,17 +110,14 @@ export default function MemberDetails({ open, onClose, item }: MemberDetailsProp
                                 <p className="text-xs font-semibold text-gray-500 uppercase">ব্লাড গ্রুপ</p>
                                 <p className="text-gray-800 mt-1">{item.bloodGroup || "N/A"}</p>
                             </div>
-                            <div>
-                                <p className="text-xs font-semibold text-gray-500 uppercase">পদবি</p>
-                                <p className="text-gray-800 mt-1">{item.designation || "N/A"}</p>
-                            </div>
+                            
                         </div>
                     </div>
 
                     {/* FAMILY INFO */}
                     <div>
                         <h3 className="text-lg font-semibold text-gray-800 mb-3">পারিবারিক তথ্য</h3>
-                        <div className="grid md:grid-cols-2 gap-4">
+                        <div className="grid grid-cols-2 gap-4">
                             <div>
                                 <p className="text-xs font-semibold text-gray-500 uppercase">পিতার পেশা</p>
                                 <p className="text-gray-800 mt-1">{item.fatherProfession || "N/A"}</p>
@@ -130,7 +132,7 @@ export default function MemberDetails({ open, onClose, item }: MemberDetailsProp
                     {/* PRESENT ADDRESS */}
                     <div>
                         <h3 className="text-lg font-semibold text-gray-800 mb-3">বর্তমান ঠিকানা</h3>
-                        <div className="grid md:grid-cols-2 gap-4">
+                        <div className="grid grid-cols-2 gap-4">
                             <div>
                                 <p className="text-xs font-semibold text-gray-500 uppercase">গ্রাম</p>
                                 <p className="text-gray-800 mt-1">{item.presentVillage || "N/A"}</p>
@@ -153,7 +155,7 @@ export default function MemberDetails({ open, onClose, item }: MemberDetailsProp
                     {/* PERMANENT ADDRESS */}
                     <div>
                         <h3 className="text-lg font-semibold text-gray-800 mb-3">স্থায়ী ঠিকানা</h3>
-                        <div className="grid md:grid-cols-2 gap-4">
+                        <div className="grid grid-cols-2 gap-4">
                             <div>
                                 <p className="text-xs font-semibold text-gray-500 uppercase">গ্রাম</p>
                                 <p className="text-gray-800 mt-1">{item.permanentVillage || "N/A"}</p>

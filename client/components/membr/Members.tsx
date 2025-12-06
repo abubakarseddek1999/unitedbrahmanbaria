@@ -1,7 +1,7 @@
 "use client"
 
 import { useState } from "react"
-import { Edit, Eye, Plus, Trash2 } from "lucide-react"
+import { Award, Edit, Eye, Plus, Trash2, Verified } from "lucide-react"
 import { Button } from "../ui/button"
 import { Card, CardContent, CardDescription, CardHeader } from "../ui/card"
 import { useToast } from "../ui/use-toast"
@@ -12,6 +12,7 @@ import usePaginatedData from "@/hooks/usePaginatedData"
 import AddMember from "./AddMember"
 import EditMember from "./EditMember"
 import MemberDetails from "./MemberDetails"   // <-- NEW
+import MemberCertificate from "./Cirtificate"
 
 export type MemberItem = {
     _id: string
@@ -26,6 +27,7 @@ const Members = () => {
     const [isEditModalOpen, setIsEditModalOpen] = useState(false)
     const [isAddModalOpen, setIsAddModalOpen] = useState(false)
     const [isDetailsModalOpen, setIsDetailsModalOpen] = useState(false)
+    const [isVerifiedModalOpen, setIsVerifiedModalOpen] = useState(false)
 
     const [selectedItem, setSelectedItem] = useState<MemberItem | null>(null)
 
@@ -99,7 +101,7 @@ const Members = () => {
                             className="bg-purple-600 hover:bg-purple-700"
                         >
                             <Plus className="w-4 h-4 " />
-                            নতুন সদস্য 
+                            নতুন সদস্য
                         </Button>
                     </div>
                 </CardHeader>
@@ -133,8 +135,20 @@ const Members = () => {
 
                                         {/* BUTTONS SECTION - ALWAYS BOTTOM */}
                                         <div className="flex justify-end space-x-2 mt-3 mb-2 gap-2 md:gap-5">
+                                            {/* <Button
+                                                className="w-2 h-2 md:w-4 md:h-4 p-2"
+                                                size="sm"
+                                                variant="outline"
+                                                onClick={(e) => {
+                                                    e.stopPropagation()
+                                                    setSelectedItem(item)
+                                                    setIsVerifiedModalOpen(true)
+                                                }}
+                                            >
+                                                <Award className="w-2 h-2 md:w-4 md:h-4 text-orange-500" />
+                                            </Button> */}
                                             <Button
-                                            className="w-2 h-2 md:w-4 md:h-4 p-2"
+                                                className="w-2 h-2 md:w-4 md:h-4 p-2"
                                                 size="sm"
                                                 variant="outline"
                                                 onClick={(e) => {
@@ -145,8 +159,9 @@ const Members = () => {
                                             >
                                                 <Eye className="w-2 h-2 md:w-4 md:h-4 " />
                                             </Button>
+
                                             <Button
-                                            className="w-2 h-2 md:w-4 md:h-4 p-2"
+                                                className="w-2 h-2 md:w-4 md:h-4 p-2"
                                                 // size="sm"
                                                 variant="outline"
                                                 onClick={(e) => {
@@ -159,7 +174,7 @@ const Members = () => {
                                             </Button>
 
                                             <Button
-                                            className="w-2 h-2 md:w-4 md:h-4 p-2 bg-white"
+                                                className="w-2 h-2 md:w-4 md:h-4 p-2 bg-white"
                                                 // size="sm"
                                                 variant="outline"
                                                 onClick={(e) => {
@@ -214,6 +229,12 @@ const Members = () => {
             <MemberDetails
                 open={isDetailsModalOpen}
                 onClose={() => setIsDetailsModalOpen(false)}
+                item={selectedItem}
+            />
+            {/* Verified Modal */}
+            <MemberCertificate
+                open={isVerifiedModalOpen}
+                onClose={() => setIsVerifiedModalOpen(false)}
                 item={selectedItem}
             />
         </div>

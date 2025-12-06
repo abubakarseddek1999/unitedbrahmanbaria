@@ -137,9 +137,9 @@ export default function RootLayout({
         <GoogleTranslate />
         <QueryClientProvider client={queryClient}>
           {/* <Navbar /> */}
+          <Toaster />
           <Topbar />
           {children}
-          <Toaster />
           <Footer />
         </QueryClientProvider>
 

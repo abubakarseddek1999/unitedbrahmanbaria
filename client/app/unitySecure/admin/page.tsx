@@ -56,7 +56,7 @@ export default function AdminPage() {
     limit: 8,
   });
   const { data: successStories, total: successStoriesTotal } = usePaginatedData({
-    endpoint: "/successdata",
+    endpoint: "/memberData",
     limit: 8,
   });
   const { data: memberData, total: memberDataTotal } = usePaginatedData({

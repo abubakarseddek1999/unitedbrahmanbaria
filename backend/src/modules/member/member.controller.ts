@@ -38,12 +38,14 @@ export const createMemberController: RequestHandler = catchAsync(async (req, res
 // Get All Member 
 
 export const getAllMemberController: RequestHandler = catchAsync(async (req, res) => {
-  const result = await getAllMemberService(req.query);
+  const {result,total} = await getAllMemberService(req.query);
   sendResponse(res, {
     status: 200,
     success: true,
     message: 'member retrived successfully',
     data: result,
+    total,
+
   });
 });
 

@@ -1,6 +1,6 @@
 "use client"
-
 import { FormSelect } from "@/components/form/form-select"
+// import { FormSelect } from "@/components/form/form-select"
 import { FormInput, FormTextarea } from "@/components/form/FormInput"
 import { Button } from "@/components/ui/button"
 import { useToast } from "@/hooks/use-toast"
@@ -53,7 +53,7 @@ export default function VolunteerForm() {
     const { toast } = useToast()
     const [photo, setPhoto] = useState<File | null>(null)
     const [photoPreview, setPhotoPreview] = useState("")
-
+    const [loading, setLoading] = useState(false)
     const [signature, setSignature] = useState<File | null>(null)
     const [signaturePreview, setSignaturePreview] = useState("")
 
@@ -96,19 +96,22 @@ export default function VolunteerForm() {
     }
 
     const onSubmit = async (data: VolunteerFormData) => {
+        setLoading(true)
         const axiosPublic = useAxiosPublic()
         if (!data.nidCertificateNo && !data.birthCertificateNo && !data.passportNo) {
             toast({
                 title: "ত্রুটি",
                 description: "জাতীয় পরিচয়পত্র, জন্মসনদ, পাসপোর্ট যেকোনো একটি দিন",
             })
+            setLoading(false)
             return
         }
         if (!data.isProbashi) {
             toast({
                 title: "ত্রুটি",
-                description: "আপনি কি প্রবাসী?",
+                description: "আপনি কি প্রবাসী সিলেক্ট করুন ?",
             })
+            setLoading(false)
             return
         }
 
@@ -117,6 +120,7 @@ export default function VolunteerForm() {
                 title: "ত্রুটি",
                 description: "ছবি নির্বাচন করা আবশ্যক",
             })
+            setLoading(false)
             return
         }
 
@@ -125,6 +129,7 @@ export default function VolunteerForm() {
                 title: "ত্রুটি",
                 description: "সাক্ষর নির্বাচন করা আবশ্যক",
             })
+            setLoading(false)
             return
         }
         if (!data.termsAccepted) {
@@ -132,6 +137,7 @@ export default function VolunteerForm() {
                 title: "ত্রুটি",
                 description: "অঙ্গীকারনামার শর্তে সম্মতি দিন",
             })
+            setLoading(false)
             return
         }
         // console.log(data)
@@ -177,14 +183,25 @@ export default function VolunteerForm() {
         if (res.status === 201) {
             toast({
                 title: "সফল!",
-                description: "আপলোড সফল হয়েছে",
+                description: "জমা দেওয়া সফল হয়েছে",
+            })
+            setLoading(false)
+            // চাইলে ফর্ম রিসেট করতে পারো
+            reset()
+            setPhoto(null)
+            setPhotoPreview("")
+            setSignature(null)
+            setSignaturePreview("")
+        } 
+         else {
+            setLoading(false)
+            toast({
+                title: "❌ ত্রুটি",
+                description: "সদস্য আপলোড করতে সমস্যা হয়েছে।",
+                variant: "destructive",
             })
             // চাইলে ফর্ম রিসেট করতে পারো
-            // reset()
-            // setPhoto(null)
-            // setPhotoPreview("")
-            // setSignature(null)
-            // setSignaturePreview("")
+
         }
     }
 
@@ -214,7 +231,8 @@ export default function VolunteerForm() {
             <div className="max-w-4xl mx-auto px-2">
 
                 <div className="bg-primary text-white rounded-t-lg p-8">
-                    <h2 className="text-2xl font-bold">সদস্য আবেদন</h2>
+                    <h2 className="text-2xl font-bold">সদস্য আবেদন ফর্ম </h2>
+                    <h2 className="text-base font-bold">ঐক্যবদ্ধ সদর ব্রাহ্মণবাড়িয়া</h2>
                 </div>
 
                 <form
@@ -234,11 +252,11 @@ export default function VolunteerForm() {
 
                     <div className="grid md:grid-cols-2 gap-6">
                         <FormInput label="মাতার পেশা" {...register("motherProfession")} />
-                        <FormInput label="মোবাইল নম্বর" required {...register("mobileNumber", { required: true })} />
+                        <FormInput type="number" label="মোবাইল নম্বর" required {...register("mobileNumber", { required: true })} />
                     </div>
                     <div className="grid md:grid-cols-2 gap-6">
                         <FormInput label="জন্মদিন" type="date" required {...register("birthDate", { required: true })} />
-                        <FormInput label="বয়স" required {...register("age", { required: true })} />
+                        <FormInput type="number" label="বয়স" required {...register("age", { required: true })} />
 
                     </div>
                     <div className="grid md:grid-cols-2 gap-6">
@@ -252,9 +270,19 @@ export default function VolunteerForm() {
 
                     {/* BLOOD + NATIONALITY */}
                     <div className="grid md:grid-cols-2 gap-6">
-                        <FormSelect label="লিঙ্গ" options={genderOptions} {...register("gender")} />
-                        <FormSelect label="ব্লাড গ্রুপ" options={bloodGroupOptions} {...register("bloodGroup")} />
+                        <FormSelect
+                            label="লিঙ্গ"
+                            options={genderOptions}
+                            required
+                            {...register("gender", { required: true })}
+                        />
+                        <FormSelect
+                            label="ব্লাড গ্রুপ"
+                            options={bloodGroupOptions}
+                            {...register("bloodGroup")}
+                        />
                     </div>
+
 
                     {/* ADDRESS */}
                     <h3 className="text-lg font-semibold mt-6">বর্তমান ঠিকানা</h3>
@@ -283,7 +311,7 @@ export default function VolunteerForm() {
                     <FormSelect label="পাসপোর্ট আছে?" options={yesNo} {...register("isPassport")} />
                     {watchPassport === "yes" && <FormInput label="পাসপোর্ট নম্বর" {...register("passportNo")} />}
 
-                    <FormSelect label="আপনি কি প্রবাসী?" options={yesNo} {...register("isProbashi")} />
+                    <FormSelect label="আপনি কি প্রবাসী?" options={yesNo} required {...register("isProbashi", { required: true })} />
 
                     {/* PROFESSION */}
                     <h3 className="text-lg font-semibold mt-6">পেশাগত তথ্য</h3>
@@ -395,8 +423,8 @@ export default function VolunteerForm() {
 
 
                     {/* SUBMIT */}
-                    <Button type="submit" className="w-full bg-primary text-white py-3 mt-6">
-                        আবেদন করুন →
+                    <Button type="submit" className="w-full bg-primary text-white py-3 mt-6" disabled={loading}>
+                        {loading ? "জমা হচ্ছে..." : "জমা দিন "}
                     </Button>
                 </form>
             </div>

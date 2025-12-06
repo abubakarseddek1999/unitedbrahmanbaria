@@ -24,9 +24,16 @@ export const getAllMemberService = async (query: Record<string, unknown>) => {
     ])
     .fields()
     .paginate()
-
+  const countQuery = new QueryBuilder(Member.find(), query)
+    .filter()
+    .search([
+      'name',
+      'category',
+      'description',
+    ]);
+  const total = await countQuery.modelQuery.countDocuments();
   const result = await memberQueries.modelQuery;
-  return result;
+  return { result, total };
 };
 
 // get member by Id or single  service

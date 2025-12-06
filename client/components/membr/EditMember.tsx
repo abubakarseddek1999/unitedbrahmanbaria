@@ -212,7 +212,7 @@ const EditMember = ({ open, onClose, item, refetch }: EditMemberProps) => {
 
     return (
         <Dialog open={open} onOpenChange={onClose}>
-            <DialogContent className="max-w-2xl w-full max-h-[90vh] p-0 flex flex-col overflow-hidden">
+            <DialogContent className="max-w-4xl w-full max-h-[90vh] p-0 flex flex-col overflow-hidden">
                 {/* HEADER — Sticky */}
                 <DialogHeader className="sticky top-0 bg-gradient-to-r from-blue-50 to-indigo-50 border-b px-6 py-4 z-10">
                     <DialogTitle className="text-xl font-bold text-gray-800">সদস্য তথ্য সম্পাদনা</DialogTitle>
