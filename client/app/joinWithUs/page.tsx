@@ -4,6 +4,7 @@ import { FormSelect } from "@/components/form/form-select"
 import { FormInput, FormTextarea } from "@/components/form/FormInput"
 import { Button } from "@/components/ui/button"
 import { useToast } from "@/hooks/use-toast"
+import useAxiosPublic from "@/hooks/useAxios"
 import { useRef, useState, useEffect } from "react"
 import { useForm } from "react-hook-form"
 
@@ -45,6 +46,7 @@ interface VolunteerFormData {
     workAddress: string
     educationQualification: string
     interestReason: string
+    termsAccepted: boolean
 }
 
 export default function VolunteerForm() {
@@ -93,11 +95,19 @@ export default function VolunteerForm() {
         reader.readAsDataURL(file)
     }
 
-    const onSubmit = (data: VolunteerFormData) => {
+    const onSubmit = async (data: VolunteerFormData) => {
+        const axiosPublic = useAxiosPublic()
         if (!data.nidCertificateNo && !data.birthCertificateNo && !data.passportNo) {
             toast({
                 title: "ত্রুটি",
                 description: "জাতীয় পরিচয়পত্র, জন্মসনদ, পাসপোর্ট যেকোনো একটি দিন",
+            })
+            return
+        }
+        if (!data.isProbashi) {
+            toast({
+                title: "ত্রুটি",
+                description: "আপনি কি প্রবাসী?",
             })
             return
         }
@@ -117,9 +127,16 @@ export default function VolunteerForm() {
             })
             return
         }
-        console.log(data)
+        if (!data.termsAccepted) {
+            toast({
+                title: "ত্রুটি",
+                description: "অঙ্গীকারনামার শর্তে সম্মতি দিন",
+            })
+            return
+        }
+        // console.log(data)
         const finalData = {
-            fullName: data.fullName,
+            name: data.fullName,
             fatherName: data.fatherName,
             motherName: data.motherName,
             fatherProfession: data.fatherProfession,
@@ -148,22 +165,27 @@ export default function VolunteerForm() {
             workAddress: data.workAddress,
             educationQualification: data.educationQualification,
             interestReason: data.interestReason,
+            termsAccepted: data.termsAccepted,
         }
         console.log(finalData)
+        const fd = new FormData()
+        fd.append("data", JSON.stringify(finalData))
+        if (photo) fd.append("photo", photo as Blob)
+        if (signature) fd.append("signature", signature as Blob)
 
-        // todo: এখানে ডাটা সাবমিট করার লজিক যোগ করো
-
-        toast({
-            title: "সফল!",
-            description: "আপলোড সফল হয়েছে",
-        })
-
-        // চাইলে ফর্ম রিসেট করতে পারো
-        // reset()
-        // setPhoto(null)
-        // setPhotoPreview("")
-        // setSignature(null)
-        // setSignaturePreview("")
+        const res = await axiosPublic.post("/member/create", fd)
+        if (res.status === 201) {
+            toast({
+                title: "সফল!",
+                description: "আপলোড সফল হয়েছে",
+            })
+            // চাইলে ফর্ম রিসেট করতে পারো
+            // reset()
+            // setPhoto(null)
+            // setPhotoPreview("")
+            // setSignature(null)
+            // setSignaturePreview("")
+        }
     }
 
     const genderOptions = [
@@ -189,15 +211,15 @@ export default function VolunteerForm() {
 
     return (
         <div className="bg-gray-50 py-12">
-            <div className="max-w-4xl mx-auto px-4">
+            <div className="max-w-4xl mx-auto px-2">
 
                 <div className="bg-primary text-white rounded-t-lg p-8">
-                    <h2 className="text-2xl font-bold">স্বেচ্ছাসেবক আবেদন</h2>
+                    <h2 className="text-2xl font-bold">সদস্য আবেদন</h2>
                 </div>
 
                 <form
                     onSubmit={handleSubmit(onSubmit)}
-                    className="bg-white rounded-b-lg shadow-lg p-8 space-y-6"
+                    className="bg-white rounded-b-lg shadow-lg p-4 space-y-6"
                 >
                     {/* BASIC INFO */}
                     <div className="grid md:grid-cols-2 gap-6">
@@ -215,7 +237,7 @@ export default function VolunteerForm() {
                         <FormInput label="মোবাইল নম্বর" required {...register("mobileNumber", { required: true })} />
                     </div>
                     <div className="grid md:grid-cols-2 gap-6">
-                        <FormInput label="জন্মদিন" required {...register("birthDate", { required: true })} />
+                        <FormInput label="জন্মদিন" type="date" required {...register("birthDate", { required: true })} />
                         <FormInput label="বয়স" required {...register("age", { required: true })} />
 
                     </div>
@@ -341,6 +363,36 @@ export default function VolunteerForm() {
                         <input type="file" ref={signatureRef} className="hidden" accept="image/*"
                             onChange={(e) => uploadImage(e, setSignature, setSignaturePreview)} />
                     </div>
+                    {/* term and condition allow */}
+                    {/* TERMS & CONDITIONS CHECKBOX */}
+                    <div className="bg-blue-50 border-l-4 border-blue-500 p-4 mb-6 rounded">
+                        <h3 className="font-bold text-sm mb-2 text-blue-900">অঙ্গীকার নামা</h3>
+
+                        <p className="text-xs text-blue-900 leading-relaxed mb-3">
+                            আমি এই মর্মে স্বেচ্ছায়, সজ্ঞানে ও সুস্থ মস্তিষ্কে অঙ্গীকার ও শপথ করছি যে—
+                            <br />১. আমি ঐক্যবদ্ধ সদর ব্রাহ্মণবাড়িয়া সংগঠনের লক্ষ্য ও উদ্দেশ্যের প্রতি আন্তরিকভাবে বিশ্বাসী এবং সে আদর্শ বাস্তবায়নে সর্বোচ্চ ভূমিকা রাখব।
+                            <br />২. ব্রাহ্মণবাড়িয়া জেলাকে অন্যায়, দুর্নীতি, মাদক, সন্ত্রাস ও অসামাজিক কার্যকলাপমুক্ত একটি নিরাপদ ও ন্যায়ভিত্তিক সমাজ গড়ে তুলতে নিষ্ঠা ও সততার সাথে কাজ করব।
+                            <br />৩. সংগঠনের গঠনতন্ত্র, নীতিমালা ও নির্দেশনা সর্বদা অনুসরণ করব এবং সংগঠনের শৃঙ্খলা ভঙ্গ করব না।
+                            <br />৪. কোনো ব্যক্তিগত স্বার্থে, রাজনৈতিক স্বার্থে বা বেআইনি উদ্দেশ্যে সংগঠনের পরিচয়, পদমর্যাদা বা কর্মকান্ড ব্যবহার করব না।
+                            <br />৫. মানবিক মূল্যবোধ, দেশপ্রেম ও সামাজিক দায়বদ্ধতা থেকে প্রাপ্ত দায়িত্ব সর্বদা সঠিকভাবে পালন করব।
+                            <br />৬. সংগঠনের প্রয়োজনে নিয়মিত সময়, শ্রম ও দক্ষতা প্রদান করব এবং জনস্বার্থে সব বৈধ কার্যক্রমে অংশগ্রহণ করব।
+                            <br /><br />
+                            আমি উপরোক্ত সকল অঙ্গীকার আন্তরিকতা ও দায়িত্ববোধের সাথে পালন করব।
+                        </p>
+
+                        {/* Checkbox */}
+                        <div className="flex items-start gap-2">
+                            <input
+                                type="checkbox"
+                                {...register("termsAccepted", { required: true })}
+                                className="mt-1 w-4 h-4"
+                            />
+                            <label className="text-xs text-blue-900">
+                                উপরের সকল অঙ্গীকার আমি পড়েছি এবং শর্তাবলীর সাথে একমত।
+                            </label>
+                        </div>
+                    </div>
+
 
                     {/* SUBMIT */}
                     <Button type="submit" className="w-full bg-primary text-white py-3 mt-6">

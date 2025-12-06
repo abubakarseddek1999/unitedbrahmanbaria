@@ -1,6 +1,6 @@
 // member.model.ts
 export interface IMember {
-  fullName: string;
+  name: string;
   fatherName: string;
   motherName?: string;
   fatherProfession?: string;
@@ -8,6 +8,7 @@ export interface IMember {
   mobileNumber: string;
   email?: string;
   photo?: string;
+  signature?: string;
   designation?: string;
   birthDate: string; // You can use Date if you plan to store it as a Date object
   gender: string;
@@ -33,7 +34,7 @@ export interface IMember {
   interestReason?: string;
   joinedDate?: string;
   status?: string;
-
+  termsAccepted?: boolean;
 
   // update your content here 
 }

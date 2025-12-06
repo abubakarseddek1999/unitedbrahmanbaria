@@ -6,10 +6,12 @@ interface FormSelectProps {
   error?: string
   options: { value: string; label: string }[]
   className?: string
+  value?: string
+  onValueChange?: (value: string) => void
 }
 
 export const FormSelect = forwardRef<HTMLSelectElement, FormSelectProps>(
-  ({ label, required = false, error, options, className, ...props }, ref) => {
+  ({ label, value, onValueChange, required = false, error, options, className, ...props }, ref) => {
     return (
       <div className={className}>
         <label className="text-sm font-medium text-gray-700 dark:text-white mb-4 block">
@@ -17,11 +19,13 @@ export const FormSelect = forwardRef<HTMLSelectElement, FormSelectProps>(
         </label>
         <select
           ref={ref}
-          className={`w-full h-12 leading-[2.8] border dark:text-white dark:bg-[#202A37] border-gray-300 rounded-lg px-3 focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent ${
-            error ? "border-red-500 focus:ring-red-500" : ""
-          }`}
+          value={value || ""} // <-- value সেট করতে হবে
+          onChange={(e) => onValueChange && onValueChange(e.target.value)} // <-- onValueChange handle করতে হবে
+          className={`w-full h-12 leading-[2.8] border dark:text-white dark:bg-[#202A37] border-gray-300 rounded-lg px-3 focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent ${error ? "border-red-500 focus:ring-red-500" : ""
+            }`}
           {...props}
         >
+
           <option className="m-2" value="">নির্বাচন করুন</option>
           {options.map((option) => (
             <option className="m-2 p-5" key={option.value} value={option.value}>

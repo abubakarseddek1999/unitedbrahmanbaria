@@ -6,7 +6,7 @@ const memberSchema = new Schema<IMember>(
   {
 
     // update your content here 
-    fullName: { type: String, required: true },
+    name: { type: String, required: true },
     fatherName: { type: String, required: true },
     motherName: { type: String, required: false },
     fatherProfession: { type: String, required: false },
@@ -14,9 +14,10 @@ const memberSchema = new Schema<IMember>(
     mobileNumber: { type: String, required: true },
     email: { type: String, required: false },
     photo: { type: String, required: false },
+    signature: { type: String, required: false },
     designation: {
       type: String,
-      default: 'সাধারণ-সদস্য',
+      default: 'নতুন-আবেদনকারী',
     },
     birthDate: { type: String, required: true },
     gender: { type: String, required: true },
@@ -41,6 +42,7 @@ const memberSchema = new Schema<IMember>(
     educationQualification: { type: String, required: false },
     interestReason: { type: String, required: false },
     status: { type: String, required: false },
+    termsAccepted: { type: Boolean, required: false },
     joinedDate: { type: String, default: new Date().toISOString() },
   },
   { timestamps: true } // optional: adds createdAt and updatedAt

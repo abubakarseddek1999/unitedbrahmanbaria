@@ -22,6 +22,7 @@ export const createMemberController: RequestHandler = catchAsync(async (req, res
     formattedData = {
       ...req.body,
       photo: imageInfo?.photo, // ✅ Only URL is stored
+      signature: imageInfo?.signature, // ✅ Only URL is stored
     };
   }
 
@@ -71,6 +72,7 @@ export const updateMemberByIdController: RequestHandler = catchAsync(async (req,
     formattedData = {
       ...req.body,
       photo: imageInfo?.photo, // ✅ Only URL is stored
+      signature: imageInfo?.signature, // ✅ Only URL is stored
     };
   }
 

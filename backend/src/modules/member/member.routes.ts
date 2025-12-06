@@ -8,7 +8,15 @@ import uploader from '../../utils/uploader/uploader';
 export const memberRoutes: Router = Router();
 
 memberRoutes.get('/',getAllMemberController);
-memberRoutes.post('/create', uploader({photo: 'single' }), formValidator,createMemberController);
-memberRoutes.patch('/:id',uploader({photo: 'single' }), formValidator, updateMemberByIdController);
+memberRoutes.post('/create', uploader({
+    photo: "single",
+    signature: "single",
+  }),
+ formValidator,
+ createMemberController);
+memberRoutes.patch('/:id',uploader({
+    photo: "single",
+    signature: "single",
+  }), formValidator, updateMemberByIdController);
 memberRoutes.delete('/:id', deleteMemberByIdController);
 
