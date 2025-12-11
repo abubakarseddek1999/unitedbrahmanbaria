@@ -149,7 +149,9 @@ const AddMember = ({ open, onClose, refetch }: AddMemberProps) => {
                             <option value="প্রধান-নির্বাহী">প্রধান নির্বাহী</option>
                             <option value="পরিচালক">পরিচালক</option>
                             <option value="উপদেষ্টা">উপদেষ্টা</option>
+                            <option value="উপদেষ্টা">সভাপতি</option>
                             <option value="দাতা">দাতা</option>
+                            <option value="দাতা">আজীবন দাতা</option>
                         </select>
                     </div>
 

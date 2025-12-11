@@ -12,7 +12,7 @@ import usePaginatedData from "@/hooks/usePaginatedData"
 import AddMember from "./AddMember"
 import EditMember from "./EditMember"
 import MemberDetails from "./MemberDetails"   // <-- NEW
-import MemberCertificate from "./Cirtificate"
+// import MemberCertificate from "./Cirtificate"
 
 export type MemberItem = {
     _id: string
@@ -232,11 +232,11 @@ const Members = () => {
                 item={selectedItem}
             />
             {/* Verified Modal */}
-            <MemberCertificate
+            {/* <MemberCertificate
                 open={isVerifiedModalOpen}
                 onClose={() => setIsVerifiedModalOpen(false)}
                 item={selectedItem}
-            />
+            /> */}
         </div>
     )
 }

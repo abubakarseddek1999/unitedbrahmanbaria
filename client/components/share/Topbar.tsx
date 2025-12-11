@@ -5,7 +5,7 @@ import Link from "next/link";
 import { useState, useEffect } from "react";
 import { usePathname } from "next/navigation";
 import Image from "next/image";
-import logo from "@/app/asset/images/logo.png";
+import logo from "@/app/asset/images/logo-1.jpg";
 import { LanguageSwitcher } from "../language/LanguageSwitcher";
 
 const Topbar = () => {
@@ -39,20 +39,20 @@ const Topbar = () => {
     ];
 
     return (
-        <header className="bg-white px-4 shadow-md sticky top-0 z-50">
+        <header className="bg-white px-2 shadow-md sticky top-0 z-50">
             <div className="container mx-auto py-4">
                 <div className="flex items-center justify-between item-center">
 
                     {/* Logo Section */}
-                    <div className="flex items-center space-x-3">
-                        <Link href="/" className="w-12 h-12 bg-green-600 rounded-full flex items-center justify-center">
-                            <Image src={logo} alt="Logo" width={40} height={40} />
+                    <div className="flex items-center space-x-2">
+                        <Link href="/" className="w-[50px] h-[50px] bg-white rounded-full flex items-center justify-center">
+                            <Image src={logo} alt="Logo" width={100} height={100} />
                         </Link>
                         <div>
-                            <h1 className="text-[13px] md:text-xl font-bold text-gray-800">
+                            <h1 className="text-[14px] md:text-xl font-bold text-gray-800">
                                 ঐক্যবদ্ধ সদর ব্রাহ্মণবাড়িয়া
                             </h1>
-                            <p className="text-[10px] text-gray-600">স্বচ্ছতা ও জবাবদিহিতার প্ল্যাটফর্ম</p>
+                            <p className="text-[10px] text-gray-600">অন্যায় ও দুর্নীতি বিরোধী আন্দোলন </p>
                         </div>
                     </div>
 

@@ -1,5 +1,5 @@
 // Local Storage utility functions for data management
-
+"use client"
 export interface Complaint {
   id?: number
   _id?: string

@@ -24,7 +24,7 @@ const SuccessStoryContent = ({ refresh, setRefresh }: { refresh: boolean; setRef
                     return (
 
                         <div key={story._id} ref={isLast ? ref : undefined}>
-                            <SuccessStoryCard story={story} setRefresh={setRefresh} />
+                            {/* <SuccessStoryCard story={story} setRefresh={setRefresh} /> */}
                         </div>
 
                     );

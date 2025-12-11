@@ -272,7 +272,9 @@ const EditMember = ({ open, onClose, item, refetch }: EditMemberProps) => {
                                 { value: "প্রধান-নির্বাহী", label: "প্রধান নির্বাহী" },
                                 { value: "পরিচালক", label: "পরিচালক" },
                                 { value: "উপদেষ্টা", label: "উপদেষ্টা" },
+                                { value: "সভাপতি", label: "সভাপতি" },
                                 { value: "দাতা", label: "দাতা" },
+                                { value: "আজীবন-দাতা", label: "আজীবন দাতা" },
                             ]}
                             value={watch("designation")} // react-hook-form থেকে ভ্যালু নেবে
                             onValueChange={(value) => setValue("designation", value)} // react-hook-form এ আপডেট করবে

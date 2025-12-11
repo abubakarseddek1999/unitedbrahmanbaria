@@ -1,4 +1,6 @@
 // hooks/useSecretData.ts
+
+"use client"
 import { useQuery } from "@tanstack/react-query"
 import useAxiosPublic from "./useAxios"
 

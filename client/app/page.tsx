@@ -5,11 +5,11 @@ import Image from "next/image"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { Badge } from "@/components/ui/badge"
-import { FileText, Shield, Users, ArrowRight, Phone, Mail, MapPin } from "lucide-react"
+import { FileText, Shield, Users, ArrowRight } from "lucide-react"
 import { initializeData, getSuccessStories, getGalleryItems, type SuccessStory, type GalleryItem } from "@/lib/storage"
 import Banner from "@/components/home/Banner"
-import Navbar from "@/components/share/Navbar"
-import logo from "@/app/asset/images/logo.png";
+// import Navbar from "@/components/share/Navbar"
+// import logo from "@/app/asset/images/logo.png";
 import usePaginatedData from "@/hooks/usePaginatedData"
 import Testimonials from "@/components/home/Testimonial"
 
@@ -17,7 +17,7 @@ export default function HomePage() {
   // const [successStories, setSuccessStories] = useState<SuccessStory[]>([])
   const { data: galleryItems, total: galleryDataTotal } = usePaginatedData<{ _id: string; photo: string; title: string; dateSubmitted: string }>({
     endpoint: "/gallerydata",
-    limit: 15,
+    limit: 20,
   });
   const { data: successStories, total: successStoriesTotal } = usePaginatedData<SuccessStory>({
     endpoint: "/successdata",
@@ -123,7 +123,7 @@ export default function HomePage() {
                 <div className="flex flex-col flex-1 justify-between">
                   <div>
                     <div className="px-4">
-                      <CardTitle className="text-lg text-gray-800">{story?.title}</CardTitle>
+                      <CardTitle className="text-lg line-clamp-2 text-gray-800">{story?.title}</CardTitle>
                       <CardDescription className="text-sm text-gray-500">📅 তারিখ:
                         {story?.dateSubmitted && new Date(story.dateSubmitted).toLocaleDateString('bn-BD', {
                           day: 'numeric',
@@ -200,7 +200,7 @@ export default function HomePage() {
 
           {/* Images */}
           <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 xl:grid-cols-5 gap-5">
-            {galleryItems.slice(0, 15).map((item) => (
+            {galleryItems.slice(0, 20).map((item) => (
               <div
                 key={item._id}
                 className="relative aspect-[4/3] group overflow-hidden rounded-xl shadow-sm hover:shadow-lg transition-shadow cursor-pointer"

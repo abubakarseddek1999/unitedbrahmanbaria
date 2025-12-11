@@ -1,7 +1,7 @@
 import { Mail, MapPin, Phone, Shield } from "lucide-react";
 import Image from "next/image";
 import Link from "next/link";
-import logo from "@/app/asset/images/logo.png";
+import logo from "@/app/asset/images/logo-1.jpg";
 export default function Footer() {
     return (
         <footer className="bg-gray-800 text-white py-12 px-4">
@@ -9,11 +9,13 @@ export default function Footer() {
                 <div className="grid md:grid-cols-4 gap-8">
                     <div>
                         <div className="flex items-center space-x-3 mb-4">
-                            <div className="w-10 h-10 bg-green-600 rounded-full flex items-center justify-center">
-                                <Shield className="w-5 h-5 text-white" />
-                                <Image src={logo} alt="Logo" width={40} height={40} />
+                            <Link href="/" className="w-[50px] h-[50px] bg-white rounded-full flex items-center justify-center">
+                                <Image className="rounded-full" src={logo} alt="Logo" width={100} height={100} />
+                            </Link>
+                            <div>
+                                <h4 className="text-lg font-bold">ঐক্যবদ্ধ সদর ব্রাহ্মণবাড়িয়া</h4>
+                                <p className="text-gray-400 text-[14px]">অন্যায় ও দুর্নীতি বিরোধী আন্দোলন </p>
                             </div>
-                            <h4 className="text-lg font-bold">একযোগে সদর ব্রাহ্মণবাড়িয়া</h4>
                         </div>
                         <p className="text-gray-400">স্বচ্ছতা ও জবাবদিহিতার মাধ্যমে একটি উন্নত সমাজ গড়ে তোলার প্ল্যাটফর্ম।</p>
                     </div>
@@ -70,7 +72,7 @@ export default function Footer() {
                 </div>
 
                 <div className="border-t border-gray-700 mt-8 pt-8 text-center text-gray-400">
-                    <p>&copy; ২০২৫ একযোগে সদর ব্রাহ্মণবাড়িয়া। সকল অধিকার সংরক্ষিত।</p>
+                    <p>&copy; ২০২৫ ঐক্যবদ্ধ সদর ব্রাহ্মণবাড়িয়া সকল অধিকার সংরক্ষিত।</p>
                 </div>
             </div>
         </footer>
