@@ -222,7 +222,7 @@ const SecretData: React.FC<SecretDataProps> = () => {
                     {/* skeleton */}
                     {loading && (
                         <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-                            {Array.from({ length: 8 }).map((_, i) => (
+                            {Array?.from({ length: 8 }).map((_, i) => (
                                 <Card className="border-l-4 border-l-green-500 animate-pulse">
                                     <CardContent className="p-4">
                                         <div className="flex flex-col-reverse md:flex-row gap-5 items-start justify-between">

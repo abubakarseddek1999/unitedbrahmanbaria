@@ -10,6 +10,7 @@ const SuccessStoryContent = ({ refresh, setRefresh }: { refresh: boolean; setRef
         endpoint: "/successdata",
         limit: 8,
     });
+    console.log(successStories)
     useEffect(() => {
         if (refresh) {
             refetch()
@@ -24,7 +25,7 @@ const SuccessStoryContent = ({ refresh, setRefresh }: { refresh: boolean; setRef
                     return (
 
                         <div key={story._id} ref={isLast ? ref : undefined}>
-                            {/* <SuccessStoryCard story={story} setRefresh={setRefresh} /> */}
+                            <SuccessStoryCard story={story} setRefresh={setRefresh} />
                         </div>
 
                     );
@@ -32,7 +33,7 @@ const SuccessStoryContent = ({ refresh, setRefresh }: { refresh: boolean; setRef
             </div>
             {loading && (
                 <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-                    {Array.from({ length: 8 }).map((_, i) => (
+                    {Array?.from({ length: 8 }).map((_, i) => (
                         <Card className="border-l-4 border-l-green-500 animate-pulse">
                             <CardContent className="p-4">
                                 <div className="flex flex-col-reverse md:flex-row gap-5 items-start justify-between">

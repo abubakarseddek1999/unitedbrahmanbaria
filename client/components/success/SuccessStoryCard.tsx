@@ -1,6 +1,6 @@
 "use client"
 
-import { Edit, Loader2, Trash2, Upload } from "lucide-react"
+import { Edit, Eye, Loader2, Trash2, Upload } from "lucide-react"
 import { useState, useEffect } from "react"
 import { Button } from "../ui/button"
 import { Input } from "../ui/input"
@@ -12,6 +12,7 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle } from "../ui/dialog"
 import { useToast } from "@/hooks/use-toast"
 import Swal from "sweetalert2"
 import useAxiosPublic from "@/hooks/useAxios"
+import SuccessDetails from "./SuccessDetails"
 
 export const SuccessStoryCard = ({ story, setRefresh }: { story: any, setRefresh: any }) => {
     const { toast } = useToast()
@@ -21,6 +22,7 @@ export const SuccessStoryCard = ({ story, setRefresh }: { story: any, setRefresh
     const [photoFiles, setPhotoFiles] = useState<File[]>([])
     const [photoPreview, setPhotoPreview] = useState<string[]>([])
     const [isLoading, setIsLoading] = useState(false)
+    const [successDetailsOpen, setSuccessDetailsOpen] = useState(false)
 
     useEffect(() => {
         if (story) {
@@ -167,7 +169,7 @@ export const SuccessStoryCard = ({ story, setRefresh }: { story: any, setRefresh
                     <div className="flex flex-col-reverse md:flex-row gap-5 items-start justify-between">
                         <div className="flex-1 flex flex-col gap-5 md:w-1/2">
                             <div>
-                                <h4 className="font-semibold text-2xl">{story.title}</h4>
+                                <h4 className="font-semibold text-2xl line-clamp-3">{story.title}</h4>
                                 <p className="text-gray-600 text-[14px] mt-1 line-clamp-4">{story.description}</p>
                                 <p className="text-[12px]">
                                     তারিখ:{" "}
@@ -181,6 +183,9 @@ export const SuccessStoryCard = ({ story, setRefresh }: { story: any, setRefresh
                             <div className="flex items-center space-x-2">
                                 <Button onClick={() => setModalOpen(true)} size="sm" variant="outline">
                                     <Edit className="w-4 h-4" />
+                                </Button>
+                                <Button onClick={() => setSuccessDetailsOpen(true)} size="sm" variant="outline">
+                                    <Eye className="w-4 h-4" />
                                 </Button>
                                 <Button
                                     size="sm"
@@ -314,6 +319,7 @@ export const SuccessStoryCard = ({ story, setRefresh }: { story: any, setRefresh
                     </form>
                 </DialogContent>
             </Dialog>
+            <SuccessDetails open={successDetailsOpen} onClose={() => setSuccessDetailsOpen(false)} story={story} />
         </>
     )
 }

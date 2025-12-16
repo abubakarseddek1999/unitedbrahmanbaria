@@ -194,7 +194,7 @@ const Members = () => {
 
                     {loading && (
                         <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
-                            {Array.from({ length: 8 }).map((_, i) => (
+                            {Array?.from({ length: 8 }).map((_, i) => (
                                 <CardContent key={i} className="p-4 animate-pulse">
                                     <div className="aspect-square bg-gray-300 rounded-lg mb-3" />
                                     <div className="h-4 bg-gray-300 rounded w-3/4 mb-2" />

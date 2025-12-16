@@ -154,7 +154,7 @@ const Gallery = () => {
                     </div>
                     {loading && (
                         <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
-                            {Array.from({ length: 8 }).map((_, i) => (
+                            {Array?.from({ length: 8 }).map((_, i) => (
                                 <CardContent key={i} className="p-4 animate-pulse">
                                     <div className="aspect-[4/3] bg-gray-300 rounded-lg mb-3" />
 
