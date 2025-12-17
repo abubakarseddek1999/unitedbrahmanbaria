@@ -146,7 +146,7 @@ const SecretData: React.FC<SecretDataProps> = () => {
                                     const isLast = info._id === secretData[secretData.length - 1]._id
                                     return (
                                         <div key={info._id} ref={isLast ? ref : undefined} >
-                                            <Card className="border-l-4 border-l-red-500">
+                                            <Card  className="border-l-4 border-l-red-500">
                                                 <CardContent className="p-2 md:p-4 flex flex-col-reverse md:flex-row gap-6">
                                                     <div className="flex-1 min-w-0 flex-col gap-5 items-start justify-between">
                                                         <div className="flex-1 mb-2">
@@ -223,7 +223,7 @@ const SecretData: React.FC<SecretDataProps> = () => {
                     {loading && (
                         <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
                             {Array?.from({ length: 8 }).map((_, i) => (
-                                <Card className="border-l-4 border-l-green-500 animate-pulse">
+                                <Card key={i} className="border-l-4 border-l-green-500 animate-pulse">
                                     <CardContent className="p-4">
                                         <div className="flex flex-col-reverse md:flex-row gap-5 items-start justify-between">
 
@@ -269,7 +269,7 @@ const SecretData: React.FC<SecretDataProps> = () => {
                         </DialogTitle>
                     </DialogHeader>
                     <div className="flex-1 overflow-y-auto p-4 space-y-4">
-                        {currentImages.map((img, index) => (
+                        {currentImages?.map((img, index) => (
                             <div key={index} className="flex flex-col items-center">
                                 <img
                                     src={img}
