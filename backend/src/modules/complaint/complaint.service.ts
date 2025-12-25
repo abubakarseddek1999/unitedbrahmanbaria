@@ -34,8 +34,8 @@ export const getAllComplaintService = async (query: Record<string, unknown>) => 
       // 'description',
     ]);
 
-  const total = await countQuery.modelQuery.countDocuments();
-  return { data, total };;
+    const meta = await complaintQueries.countTotal();
+  return { data, meta };;
 };
 
 // get complaint by Id or single  service

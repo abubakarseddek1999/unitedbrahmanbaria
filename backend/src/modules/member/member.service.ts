@@ -31,9 +31,9 @@ export const getAllMemberService = async (query: Record<string, unknown>) => {
       'category',
       'description',
     ]);
-  const total = await countQuery.modelQuery.countDocuments();
+  const meta = await memberQueries.countTotal();
   const result = await memberQueries.modelQuery;
-  return { result, total };
+  return { result, meta };
 };
 
 // get member by Id or single  service

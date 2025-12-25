@@ -13,7 +13,7 @@ gallerydataRoutes.post('/create',
     createGallerydataController);
 gallerydataRoutes.get('/', getAllGallerydataController);
 gallerydataRoutes.get('/:id', getGallerydataByIdController);
-gallerydataRoutes.put('/:id',
+gallerydataRoutes.patch('/:id',
     uploader({ photo: 'single' }),
     formValidator,
     updateGallerydataByIdController);

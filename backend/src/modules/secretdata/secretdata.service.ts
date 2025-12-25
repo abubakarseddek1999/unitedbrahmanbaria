@@ -39,9 +39,9 @@ export const getAllSecretdataService = async (query: Record<string, unknown>) =>
       // উপরের fields এর সাথে মিলিয়ে রাখো
     ]);
 
-  const total = await totalCountQuery.modelQuery.countDocuments();
+    const meta = await secretdataQueries.countTotal();
 
-  return { data, total };
+  return { data, meta };
 };
 // get secretdata by Id or single  service
 

@@ -36,9 +36,10 @@ export const getAllGallerydataService = async (query: Record<string, unknown>) =
       'description',
     ]);
 
-  const total = await countQuery.modelQuery.countDocuments();
+ const meta = await gallerydataQueries.countTotal();
 
-  return { data, total };
+
+  return { data, meta };
 };
 
 

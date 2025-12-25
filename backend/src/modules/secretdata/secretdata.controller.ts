@@ -54,13 +54,13 @@ export const createSecretdataController: RequestHandler = catchAsync(async (req,
 // Get All Secretdata 
 
 export const getAllSecretdataController: RequestHandler = catchAsync(async (req, res) => {
-  const {data , total} = await getAllSecretdataService(req.query);
+  const {data , meta} = await getAllSecretdataService(req.query);
   sendResponse(res, {
     status: 200,
     success: true,
     message: 'secretdata retrived successfully',
     data: data,
-    total: total,
+    meta: meta,
   });
 });
 

@@ -36,9 +36,9 @@ export const getAllSuccessdataService = async (query: Record<string, unknown>) =
       'description',
     ]);
 
-  const total = await countQuery.modelQuery.countDocuments();
+    const meta = await successdataQueries.countTotal();
 
-  return { data, total };
+  return { data, meta };
 };
 
 // get successdata by Id or single  service

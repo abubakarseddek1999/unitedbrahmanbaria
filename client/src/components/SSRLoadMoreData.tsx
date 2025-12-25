@@ -1,0 +1,69 @@
+import Link from "next/link";
+
+// components/SSRLoadMoreData.tsx
+interface SSRLoadMoreDataProps<T> {
+  apiUrl: string;  
+  roleType?: string;                  // API endpoint
+  searchParams?: Promise<{ limit?: string }>;
+  defaultLimit?: number;
+  page?: number;
+  children: (items: T[]) => React.ReactNode; // parent will render items
+}
+
+export default async function SSRLoadMoreData<T>({
+  apiUrl,
+  roleType,
+  searchParams,
+  defaultLimit = 10,
+  page = 1,
+  children,
+}: SSRLoadMoreDataProps<T>) {
+  const params = await searchParams;
+  const currentLimit = parseInt(params?.limit || String(defaultLimit));
+  const nextLimit = currentLimit + defaultLimit;
+
+   // URL build dynamically
+   const url = new URL(apiUrl, apiUrl);
+   url.searchParams.set("page", String(page));
+   url.searchParams.set("limit", String(currentLimit));
+   if (roleType) url.searchParams.set("roleType", roleType);
+ 
+   let items: T[] = [];
+   let totalCount = 0;
+ 
+   try {
+     const res = await fetch(url.toString(), { cache: "no-store" });
+     const json = await res.json();
+     items = json?.data || [];
+     totalCount = json?.meta?.total || 0;
+   } catch (err) {
+     console.error("Failed to fetch data:", err);
+   }
+ 
+
+  return (
+    <div className="px-4 py-8 max-w-7xl mx-auto">
+      {children(items)}
+
+      <div className="flex justify-between items-center">
+      <p className="mt-4 text-center text-sm text-gray-500">
+          Showing {items.length} of {totalCount} items
+        </p>
+
+        {/* Load More button */}
+        {items.length < totalCount && (
+          <div className="mt-8 flex justify-center">
+            <Link
+              href={`?limit=${nextLimit}`}
+              className="px-2 py-1 bg-primary text-white rounded hover:bg-primary/80 transition"
+            >
+              Load More
+            </Link>
+          </div>
+        )}
+
+        
+      </div>
+    </div>
+  );
+}

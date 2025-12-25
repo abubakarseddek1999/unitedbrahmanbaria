@@ -36,13 +36,13 @@ export const createSuccessdataController: RequestHandler = catchAsync(async (req
 // Get All Successdata 
 
 export const getAllSuccessdataController: RequestHandler = catchAsync(async (req, res) => {
-  const {data, total} = await getAllSuccessdataService(req.query);
+  const {data, meta} = await getAllSuccessdataService(req.query);
   sendResponse(res, {
     status: 200,
     success: true,
     message: 'successdata retrived successfully',
     data: data,
-    total: total,
+    meta: meta,
   });
 });
 

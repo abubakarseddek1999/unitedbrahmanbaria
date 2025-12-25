@@ -23,13 +23,19 @@ export const prepareForActivateService = async (payload: IUser) => {
 
   const { code, token } = activationCode(payload);
 
-  await sendMail(payload.email, 'Account Activation ', { ...payload, code });
+  try {
+    await sendMail(payload.email, 'Account Activation', { ...payload, code });
+  } catch (error) {
+    console.error('Activation email failed:', error);
+    // ❗ email fail হলেও user create block হবে না
+  }
 
   return {
     code,
     token,
   };
 };
+
 
 export const createUserService = async (payload: IUser) => {
   if (await User.isUserExists(payload)) {

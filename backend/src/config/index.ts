@@ -20,14 +20,14 @@ export const access_token_expiry: string =
 export const refresh_token_expiry: string =
   process.env.REFRESH_TOKEN_EXPIRE || '';
 
-  export const googleClient = process.env.GOOGLE_CLIENT
-  export const googleSecrete = process.env.GOOGLE_SECRET
+export const googleClient = process.env.GOOGLE_CLIENT
+export const googleSecrete = process.env.GOOGLE_SECRET
 
-  // For Cloud Storage
+// For Cloud Storage
 
-  export const cloudName= process.env.CLOUD_NAME
-  export const cloudApiKey= process.env.CLOUD_API_KEY
-  export const cloudSecret= process.env.CLOUD_SECRET
+export const cloudName = process.env.CLOUD_NAME
+export const cloudApiKey = process.env.CLOUD_API_KEY
+export const cloudSecret = process.env.CLOUD_SECRET
 
 //  For Email Server
 
@@ -36,3 +36,10 @@ export const mailPort = 465;
 export const mailUser: string = process.env.MAIL_USER || '';
 export const mailPass: string = process.env.MAIL_PASS || '';
 export const mailService: string = process.env.MAIL_SERVICE || '';
+
+// for payment 
+export const bkashUser: string = process.env.BKASH_USER || ''
+export const bkashPass: string = process.env.BKASH_PASS || ''
+export const bkashKey: string = process.env.BKASH_API_KEY || ''
+export const bkashSecret: string = process.env.BKASH_APP_SECRECT || ''
+export const bkashUrl: string = process.env.BKASH_API_URL || ''

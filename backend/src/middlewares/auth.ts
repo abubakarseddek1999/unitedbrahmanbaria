@@ -25,14 +25,14 @@ const auth = (...requiredRoles: IUserRole[]) => {
       // checking if the given token is valid
       const decoded = jwt.verify(token, access_token) as JwtPayload;
       const { role, email, userId } = decoded;
-
+      // console.log("userId", userId)
       const userPayload = {
         _id: userId,
         email: email,
       };
       // checking if the user is exist
       const user = await User.isUserExists(userPayload);
-
+      // console.log(user)
       if (!user) {
         throw new CustomError(httpStatus.NOT_FOUND, 'This user is not found !');
       }
@@ -58,7 +58,7 @@ const auth = (...requiredRoles: IUserRole[]) => {
         );
       }
 
-      // req.user = decoded as JwtPayload;
+      req.user = decoded as JwtPayload;
       next();
     },
   );
