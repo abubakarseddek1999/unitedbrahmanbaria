@@ -41,7 +41,7 @@ const Topbar = () => {
 
     return (
         <header className="bg-white px-2 shadow-md sticky top-0 z-50">
-            <div className="max-w-7xl mx-auto py-2">
+            <div className="container mx-auto py-2">
                 
                 <div className="flex items-center justify-between item-center">
 

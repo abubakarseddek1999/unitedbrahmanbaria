@@ -56,7 +56,7 @@ export default function Testimonials() {
         }, 500); // simulate API delay
     }, []);
     return (
-        <div className="bg-white py-16 px-4">
+        <div className=" py-16 px-4">
             <div className="container mx-auto">
                 <div className="text-center mb-[50px]">
                     {/* <span className="text-base font-bold mb-4">মতামত</span> */}

@@ -9,6 +9,8 @@ import icon from "@/asset/images/logo.png"
 import { GoogleTranslate } from "@/components/language/GoogleTranslate"
 import { Provider } from "react-redux"
 import { store } from "@/redux/store"
+import WhatsApp from "@/components/home/WhatsApp"
+
 
 // Configure Hind Siliguri with all weights and subsets
 const hindSiliguri = Hind_Siliguri({
@@ -66,6 +68,7 @@ export default function RootLayout({
         <QueryClientProvider client={queryClient}>
           {/* <Navbar /> */}
           <Toaster />
+          <WhatsApp />
           <Provider store={store}>
           {children}
           </Provider>

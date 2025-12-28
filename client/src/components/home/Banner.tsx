@@ -107,12 +107,12 @@ const ProfessionalBanner = () => {
             </div>
 
             {/* Floating Elements */}
-            <div className="absolute inset-0 overflow-hidden pointer-events-none">
+            {/* <div className="absolute inset-0 overflow-hidden pointer-events-none">
                 <div className="absolute top-20 left-10 w-20 h-20 bg-emerald-200/30 rounded-full animate-float" />
                 <div className="absolute top-40 right-20 w-16 h-16 bg-teal-200/30 rounded-full animate-float-delayed" />
                 <div className="absolute bottom-32 left-1/4 w-12 h-12 bg-green-200/30 rounded-full animate-float" />
                 <div className="absolute bottom-20 right-1/3 w-24 h-24 bg-emerald-100/40 rounded-full animate-float-delayed" />
-            </div>
+            </div> */}
 
             <Swiper
                 // pagination={{
@@ -132,7 +132,7 @@ const ProfessionalBanner = () => {
             >
                 {slides.map((slide, index) => (
                     <SwiperSlide key={slide.id}>
-                        <section className="min-h-[80vh] flex items-center py-12 lg:py-20">
+                        <section className="min-h-[80vh] flex items-center lg:py-20">
                             <div className="container mx-auto px-4 lg:px-8 relative z-10">
                                 <div className="grid lg:grid-cols-12 gap-8 lg:gap-12 items-center">
                                     {/* Content Side - 7 columns */}
@@ -215,7 +215,7 @@ const ProfessionalBanner = () => {
 
                                         {/* Trust Indicators */}
                                         <div
-                                            className="flex flex-wrap items-center gap-6 pt-6 border-t border-gray-200 animate-slide-up"
+                                            className="hidden md:block flex flex-wrap items-center gap-6 pt-6 border-t border-gray-200 animate-slide-up"
                                             style={{ animationDelay: "0.6s" }}
                                         >
                                             <div className="flex items-center gap-2">
@@ -240,7 +240,7 @@ const ProfessionalBanner = () => {
                                     </div>
 
                                     {/* Dynamic Visual Side - 5 columns */}
-                                    <div className="lg:col-span-5 animate-slide-left" style={{ animationDelay: "0.4s" }}>
+                                    <div className="hidden md:block lg:col-span-5 animate-slide-left py-16" style={{ animationDelay: "0.4s" }}>
                                         <div className="relative">
                                             {/* Dynamic Main Card */}
                                             <div className="bg-white rounded-3xl shadow-2xl p-6 lg:p-8 border border-gray-100 relative overflow-hidden">

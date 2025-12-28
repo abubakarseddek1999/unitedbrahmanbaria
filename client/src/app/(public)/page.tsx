@@ -13,12 +13,16 @@ import Banner from "@/components/home/Banner"
 import usePaginatedData from "@/hooks/usePaginatedData"
 import Testimonials from "@/components/home/Testimonial"
 import { Button } from "@/components/ui/button"
+import { UpcomingEvents } from "@/components/home/commingActivity"
+import { AboutSection } from "@/components/home/AboutSection"
+import { Newsletter } from "@/components/home/Newsletter"
+import ScrollToTop from "@/components/home/ScrollToTop"
 
 export default function HomePage() {
   // const [successStories, setSuccessStories] = useState<SuccessStory[]>([])
   const { data: galleryItems, total: galleryDataTotal } = usePaginatedData<{ _id: string; photo: string; title: string; dateSubmitted: string }>({
     endpoint: "/gallerydata",
-    limit: 20,
+    limit: 24,
   });
   const { data: successStories, total: successStoriesTotal } = usePaginatedData<SuccessStory>({
     endpoint: "/successdata",
@@ -44,72 +48,15 @@ export default function HomePage() {
     }
   }, [selectedImage])
   return (
-    <div className="min-h-screen bg-gradient-to-br from-green-50 to-blue-50">
+    <div className="min-h-screen bg-gradient-to-br ">
+      <ScrollToTop />
       <Banner />
 
-      <section className="py-20 px-4 bg-gradient-to-b from-white via-[#f9fdfb] to-white">
-        <div className="max-w-7xl mx-auto">
-          <h3 className="text-3xl sm:text-4xl font-extrabold text-center text-gray-800 mb-16">
-            আমাদের সেবাসমূহ
-          </h3>
-
-          <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-8">
-            {/* Card 1 */}
-            <div className="group perspective">
-              <div className="bg-white h-full rounded-2xl border border-gray-200 shadow-xl p-8 text-center flex flex-col justify-between transition-transform duration-500 transform group-hover:-translate-y-2 group-hover:rotate-x-2 group-hover:scale-[1.03]">
-                <div>
-                  <FileText className="w-14 h-14 text-green-600 mx-auto mb-4 drop-shadow-md transition-transform duration-300 group-hover:scale-110" />
-                  <h4 className="text-xl font-bold text-gray-800 mb-2">অন্যায় ও দুর্নীতির বিরুদ্ধে</h4>
-                  <p className="text-gray-600 text-base leading-relaxed">
-                    যেকোনো সমস্যা বা অন্যায় অনিয়মের ও দুর্নীতির বিরুদ্ধে কাজ করা
-                  </p>
-                </div>
-              </div>
-            </div>
-            <div className="group perspective">
-              <div className="bg-white h-full rounded-2xl border border-gray-200 shadow-xl p-8 text-center flex flex-col justify-between transition-transform duration-500 transform group-hover:-translate-y-2 group-hover:rotate-x-2 group-hover:scale-[1.03]">
-                <div>
-                  <FileText className="w-14 h-14 text-green-600 mx-auto mb-4 drop-shadow-md transition-transform duration-300 group-hover:scale-110" />
-                  <h4 className="text-xl font-bold text-gray-800 mb-2">অভিযোগ জমা দিন</h4>
-                  <p className="text-gray-600 text-base leading-relaxed">
-                    যেকোনো সমস্যা বা অনিয়মের বিষয়ে অভিযোগ জানান। আপনার পরিচয় গোপন রাখার সুবিধা রয়েছে।
-                  </p>
-                </div>
-              </div>
-            </div>
-
-            {/* Card 2 */}
-            <div className="group perspective">
-              <div className="bg-white h-full rounded-2xl border border-gray-200 shadow-xl p-8 text-center flex flex-col justify-between transition-transform duration-500 transform group-hover:-translate-y-2 group-hover:rotate-x-2 group-hover:scale-[1.03]">
-                <div>
-                  <Shield className="w-14 h-14 text-blue-600 mx-auto mb-4 drop-shadow-md transition-transform duration-300 group-hover:scale-110" />
-                  <h4 className="text-xl font-bold text-gray-800 mb-2">গোপন তথ্য</h4>
-                  <p className="text-gray-600 text-base leading-relaxed">
-                    গুরুত্বপূর্ণ ও সংবেদনশীল তথ্য সম্পূর্ণ গোপনীয়তার সাথে জমা দিন।
-                  </p>
-                </div>
-              </div>
-            </div>
-
-            {/* Card 3 */}
-            <div className="group perspective">
-              <div className="bg-white h-full rounded-2xl border border-gray-200 shadow-xl p-8 text-center flex flex-col justify-between transition-transform duration-500 transform group-hover:-translate-y-2 group-hover:rotate-x-2 group-hover:scale-[1.03]">
-                <div>
-                  <Users className="w-14 h-14 text-purple-600 mx-auto mb-4 drop-shadow-md transition-transform duration-300 group-hover:scale-110" />
-                  <h4 className="text-xl font-bold text-gray-800 mb-2">সফলতার গল্প</h4>
-                  <p className="text-gray-600 text-base leading-relaxed">
-                    আপনার অভিযোগের ভিত্তিতে সমাধান হওয়া সমস্যাগুলোর সফলতার গল্প দেখুন।
-                  </p>
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
-      </section>
-
+      <AboutSection />
+      {/* <UpcomingEvents /> */}
       {/* Success Stories Section */}
-      <section className="py-16 px-4 bg-gray-50">
-        <div className="max-w-7xl mx-auto">
+      <section className="py-16 px-4 ">
+        <div className="container mx-auto">
           <div className="flex flex-col md:flex-row items-center justify-between mb-12 gap-4">
             <h3 className="text-3xl font-bold text-gray-800">সফলতার গল্প</h3>
             <Badge variant="secondary" className="text-sm">
@@ -117,8 +64,8 @@ export default function HomePage() {
             </Badge>
           </div>
 
-          <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-6">
-            {successStories?.slice(0, 6).map((story) => (
+          <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-6">
+            {successStories?.slice(0, 8).map((story) => (
               <Card
                 key={story?._id}
                 className="hover:shadow-lg transition-shadow rounded-t-xl overflow-hidden flex flex-col"
@@ -206,13 +153,13 @@ export default function HomePage() {
       </section>
 
       {/* Gallery Section */}
-      <section className="py-16 px-4 bg-white">
-        <div className="max-w-7xl mx-auto">
+      <section className="py-16 px-4 ">
+        <div className="container mx-auto">
           <h3 className="text-3xl font-bold text-center text-gray-800 mb-12">গ্যালারি</h3>
 
           {/* Images */}
-          <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 xl:grid-cols-5 gap-5">
-            {galleryItems.slice(0, 20).map((item) => (
+          <div className="grid grid-cols-2 sm:grid-cols-2 md:grid-cols-5 xl:grid-cols-6 gap-5">
+            {galleryItems.slice(0, 24).map((item) => (
               <div
                 key={item._id}
                 className="relative aspect-[4/3] group overflow-hidden rounded-xl shadow-sm hover:shadow-lg transition-shadow cursor-pointer"
@@ -287,7 +234,7 @@ export default function HomePage() {
 
 
       {/* CTA Section */}
-      <section className="py-20 px-4 bg-gradient-to-r from-green-600 to-blue-600 text-white">
+      <section className="py-20 px-4 ">
         <div className="container mx-auto text-center">
           <h3 className="text-3xl font-bold mb-6">আজই শুরু করুন</h3>
           <p className="text-xl mb-8 opacity-90">আপনার সমস্যার সমাধানে আমরা আছি। নিরাপদে আপনার কথা বলুন।</p>
@@ -302,7 +249,7 @@ export default function HomePage() {
               asChild
               size="lg"
               variant="outline"
-              className="text-green-600 border-white  hover:text-white hover:bg-black"
+              className=" border-white bg-primary text-white   hover:bg-black"
             >
               <Link href="/spot-info">
                 গোপন তথ্য দিন
@@ -312,7 +259,7 @@ export default function HomePage() {
           </div>
         </div>
       </section>
-    
+      <Newsletter />
     </div>
   )
 }

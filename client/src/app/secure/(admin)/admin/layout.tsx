@@ -91,7 +91,7 @@ export default function AdminLayout({ children }: AdminLayoutProps) {
             </div>
             {sidebarOpen && (
               <div className="flex flex-col">
-                <span className={`font-semibold text-sm ${textPrimary}`}>খাইরুল উম্মাহ</span>
+                <span className={`font-semibold text-sm ${textPrimary}`}>ঐক্যবদ্ধ সদর ব্রাহ্মণবাড়িয়া</span>
                 <span className={`text-xs ${textSecondary}`}>Admin Panel</span>
               </div>
             )}

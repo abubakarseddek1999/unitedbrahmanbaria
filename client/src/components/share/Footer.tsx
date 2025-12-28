@@ -12,7 +12,7 @@ export default function Footer() {
                             <Link href="/" className="w-[100px] h-[100px] bg-white rounded-full flex items-center justify-center mb-5">
                                 <Image src={logo} alt="Logo" width={100} height={100} />
                             </Link>
-                            <div className="flex flex-col justify-center items-center mb-5">
+                            <div className="flex flex-col mb-5">
                                 <div className="space-y-2">
                                     <h4 className="text-[18px] font-bold">ঐক্যবদ্ধ সদর ব্রাহ্মণবাড়িয়া</h4>
                                     <p className="text-gray-400 text-[14px]">অন্যায় ও দুর্নীতি বিরোধী আন্দোলন </p>

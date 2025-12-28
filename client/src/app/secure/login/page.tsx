@@ -31,6 +31,7 @@ export default function AdminLogin() {
 
   const {
     register,
+    setValue,
     handleSubmit,
     formState: { errors },
   } = useForm<LoginFormValues>();
@@ -63,7 +64,7 @@ export default function AdminLogin() {
           // Smooth redirect
           setTimeout(() => {
             router.push("/secure/admin");
-          }, 700);
+          }, 300);
         } else {
           setMessage("Token not received!");
         }
@@ -77,9 +78,13 @@ export default function AdminLogin() {
       setSuccess(false);
     }
   };
+  const handleAutoFill = () => {
+    setValue("email", "unitybb@gmail.com");
+    setValue("password", "12345678");
+  };
 
   return (
-    <div className="flex min-h-[70vh] items-center justify-center bg-background text-foreground transition-colors">
+    <div className="flex min-h-[70vh] items-center justify-center item-center bg-background text-foreground transition-colors pt-8">
       <div className="w-full max-w-md rounded-2xl bg-card p-10 shadow-lg border border-border animate-fadeIn">
 
         {/* Logo */}
@@ -93,8 +98,8 @@ export default function AdminLogin() {
         {message && (
           <Alert
             className={`mb-4 ${success
-                ? "border-green-600 bg-green-50"
-                : "border-red-600 bg-red-50"
+              ? "border-green-600 bg-green-50"
+              : "border-red-600 bg-red-50"
               }`}
           >
             {success ? (
@@ -162,14 +167,23 @@ export default function AdminLogin() {
               Forgot password?
             </Link>
           </div>
+          <div>
+            <Button
+              type="button"
+              onClick={handleAutoFill}
+              className="w-full py-2 bg-secondary text-secondary-foreground hover:bg-secondary/80"
+            >
+              Use Demo Admin Credentials
+            </Button>
 
-          <Button
-            type="submit"
-            className="w-full mt-2 bg-primary text-primary-foreground hover:scale-105 transition-transform"
-            disabled={isLoading}
-          >
-            {isLoading ? "Logging in..." : "Login"}
-          </Button>
+            <Button
+              type="submit"
+              className="w-full mt-2 bg-primary text-primary-foreground hover:scale-105 transition-transform"
+              disabled={isLoading}
+            >
+              {isLoading ? "Logging in..." : "Login"}
+            </Button>
+          </div>
         </form>
 
         <p className="text-center text-sm text-muted-foreground mt-6">
